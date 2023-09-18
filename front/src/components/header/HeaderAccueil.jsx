@@ -1,8 +1,9 @@
+import { useNavigate } from "react-router-dom";
 import style from "./HeaderAccueil.module.scss";
 import { useEffect, useState } from 'react';
 
 const HeaderAccueil = () => {
-
+    const navigate = useNavigate();
     const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
     useEffect(() => {
@@ -23,10 +24,10 @@ const HeaderAccueil = () => {
         <pre className={style.headerPhone}>findByDev&lt;♥/&gt;</pre>
       ) : (
         <div className={style.headerLarge}>
-          <pre>findByDev&lt;♥/&gt;</pre>
+          <pre className={style.navbar} onClick={()=> navigate("/accueil")}>findByDev&lt;♥/&gt;</pre>
           <p>Application de rencontre pré-compilée</p>
-          <p>S'inscrire</p>
-          <p>Se connecter</p>
+          <p className={style.navbar} onClick={()=> navigate("/register")}>S'inscrire</p>
+          <p className={style.navbar} onClick={()=> navigate("/login")}>Se connecter</p>
         </div>
       )}
     </div>

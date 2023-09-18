@@ -27,7 +27,7 @@
     p {
         font-family: 'JetBrains Mono', monospace;
         color: white;
-        font-size: 32px;
+        font-size: 18px;
         padding:0 20px;
         margin:0 0 60px ;
         text-align: center;
@@ -38,10 +38,37 @@
     .accueilPhone {
         background-image: url(../../assets/background/8L7XzBgdsdBmoMvYWSO6--1--7cnnw.jpg);
 
-        .textLarge {
+        .blockRight {
             display: flex;
-            
+            flex-direction: column;
+            width: 100%;
+            justify-content: flex-end;
+            align-items: flex-end;
+            margin-right: 20px;
+
+            .textLarge {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                background-color: black;
+                opacity: 0.7;
+                width: 40%;
+                height: fit-content;
+                border-radius: 6px;
+    
+                p {
+                    margin: 20px 0;
+                }
+    
+                ul {
+                    font-size: 16px;
+                    font-family: 'JetBrains Mono', monospace;
+                    color: white;
+                    text-align: left;
+                }
+            }
         }
+        
     }
 }
 
