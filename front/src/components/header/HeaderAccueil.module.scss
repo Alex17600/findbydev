@@ -1,0 +1,45 @@
+.headerAccueil {
+    background-color: black;
+    opacity: 80%;
+    height: fit-content;
+    margin: 0;
+
+    .headerPhone {
+        margin: 0;
+        padding: 10px 0;
+        color: #ee9c31;
+        text-align: center;
+        font-size: 40px;
+    }
+
+    p {
+        margin: 0;
+    }
+
+    @media screen and (min-width: 928px) {
+
+        .headerLarge {
+            display: flex;
+            justify-content:space-around;
+            background-color: black;
+            opacity: 80%;
+            height: fit-content;
+            margin: 0;
+            font-family: 'JetBrains Mono', monospace;
+            
+            pre, p {
+                display: flex;
+                align-items: center;
+                margin: 0;
+                color: #ee9c31;
+                font-size: 18px;
+            }
+
+            pre {
+                font-size: 44px;
+            }
+        }
+
+
+    }
+}
