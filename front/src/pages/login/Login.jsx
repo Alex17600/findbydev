@@ -17,17 +17,38 @@ const Login = () => {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
+
   return (
-    <div className={style.loginPhone}>
+    <div className={style.login}>
       {windowWidth < 928 ? (
         <div className={style.blockLogin}>
           <div className={style.returnIcon}>
             <RiArrowGoBackFill onClick={() => navigate("/accueil")} />
           </div>
           <h1>Connectez-vous</h1>
+          <input type="text" placeholder="Email" />
+          <input type="text" placeholder="Mot de passe" />
         </div>
       ) : (
-        <p></p>
+        <div className={style.popup}>
+          <div className={style.popupContent}>
+            <div className={style.returnIcon}>
+              <RiArrowGoBackFill onClick={() => navigate("/accueil")} />
+            </div>
+            <h1>Connectez-vous</h1>
+            <input type="text" placeholder="Email" />
+            <input type="text" placeholder="Mot de passe" />
+            <div className={style.bas}>
+              <p>
+                Pas encore de compte?{" "}
+                <span onClick={() => navigate("/register")}>
+                  Créez en-un ici
+                </span>
+              </p>
+              <button>Confirmer</button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
