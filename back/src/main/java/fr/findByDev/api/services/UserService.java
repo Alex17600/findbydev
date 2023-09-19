@@ -12,7 +12,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import fr.findByDev.api.model.User;
+import fr.findByDev.api.models.User;
+import fr.findByDev.api.repositories.UserRepository;
 import jakarta.transaction.Transactional;
 
 /**
@@ -22,8 +23,13 @@ import jakarta.transaction.Transactional;
  */
 @Service
 public class UserService implements UserDetailsService{
+
     private static final String USER_NOT_FOUND_MESSAGE = "L'utilisateur avec le nom %s n'existe pas.";
     private static final String USER_FOUND_MESSAGE = "L'utilisateur avec le nom %s existe en base de données.";
+
+    @Autowired
+    private UserRepository userRepository;
+    
     private Logger logger = LoggerFactory.getLogger(UserService.class);
     @Override
     @Transactional
@@ -42,18 +48,8 @@ public class UserService implements UserDetailsService{
             // user.getRoles().forEach(role -> {
             // authorities.add(new SimpleGrantedAuthority(role.getName()));
             // });
-
-            if (user.getType().equals("T")) {
-                authorities.add(new SimpleGrantedAuthority("ROLE_TRAINER"));
-            } else if (user.getType().equals("A")) {
-                authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
-            } else if (user.getType().equals("S")) {
-                authorities.add(new SimpleGrantedAuthority("ROLE_ASSISTANT"));
-            }else if (user.getType().equals("SA")) {
-                authorities.add(new SimpleGrantedAuthority("ROLE_SUPER_ADMIN"));
-            }
              
-            return new CustomUserDetails(user.getId(), user.getMail(), user.getPassword(), user.getLastName(), user.getFirstName(), user.getFirstConnection(), user.getTutorialStep(),
+            return new CustomUserDetails(user.getIdUser(), user.getMail(), user.getPassword(), user.getLastName(), user.getFirstName(),
                     authorities);
         }
     }

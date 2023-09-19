@@ -17,7 +17,8 @@ CREATE TABLE users (
    description VARCHAR(255),
    popularity_ INT,
    photo BYTEA NOT NULL,
-   gitProfile VARCHAR(50)
+   gitProfile VARCHAR(50),
+   isAdmin BOOLEAN NOT NULL,
 );
 
 CREATE TABLE matches (
@@ -89,11 +90,11 @@ CREATE TABLE prefer (
    FOREIGN KEY (Id_preference) REFERENCES preferences(Id_preference)
 );
 
-INSERT INTO users (lastname, firstname, town, birthday, gender, mail, password, activeAccount, description, popularity_, photo, gitProfile)
+INSERT INTO users (lastname, firstname, town, birthday, gender, mail, password, activeAccount, description, popularity_, photo, gitProfile, isAdmin)
 VALUES
-   ('Doe', 'John', 'New York', '1990-05-15', 'Homme', 'john.doe@example.com', 'motdepasse1', TRUE, 'Développeur passionné', 85, 'photo1.jpg', 'johndoe'),
-   ('Smith', 'Alice', 'Los Angeles', '1988-08-21', 'Femme', 'alice.smith@example.com', 'motdepasse2', TRUE, 'Ingénieure logiciel', 92, 'photo2.jpg', 'alicesmith'),
-   ('Brown', 'Robert', 'Chicago', '1992-03-10', 'Homme', 'robert.brown@example.com', 'motdepasse3', TRUE, 'Designer UX/UI', 78, 'photo3.jpg', 'robertbrown');
+   ('Doe', 'John', 'New York', '1990-05-15', 'Homme', 'john.doe@example.com', 'motdepasse1', TRUE, 'Développeur passionné', 85, 'photo1.jpg', 'johndoe', TRUE),
+   ('Smith', 'Alice', 'Los Angeles', '1988-08-21', 'Femme', 'alice.smith@example.com', 'motdepasse2', TRUE, 'Ingénieure logiciel', 92, 'photo2.jpg', 'alicesmith', TRUE),
+   ('Brown', 'Robert', 'Chicago', '1992-03-10', 'Homme', 'robert.brown@example.com', 'motdepasse3', TRUE, 'Designer UX/UI', 78, 'photo3.jpg', 'robertbrown', TRUE);
 
 INSERT INTO matches (status, dateHour, user1, user2)
 VALUES

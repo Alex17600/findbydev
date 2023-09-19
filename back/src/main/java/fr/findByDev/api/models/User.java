@@ -1,4 +1,4 @@
-package fr.findByDev.api.model;
+package fr.findByDev.api.models;
 
 import jakarta.persistence.*;
 
