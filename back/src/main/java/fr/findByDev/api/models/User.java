@@ -1,65 +1,67 @@
 package fr.findByDev.api.models;
 
 import jakarta.persistence.*;
-
-@Table(name = "user")
 @Entity
-
+@Table(name = "users")
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_user")
-    private Integer idUser;
+    @Column(name = "Id_user")
+    private Integer id;
 
-    @Column(name = "lastname")
-    private String lastName;
+    @Column(name = "lastname", length = 50, nullable = false)
+    private String lastname;
 
-    @Column(name = "firstname")
-    private String firstName;
+    @Column(name = "firstname", length = 50, nullable = false)
+    private String firstname;
 
-    @Column(name = "town")
+    @Column(name = "town", length = 50, nullable = false)
     private String town;
 
-    @Column(name= "birthday")
+    @Column(name = "birthday", length = 50, nullable = false)
     private String birthday;
 
-    @Column(name = "gender", columnDefinition = "gender_enum")
-    private String gender;
-
-    @Column(name ="mail")
+    @Column(name = "mail", length = 75, nullable = false)
     private String mail;
 
-    @Column(name = "password")
+    @Column(name = "password", length = 255, nullable = false)
     private String password;
 
-    @Column(name = "activeAccount")
-    private Boolean activeAccount;
+    @Column(name = "activeAccount", nullable = false)
+    private boolean activeAccount;
 
-    @Column(name = "description")
+    @Column(name = "description", length = 255)
     private String description;
 
-    @Column(name = "popularity")
+    @Column(name = "popularity_")
     private Integer popularity;
 
-    @Lob
-    @Column(name = "photo")
+    @Column(name = "photo", length = 50, nullable = false)
     private byte[] photo;
 
-    @Column(name = "gitProfile")
+    @Column(name = "gitProfile", length = 50)
     private String gitProfile;
+
+    @ManyToOne
+    @JoinColumn(name = "Id_genders", nullable = false)
+    private Gender gender;
+
+    @ManyToOne
+    @JoinColumn(name = "Id_roles", nullable = false)
+    private Role role;
 
     public User() {
     }
 
-    public User(Integer idUser, String lastName, String firstName, String town, String birthday, String gender,
-            String mail, String password, Boolean activeAccount, String description, Integer popularity, byte[] photo,
-            String gitProfile) {
-        this.idUser = idUser;
-        this.lastName = lastName;
-        this.firstName = firstName;
+    public User(Integer id, String lastname, String firstname, String town, String birthday, String mail,
+            String password, boolean activeAccount, String description, Integer popularity, byte[] photo,
+            String gitProfile, Gender gender, Role role) {
+        this.id = id;
+        this.lastname = lastname;
+        this.firstname = firstname;
         this.town = town;
         this.birthday = birthday;
-        this.gender = gender;
         this.mail = mail;
         this.password = password;
         this.activeAccount = activeAccount;
@@ -67,32 +69,34 @@ public class User {
         this.popularity = popularity;
         this.photo = photo;
         this.gitProfile = gitProfile;
+        this.gender = gender;
+        this.role = role;
     }
 
 
 
-    public Integer getIdUser() {
-        return idUser;
+    public Integer getId() {
+        return id;
     }
 
-    public void setIdUser(Integer idUser) {
-        this.idUser = idUser;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
-    public String getLastName() {
-        return lastName;
+    public String getLastname() {
+        return lastname;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public String getFirstname() {
+        return firstname;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public void setFirstname(String firstname) {
+        this.firstname = firstname;
     }
 
     public String getTown() {
@@ -111,14 +115,6 @@ public class User {
         this.birthday = birthday;
     }
 
-    public String getGender() {
-        return gender;
-    }
-
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
-
     public String getMail() {
         return mail;
     }
@@ -135,11 +131,11 @@ public class User {
         this.password = password;
     }
 
-    public Boolean getActiveAccount() {
+    public boolean isActiveAccount() {
         return activeAccount;
     }
 
-    public void setActiveAccount(Boolean activeAccount) {
+    public void setActiveAccount(boolean activeAccount) {
         this.activeAccount = activeAccount;
     }
 
@@ -173,5 +169,22 @@ public class User {
 
     public void setGitProfile(String gitProfile) {
         this.gitProfile = gitProfile;
-    } 
+    }
+
+    public Gender getGender() {
+        return gender;
+    }
+
+    public void setGender(Gender gender) {
+        this.gender = gender;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
 }
+
