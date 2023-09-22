@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -42,5 +44,17 @@ public class UserController extends GenericController<User, Integer>{
     @CrossOrigin
     public Optional<User> get(@PathVariable Integer id) {
         return userRepository.findById(id);
+    }
+
+    @PostMapping("/create-user")
+    @ResponseStatus(HttpStatus.CREATED)
+    @CrossOrigin
+    public User createUser(@RequestBody User user) {
+        try {
+            return repository.save(user);
+        } catch (Exception e) {
+            e.printStackTrace(); 
+            throw new RuntimeException("Erreur lors de la création de l'utilisateur");
+        }
     }
 }

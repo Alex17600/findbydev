@@ -2,6 +2,10 @@ package fr.findByDev.api.models;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonView;
+
+import fr.findByDev.api.models.views.View;
 import jakarta.persistence.*;
 
 
@@ -10,20 +14,23 @@ import jakarta.persistence.*;
 public class Gender {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_genders")
-    private Integer id;
+    @JsonView(View.Gender.class)
+    @Column(name = "id_gender")
+    private Integer idGender;
 
+    @JsonView({View.Gender.class})
     @Column(name = "name", nullable = false)
     private String name;
 
     @OneToMany(mappedBy = "gender")
+    @JsonIgnore
     private List<User> users;
 
     public Gender() {
     }
 
-    public Gender(Integer id, String name, List<User> users) {
-        this.id = id;
+    public Gender(Integer idGender, String name, List<User> users) {
+        this.idGender = idGender;
         this.name = name;
         this.users = users;
     }
@@ -33,11 +40,11 @@ public class Gender {
     }
 
     public Integer getId() {
-        return id;
+        return idGender;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setId(Integer idGender) {
+        this.idGender = idGender;
     }
 
     public String getName() {

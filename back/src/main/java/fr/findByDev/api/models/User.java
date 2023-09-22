@@ -8,13 +8,13 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Id_user")
-    private Integer id;
+    private Integer idUser;
 
     @Column(name = "lastname", length = 50, nullable = false)
-    private String lastname;
+    private String lastName;
 
     @Column(name = "firstname", length = 50, nullable = false)
-    private String firstname;
+    private String firstName;
 
     @Column(name = "town", length = 50, nullable = false)
     private String town;
@@ -28,38 +28,37 @@ public class User {
     @Column(name = "password", length = 255, nullable = false)
     private String password;
 
-    @Column(name = "activeAccount", nullable = false)
+    @Column(name = "activeaccount", nullable = false)
     private boolean activeAccount;
 
     @Column(name = "description", length = 255)
     private String description;
 
-    @Column(name = "popularity_")
+    @Column(name = "popularity")
     private Integer popularity;
 
     @Column(name = "photo", length = 50, nullable = false)
     private byte[] photo;
 
-    @Column(name = "gitProfile", length = 50)
+    @Column(name = "gitprofile", length = 50)
     private String gitProfile;
 
     @ManyToOne
-    @JoinColumn(name = "Id_genders", nullable = false)
+    @JoinColumn(name = "id_gender", nullable = false)
     private Gender gender;
 
-    @ManyToOne
-    @JoinColumn(name = "Id_roles", nullable = false)
-    private Role role;
+    @Column(name = "type", length = 50)
+    private String type;
 
     public User() {
     }
 
-    public User(Integer id, String lastname, String firstname, String town, String birthday, String mail,
+    public User(Integer idUser, String lastName, String firstName, String town, String birthday, String mail,
             String password, boolean activeAccount, String description, Integer popularity, byte[] photo,
-            String gitProfile, Gender gender, Role role) {
-        this.id = id;
-        this.lastname = lastname;
-        this.firstname = firstname;
+            String gitProfile, String type, Gender gender) {
+        this.idUser = idUser;
+        this.lastName = lastName;
+        this.firstName = firstName;
         this.town = town;
         this.birthday = birthday;
         this.mail = mail;
@@ -69,34 +68,35 @@ public class User {
         this.popularity = popularity;
         this.photo = photo;
         this.gitProfile = gitProfile;
+        this.type = type;
         this.gender = gender;
-        this.role = role;
     }
+
 
 
 
     public Integer getId() {
-        return id;
+        return idUser;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setId(Integer idUser) {
+        this.idUser = idUser;
     }
 
-    public String getLastname() {
-        return lastname;
+    public String getLastName() {
+        return lastName;
     }
 
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
-    public String getFirstname() {
-        return firstname;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setFirstname(String firstname) {
-        this.firstname = firstname;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
     public String getTown() {
@@ -179,12 +179,12 @@ public class User {
         this.gender = gender;
     }
 
-    public Role getRole() {
-        return role;
+    public String getType() {
+        return type;
     }
 
-    public void setRole(Role role) {
-        this.role = role;
+    public void setType(String type) {
+        this.type = type;
     }
 }
 

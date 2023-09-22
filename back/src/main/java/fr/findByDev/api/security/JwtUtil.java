@@ -45,16 +45,13 @@ public class JwtUtil {
      * @return Une représentation sous forme de chaîne de caractères des rôles de
      *         l'utilisateur
      */
-    public static String createAccessToken(String mail, String issuer, Integer idUser, String last_name, String first_name, List<String> roles) {
+    public static String createAccessToken(String mail, String issuer, List<String> roles) {
         try {
             JWTClaimsSet claims = new JWTClaimsSet.Builder()
                     .subject(mail)
                     .issuer(issuer)
-                    .claim("idUser", idUser)
                     .claim("mail", mail)
-                    .claim("roles", roles)
-                    .claim("lastname", last_name)
-                    .claim("firstname", first_name)          
+                    .claim("roles", roles)          
                     .expirationTime(Date.from(Instant.now().plusSeconds(expireHourToken * 3600)))
                     .issueTime(new Date())
                     .build();

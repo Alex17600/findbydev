@@ -3,9 +3,9 @@ package fr.findByDev.api.models.associations;
 import fr.findByDev.api.models.Match;
 import fr.findByDev.api.models.User;
 import jakarta.persistence.*;
-
-@Table(name = "participate")
 @Entity
+@Table(name = "participate")
+@IdClass(ParticipateId.class)
 public class Participate {
     @Id
     @ManyToOne

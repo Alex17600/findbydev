@@ -7,6 +7,15 @@
     background-position: center;
     font-family: 'JetBrains Mono', monospace;
 
+    
+    .errorText {
+        background-color: #E96969;
+        padding: 5px;
+        color: white;
+        text-align: center;
+        border-radius: 6px;
+    }
+
     .blockRegister {
         display: flex;
         flex-direction: column;
@@ -223,7 +232,7 @@
                     .checkbox {
                         margin: 5px;
                         display: flex;
-                        align-items: center;
+                        align-items: left;
 
                         input[type="checkbox"] {
                             margin-right: 10px;

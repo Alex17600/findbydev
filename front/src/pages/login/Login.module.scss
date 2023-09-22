@@ -10,6 +10,44 @@
     background-position: center;
     align-items: center;
 
+    .bas {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+    
+    span {
+        cursor: pointer;
+
+        &:hover {
+            transform: scale(1.1);
+            color: #ee9c31;
+        }
+    }
+
+    button {
+        padding: 10px 40px;
+        background-color: #ee9c31;
+        width: fit-content;
+        margin: 10px 0;
+        border-radius: 6px;
+        border: none;
+        color: white;
+        cursor: pointer;
+
+        &:hover {
+            background-color: #9c6318;
+
+        }
+    }
+
+    .errorText {
+        background-color: #E96969;
+        padding: 5px;
+        color: white;
+        text-align: center;
+        border-radius: 6px;
+    }
 
     .blockLogin {
         display: flex;
