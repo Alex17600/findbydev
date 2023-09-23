@@ -16,17 +16,20 @@ const Register = () => {
   const [repeatPassword, setRepeatPassword] = useState("");
   const [birthday, setBirthday] = useState("");
   const [description, setDescription] = useState("");
-  const [gitProfil, setGitProfil] = useState("");
+  const [gitProfile, setGitProfile] = useState("");
   const [error, setError] = useState("");
   const [genders, setGenders] = useState([]);
-  const [selectedGender, setSelectedGender] = useState(""); // Genre sélectionné
+  const [selectedGender, setSelectedGender] = useState("");
+  const [photo, setPhoto] = useState(null);
 
   useEffect(() => {
     const handleResize = () => {
+      //test de la taile de l'écran et adaptation du JSX adapté
       setWindowWidth(window.innerWidth);
     };
     window.addEventListener("resize", handleResize);
 
+    //fetch au démarrage des genres
     async function fetchGenders() {
       try {
         const fetchedGenders = await getAllGenders();
@@ -59,20 +62,23 @@ const Register = () => {
       lastName,
       firstName,
       town,
+      birthday,
       mail,
       password,
-      birthday,
-      photo: "",
+      activeAccount: true,
       description,
-      gitProfil,
-      genders: selectedGender,
+      photo,
+      gitProfile,
+      gender: {
+        idGender: selectedGender,
+      },
       type: "U",
     };
 
     try {
       const createdUser = await createUser(userData);
       if (Array.isArray(createdUser) && createdUser.length > 0) {
-        navigate("/page");
+        navigate("/profil");
       } else {
         setError("Erreur lors de la création de l'utilisateur.");
       }
@@ -141,7 +147,11 @@ const Register = () => {
             />
             {/* TODO: À placer le reCaptcha */}
             <label htmlFor="photo">Choisir une photo</label>
-            <input type="file" name="photo" />
+            <input
+              type="file"
+              name="photo"
+              onChange={(e) => setPhoto(e.target.files[0])}
+            />
             <textarea
               rows="10"
               cols="33"
@@ -153,8 +163,8 @@ const Register = () => {
             <input
               type="text"
               placeholder="Votre lien Git"
-              value={gitProfil}
-              onChange={(e) => handleChange(e, setGitProfil)}
+              value={gitProfile}
+              onChange={(e) => handleChange(e, setGitProfile)}
             />
             <div className={style.checkboxGenders}>
               {genders.map((gender) => (
@@ -239,7 +249,11 @@ const Register = () => {
                   />
                   <label htmlFor="photo">Choisir une photo</label>
 
-                  <input type="file" name="photo" />
+                  <input
+                    type="file"
+                    name="photo"
+                    onChange={(e) => setPhoto(e.target.files[0])}
+                  />
                   <textarea
                     rows="5"
                     cols="33"
@@ -251,8 +265,8 @@ const Register = () => {
                   <input
                     type="text"
                     placeholder="Votre lien Git"
-                    value={gitProfil}
-                    onChange={(e) => handleChange(e, setGitProfil)}
+                    value={gitProfile}
+                    onChange={(e) => handleChange(e, setGitProfile)}
                   />
                   <div className={style.checkboxGenders}>
                     {genders.map((gender) => (

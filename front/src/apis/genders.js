@@ -6,7 +6,6 @@ const URL_API = 'http://localhost:8000/api/genders';
 export async function getAllGenders() {
     const response = await fetch(`${URL_API}`, {
         headers: {
-            'Authorization': `Bearer ${getToken()}`,
             'Content-Type': 'application/json'
         },
     });

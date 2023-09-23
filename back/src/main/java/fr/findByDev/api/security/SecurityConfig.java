@@ -59,6 +59,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/login/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/genders/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/create-user/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "//photos/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/users/forgotten-password").permitAll()
                         .requestMatchers(HttpMethod.POST, "/users/check-email").permitAll()
                         .requestMatchers(HttpMethod.GET, "/users/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_SUPER_ADMIN", "ROLE_TRAINER")

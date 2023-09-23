@@ -31,7 +31,6 @@ export async function createUser(userData) {
         body: JSON.stringify(userData)
     });
     if (response.ok) {
-        console.log(userData);
         const body = await response.json();
         return Array.isArray(body) ? body : [body];
 

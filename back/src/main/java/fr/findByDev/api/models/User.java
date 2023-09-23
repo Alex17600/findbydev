@@ -10,51 +10,51 @@ public class User {
     @Column(name = "Id_user")
     private Integer idUser;
 
-    @Column(name = "lastname", length = 50, nullable = false)
+    @Column(name = "lastname")
     private String lastName;
 
-    @Column(name = "firstname", length = 50, nullable = false)
+    @Column(name = "firstname" )
     private String firstName;
 
-    @Column(name = "town", length = 50, nullable = false)
+    @Column(name = "town")
     private String town;
 
-    @Column(name = "birthday", length = 50, nullable = false)
+    @Column(name = "birthday")
     private String birthday;
 
-    @Column(name = "mail", length = 75, nullable = false)
+    @Column(name = "mail")
     private String mail;
 
-    @Column(name = "password", length = 255, nullable = false)
+    @Column(name = "password")
     private String password;
 
-    @Column(name = "activeaccount", nullable = false)
+    @Column(name = "activeaccount")
     private boolean activeAccount;
 
-    @Column(name = "description", length = 255)
+    @Column(name = "description")
     private String description;
 
     @Column(name = "popularity")
     private Integer popularity;
 
-    @Column(name = "photo", length = 50, nullable = false)
-    private byte[] photo;
+    @Column(name = "photo")
+    private String photo;
 
-    @Column(name = "gitprofile", length = 50)
+    @Column(name = "git_profile")
     private String gitProfile;
 
     @ManyToOne
-    @JoinColumn(name = "id_gender", nullable = false)
+    @JoinColumn(name = "id_gender")
     private Gender gender;
 
-    @Column(name = "type", length = 50)
+    @Column(name = "type")
     private String type;
 
     public User() {
     }
 
     public User(Integer idUser, String lastName, String firstName, String town, String birthday, String mail,
-            String password, boolean activeAccount, String description, Integer popularity, byte[] photo,
+            String password, boolean activeAccount, String description, Integer popularity, String photo,
             String gitProfile, String type, Gender gender) {
         this.idUser = idUser;
         this.lastName = lastName;
@@ -155,11 +155,11 @@ public class User {
         this.popularity = popularity;
     }
 
-    public byte[] getPhoto() {
+    public String getPhoto() {
         return photo;
     }
 
-    public void setPhoto(byte[] photo) {
+    public void setPhoto(String photo) {
         this.photo = photo;
     }
 
