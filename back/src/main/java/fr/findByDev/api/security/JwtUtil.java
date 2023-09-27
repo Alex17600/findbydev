@@ -34,7 +34,7 @@ public class JwtUtil {
     /**
      * Clef secrète permettant d'effectuer le chiffrement du jeton
      */
-    private static final String SECRET = "AHI898697394CDBC534E7EDGTF628FE6B309E0A21DRFB130E0369C";
+    private static final String SECRET = "BJI898697394CDBGE7EDGTF628FE6B309E0A21DRFB130E0369C";
 
     /**
      * Création d'un JWT.
@@ -45,13 +45,16 @@ public class JwtUtil {
      * @return Une représentation sous forme de chaîne de caractères des rôles de
      *         l'utilisateur
      */
-    public static String createAccessToken(String mail, String issuer, List<String> roles) {
+    public static String createAccessToken(String mail, String issuer, Integer idUser, String lastName, String firstName, List<String> roles) {
         try {
             JWTClaimsSet claims = new JWTClaimsSet.Builder()
                     .subject(mail)
                     .issuer(issuer)
+                    .claim("idUser", idUser)
                     .claim("mail", mail)
-                    .claim("roles", roles)          
+                    .claim("roles", roles)  
+                    .claim("last_name", lastName)
+                    .claim("first_name", firstName)         
                     .expirationTime(Date.from(Instant.now().plusSeconds(expireHourToken * 3600)))
                     .issueTime(new Date())
                     .build();

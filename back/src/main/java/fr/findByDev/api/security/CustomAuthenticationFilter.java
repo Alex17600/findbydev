@@ -16,9 +16,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.util.MimeTypeUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import fr.findByDev.api.services.user.CustomUserDetails;
+
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -109,7 +111,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
             Authentication authentication) throws IOException, ServletException {
 
-        UserDetails user = (UserDetails) authentication.getPrincipal();
+        CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
         // création du JWT token
         // 1 - on récupère les roles de l'utilisateur
         Collection<? extends GrantedAuthority> authorities = user.getAuthorities();
@@ -119,11 +121,15 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         List<String> stringAuthorities = authorities.stream().map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
 
+        Integer idUser = user.getIdUser();
+        String lastName = user.getLastName(); // Modifier pour récupérer le last_name de l'utilisateur
+        String firstName = user.getFirstName();
+
         // 3 - on crée le JWT avec le nom de l'utilisateur, l'URL du serveur fournissant
         // le jeton et une représentaiton en chaîne de caractères
         // des rôles
-        String accessToken = JwtUtil.createAccessToken(user.getUsername(), request.getRequestURL().toString(),
-                stringAuthorities);
+        String accessToken = JwtUtil.createAccessToken(user.getUsername(), request.getRequestURL().toString(), idUser,
+        lastName, firstName, stringAuthorities);
 
         logger.info(String.format("Création d'un token pour l'utilisateur : {}. Token : ", user.getUsername(),
                 accessToken));

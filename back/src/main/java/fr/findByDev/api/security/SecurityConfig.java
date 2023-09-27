@@ -9,6 +9,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -52,20 +53,21 @@ public class SecurityConfig {
         // a le "ROLE_ADMIN" et qu'il est authentifié
         // - ajouter les filtre d'authorisation et d'authentification
 
-        http.cors().configurationSource(corsConfigurationSource()).and()
-                .csrf(csrf -> csrf.disable()) // désactivation de la vérification par défaut des attaques CSRF (pas
-                                              // grave vu qu'on va mettre en place un système de jetons)
-                .authorizeHttpRequests((authz) -> authz
+         http.csrf(AbstractHttpConfigurer::disable) // désactivation de la vérification par défaut des attaques CSRF (pas grave vu qu'on va mettre en place un système de jetons)
+                .cors(Customizer.withDefaults())
+                .authorizeHttpRequests(authz -> authz
                         .requestMatchers(HttpMethod.POST, "/login/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/genders/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/create-user/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "//photos/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/users/forgotten-password").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/users/check-email").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/users/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_SUPER_ADMIN", "ROLE_TRAINER")
-                        .requestMatchers(HttpMethod.POST, "/users/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_SUPER_ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/users/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_SUPER_ADMIN")
-                        .requestMatchers(HttpMethod.PATCH, "/users/**").authenticated() // Changer son mot de passe                    
+                        .requestMatchers(HttpMethod.GET, "/users/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/users/**").permitAll()
+                        .requestMatchers(HttpMethod.PATCH, "/users/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/genders/**").permitAll()               
+                        .requestMatchers(HttpMethod.GET, "/matches/**").permitAll()               
+                        .requestMatchers(HttpMethod.GET, "/realises/**").permitAll()               
+                        .requestMatchers(HttpMethod.GET, "/experiences/**").permitAll()               
+                        .requestMatchers(HttpMethod.GET, "/likes/**").permitAll()               
+                        .requestMatchers(HttpMethod.GET, "/concernes/**").permitAll()               
+                        .requestMatchers(HttpMethod.GET, "/prefers/**").permitAll()               
+                        .requestMatchers(HttpMethod.GET, "/alerts/**").permitAll()               
                         .requestMatchers(HttpMethod.DELETE, "/models/**").hasAnyAuthority("ROLE_TRAINER", "ROLE_SUPER_ADMIN")
                         .requestMatchers(HttpMethod.GET, "/sessions/**").authenticated()
                         .anyRequest().authenticated())

@@ -1,4 +1,4 @@
-package fr.findByDev.api.controllers.tableAssociation;
+package fr.findByDev.api.controllers.global;
 
 import java.util.Optional;
 
@@ -12,34 +12,35 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import fr.findByDev.api.controllers.GenericController;
-import fr.findByDev.api.models.associations.UserPreference;
-import fr.findByDev.api.repositories.tableAssociation.UserPreferenceRepository;
+import fr.findByDev.api.models.Technology;
+import fr.findByDev.api.repositories.global.TechnologyRepository;
 
 @RestController
-@RequestMapping("/user-preferences")
-public class UserPreferenceController extends GenericController<UserPreference, Integer>{
+@RequestMapping("/technologies")
+public class TechnologyController extends GenericController<Technology, Integer> {
     
     @Autowired
-    private UserPreferenceRepository userPreferenceRepository;
+    private TechnologyRepository technologyRepository;
 
     @Autowired
-    public UserPreferenceController (UserPreferenceRepository userPreferenceRepository) {
-        super(userPreferenceRepository);
-        this.userPreferenceRepository = userPreferenceRepository;
+    public TechnologyController(TechnologyRepository technologyRepository){
+        super(technologyRepository);
+        this.technologyRepository = technologyRepository;
     }
 
     @GetMapping("")
     @ResponseStatus(HttpStatus.OK)
     @CrossOrigin
     @Override
-    public Iterable<UserPreference> all() {
-        return userPreferenceRepository.findAll();
+    public Iterable<Technology> all() {
+        return technologyRepository.findAll();
     }
     
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     @CrossOrigin
-    public Optional<UserPreference> get(@PathVariable Integer id) {
-        return userPreferenceRepository.findById(id);
+    public Optional<Technology> get(@PathVariable Integer id) {
+        return technologyRepository.findById(id);
     }
+
 }

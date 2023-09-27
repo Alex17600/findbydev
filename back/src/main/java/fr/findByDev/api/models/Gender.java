@@ -10,7 +10,7 @@ import jakarta.persistence.*;
 
 
 @Entity
-@Table(name = "genders")
+@Table(name = "gender")
 public class Gender {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,7 +19,7 @@ public class Gender {
     private Integer idGender;
 
     @JsonView({View.Gender.class})
-    @Column(name = "name", nullable = false)
+    @Column(name = "name")
     private String name;
 
     @OneToMany(mappedBy = "gender")

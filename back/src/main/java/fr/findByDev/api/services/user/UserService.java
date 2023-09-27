@@ -32,7 +32,7 @@ public class UserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String name) throws UsernameNotFoundException {
         User user = userRepository.findByMail(name);
         if (user == null) {
-            // pas d'utilisateur, on renvoie une exception
+            
             String message = String.format(USER_NOT_FOUND_MESSAGE, name);
             logger.error(message);
             throw new UsernameNotFoundException(message);
@@ -41,17 +41,15 @@ public class UserService implements UserDetailsService {
             // correspondent à des roles
             logger.debug(USER_FOUND_MESSAGE, name);
             Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-            // user.getRoles().forEach(role -> {
-            // authorities.add(new SimpleGrantedAuthority(role.getName()));
-            // });
 
             if (user.getType().equals("U")) {
                 authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
-            } else if(user.getType().equals("A")) {
+            } else if (user.getType().equals("A")) {
                 authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
             }
-             
-            return new org.springframework.security.core.userdetails.User(user.getMail(), user.getPassword(), authorities);
+
+            return new CustomUserDetails(user.getId(), user.getMail(), user.getPassword(), user.getLastName(),
+                    user.getFirstName(), authorities);
         }
     }
 }

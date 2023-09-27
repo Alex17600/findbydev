@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import style from "./Login.module.scss";
 import { useNavigate } from "react-router-dom";
-import { RiArrowGoBackFill } from "react-icons/ri";
+import { TfiClose } from "react-icons/tfi";
 import { saveToken } from "../../data/Token";
 
 const Login = () => {
@@ -69,7 +69,7 @@ const Login = () => {
       {windowWidth < 928 ? (
         <div className={style.blockLogin}>
           <div className={style.returnIcon}>
-            <RiArrowGoBackFill onClick={() => navigate("/accueil")} />
+            <TfiClose onClick={() => navigate("/accueil")} />
           </div>
           <h1>Connectez-vous</h1>
           {error && <div className={style.errorText}>{error}</div>}
@@ -78,7 +78,7 @@ const Login = () => {
           <div className={style.bas}>
               <p>
                 Pas encore de compte?{" "}
-                <span onClick={() => navigate("/register")}>
+                <span onClick={() => navigate("/register/informations")}>
                   Créez en-un ici
                 </span>
               </p>
@@ -90,7 +90,7 @@ const Login = () => {
         <div className={style.popup}>
           <div className={style.popupContent}>
             <div className={style.returnIcon}>
-              <RiArrowGoBackFill onClick={() => navigate("/accueil")} />
+              <TfiClose onClick={() => navigate("/accueil")} />
             </div>
             <h1>Connectez-vous</h1>
             {error && <div className={style.errorText}>{error}</div>}
@@ -99,7 +99,7 @@ const Login = () => {
             <div className={style.bas}>
               <p>
                 Pas encore de compte?{" "}
-                <span onClick={() => navigate("/register")}>
+                <span onClick={() => navigate("/register/informations")}>
                   Créez en-un ici
                 </span>
               </p>

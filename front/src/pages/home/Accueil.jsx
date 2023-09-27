@@ -24,7 +24,7 @@ const Accueil = () => {
         <>
           <p>Application de rencontre pré-compilée</p>
           <button className={style.block}>Qui sommes-nous?</button>
-          <button className={style.block} onClick={()=> navigate("/register")}>Inscrivez-vous</button>
+          <button className={style.block} onClick={()=> navigate("/register/informations")}>Inscrivez-vous</button>
           <button className={style.block} onClick={()=> navigate("/login")}>Connectez-vous</button>
         </>
       ) : (

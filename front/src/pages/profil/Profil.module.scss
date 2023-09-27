@@ -3,4 +3,27 @@
     height: 100vh;
     background-size: cover;
     background-repeat: no-repeat;
+
+    .block {
+        display: flex;
+        flex-wrap: wrap;
+        margin-left: 100px;
+
+        .user {
+            width: 18%;
+            padding: 10px;
+
+            img {
+                width: 100%;
+                height: auto;
+                border-radius: 6px;
+            }
+        }
+    }
+}
+
+@media screen and (max-width: 928px) {
+    .profil {
+        display: none;
+    }
 }

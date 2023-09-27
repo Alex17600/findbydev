@@ -1,72 +1,83 @@
 package fr.findByDev.api.models;
 
-import java.sql.Timestamp;
+import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonView;
+
+import fr.findByDev.api.models.associations.MatchId;
+import fr.findByDev.api.models.enums.Status;
+import fr.findByDev.api.models.views.View;
 import jakarta.persistence.*;
 
-@Table(name = "matches")
 @Entity
+@Table(name = "_match_")
 public class Match {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_matche")
-    private Integer idMatch;
 
-    @Column(name = "dateHour")
-    private Timestamp dateHour;
+    @EmbeddedId
+    private MatchId idMatch;
 
     @ManyToOne
-    @JoinColumn(name = "id_status")
-    private Status status;
+    @JsonView(View.Match.class)
+    @JoinColumn(name = "Id_user_receiver")
+    @MapsId("idUserReceiver")
+    private User userReceiver;
 
     @ManyToOne
-    @JoinColumn(name = "user1")
-    private User user1;
+    @JsonView(View.Match.class)
+    @JoinColumn(name = "Id_user_sender")
+    @MapsId("idUserSender")
+    private User userSender;
 
-    @ManyToOne
-    @JoinColumn(name = "user2")
-    private User user2;
+
+    @Column(name = "date_hour")
+    private Date dateHour;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "current_status")
+    private Status currentStatus;
 
     public Match() {
     }
 
-    public Integer getIdMatch() {
+    public MatchId getIdMatch() {
         return idMatch;
     }
 
-    public void setIdMatch(Integer idMatch) {
+    public void setIdMatch(MatchId idMatch) {
         this.idMatch = idMatch;
     }
 
-    public Timestamp getDateHour() {
+    public User getUserReceiver() {
+        return userReceiver;
+    }
+
+    public void setUserReceiver(User userReceiver) {
+        this.userReceiver = userReceiver;
+    }
+
+    public User getUserSender() {
+        return userSender;
+    }
+
+    public void setUserSender(User userSender) {
+        this.userSender = userSender;
+    }
+
+    public Date getDateHour() {
         return dateHour;
     }
 
-    public void setDateHour(Timestamp dateHour) {
+    public void setDateHour(Date dateHour) {
         this.dateHour = dateHour;
     }
 
-    public Status getStatus() {
-        return status;
+    public Status getCurrentStatus() {
+        return currentStatus;
     }
 
-    public void setStatus(Status status) {
-        this.status = status;
+    public void setCurrentStatus(Status currentStatus) {
+        this.currentStatus = currentStatus;
     }
 
-    public User getUser1() {
-        return user1;
-    }
 
-    public void setUser1(User user1) {
-        this.user1 = user1;
-    }
-
-    public User getUser2() {
-        return user2;
-    }
-
-    public void setUser2(User user2) {
-        this.user2 = user2;
-    }
 }

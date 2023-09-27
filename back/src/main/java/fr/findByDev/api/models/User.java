@@ -1,14 +1,21 @@
 package fr.findByDev.api.models;
 
+import com.fasterxml.jackson.annotation.JsonView;
+
+import fr.findByDev.api.models.views.View;
 import jakarta.persistence.*;
 @Entity
-@Table(name = "users")
+@Table(name = "_user_")
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "Id_user")
+    @Column(name = "id_user")
     private Integer idUser;
+
+    @JsonView(View.Match.class)
+    @Column(name = "pseudo")
+    private String pseudo;
 
     @Column(name = "lastname")
     private String lastName;
@@ -28,7 +35,7 @@ public class User {
     @Column(name = "password")
     private String password;
 
-    @Column(name = "activeaccount")
+    @Column(name = "active_account")
     private boolean activeAccount;
 
     @Column(name = "description")
@@ -43,37 +50,15 @@ public class User {
     @Column(name = "git_profile")
     private String gitProfile;
 
+    @Column(name = "type")
+    private String type;
+    
     @ManyToOne
     @JoinColumn(name = "id_gender")
     private Gender gender;
 
-    @Column(name = "type")
-    private String type;
-
     public User() {
     }
-
-    public User(Integer idUser, String lastName, String firstName, String town, String birthday, String mail,
-            String password, boolean activeAccount, String description, Integer popularity, String photo,
-            String gitProfile, String type, Gender gender) {
-        this.idUser = idUser;
-        this.lastName = lastName;
-        this.firstName = firstName;
-        this.town = town;
-        this.birthday = birthday;
-        this.mail = mail;
-        this.password = password;
-        this.activeAccount = activeAccount;
-        this.description = description;
-        this.popularity = popularity;
-        this.photo = photo;
-        this.gitProfile = gitProfile;
-        this.type = type;
-        this.gender = gender;
-    }
-
-
-
 
     public Integer getId() {
         return idUser;
@@ -81,6 +66,14 @@ public class User {
 
     public void setId(Integer idUser) {
         this.idUser = idUser;
+    }
+
+    public String getPseudo() {
+        return pseudo;
+    }
+
+    public void setPseudo(String pseudo) {
+        this.pseudo = pseudo;
     }
 
     public String getLastName() {

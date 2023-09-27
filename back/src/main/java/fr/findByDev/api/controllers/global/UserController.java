@@ -1,33 +1,38 @@
 package fr.findByDev.api.controllers.global;
 
+import org.slf4j.Logger;
+
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigInteger;
 import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
-import java.io.ByteArrayOutputStream;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
 import java.util.Optional;
 import java.nio.file.Path;
 
-import org.slf4j.Logger;
+import org.springframework.core.io.Resource;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
-import org.springframework.http.MediaType;
-import java.security.MessageDigest;
 
 import fr.findByDev.api.controllers.GenericController;
 import fr.findByDev.api.models.User;
@@ -70,47 +75,66 @@ public class UserController extends GenericController<User, Integer> {
         return userRepository.findById(id);
     }
 
-    @PostMapping(value = "/create-user", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    //Recuperation de la photo d'un user
+    @GetMapping("/{idUser}/photo")
+    public ResponseEntity<byte[]> getPhoto(@PathVariable Integer idUser) {
+        Optional<User> optionalUser = userRepository.findById(idUser);
+    
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            String photoFileName = user.getPhoto(); 
+    
+            if (photoFileName != null) {
+                Resource photoResource = fileStorageService.loadAsResource(photoFileName);
+    
+                if (photoResource.exists() && photoResource.isReadable()) {
+                    try {
+                        InputStream photoInputStream = photoResource.getInputStream();
+                        byte[] buffer = new byte[8192]; 
+                        int bytesRead;
+                        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+    
+                        while ((bytesRead = photoInputStream.read(buffer)) != -1) {
+                            outputStream.write(buffer, 0, bytesRead);
+                        }
+    
+                        byte[] photoBytes = outputStream.toByteArray();
+                        HttpHeaders headers = new HttpHeaders();
+                        headers.setContentType(MediaType.IMAGE_PNG); 
+                        return new ResponseEntity<>(photoBytes, headers, HttpStatus.OK);
+                    } catch (IOException e) {
+                        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+                    }
+                }
+            }
+        }
+    
+        return ResponseEntity.notFound().build();
+    }
+    
+    
+
+    @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
     @CrossOrigin
-    public ResponseEntity<?> createUser(@RequestPart("userData") User userData,
-            @RequestPart("photo") MultipartFile photo) {
+    public ResponseEntity<?> createUser(@RequestBody User jsonData) {
         try {
-            String password = userData.getPassword();
+            String password = jsonData.getPassword();
             String encryptedPassword = passwordEncoder.encode(password);
 
             User newUser = new User();
-            newUser.setLastName(userData.getLastName());
-            newUser.setFirstName(userData.getFirstName());
-            newUser.setTown(userData.getTown());
-            newUser.setBirthday(userData.getBirthday());
-            newUser.setMail(userData.getMail());
+            newUser.setPseudo(jsonData.getPseudo());
+            newUser.setLastName(jsonData.getLastName());
+            newUser.setFirstName(jsonData.getFirstName());
+            newUser.setTown(jsonData.getTown());
+            newUser.setBirthday(jsonData.getBirthday());
+            newUser.setMail(jsonData.getMail());
             newUser.setPassword(encryptedPassword);
             newUser.setActiveAccount(false);
-            newUser.setDescription(userData.getDescription());
-            newUser.setGitProfile(userData.getGitProfile());
-            newUser.setGender(userData.getGender());
+            newUser.setDescription(jsonData.getDescription());
+            newUser.setGitProfile(jsonData.getGitProfile());
+            newUser.setGender(jsonData.getGender());
             newUser.setType("U");
-
-            if (!photo.isEmpty()) {
-                logger.info("Sauvegarde du fichier image");
-
-                String storageHash = getStorageHash(photo).orElse(null);
-                if (storageHash != null) {
-                    Path rootLocation = this.fileStorageService.getRootLocation();
-                    String fileExtension = mimeTypeToExtension(photo.getContentType());
-                    storageHash = storageHash + fileExtension;
-                    Path saveLocation = rootLocation.resolve(storageHash);
-
-                    // suppression du fichier au besoin
-                    Files.deleteIfExists(saveLocation);
-
-                    // tentative de sauvegarde
-                    Files.copy(photo.getInputStream(), saveLocation, StandardCopyOption.REPLACE_EXISTING);
-
-                    newUser.setPhoto(storageHash);
-                }
-            }
 
             newUser = userRepository.save(newUser);
 
@@ -122,7 +146,59 @@ public class UserController extends GenericController<User, Integer> {
         }
     }
 
-    // methode de recuperation du dossier image
+    @PatchMapping(value = "/{userId}/upload-photo", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    @ResponseStatus(HttpStatus.OK)
+    public User downloadPhoto(@PathVariable Integer userId, @RequestPart MultipartFile image) {
+
+        Optional<User> optionalUser = userRepository.findById(userId);
+
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+
+            try {
+                if (!image.isEmpty()) {
+                    logger.info("Sauvegarde du fichier image");
+
+                    String storageHash = getStorageHash(image).get();
+
+                    Path rootLocation = this.fileStorageService.getRootLocation();
+
+                    String fileExtension = mimeTypeToExtension(image.getContentType());
+
+                    storageHash = storageHash + fileExtension;
+
+                    Path saveLocation = rootLocation.resolve(storageHash);
+
+                    Files.deleteIfExists(saveLocation);
+
+                    Files.copy(image.getInputStream(), saveLocation);
+
+                    user.setPhoto(storageHash);
+
+                    return userRepository.save(user);
+                }
+            } catch (IOException e) {
+                logger.error(e.getMessage());
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                        "Impossible de sauvegarder l'image.");
+            }
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Utilisateur non trouvé");
+        }
+
+        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Impossible de sauvegarder la ressource.");
+    }
+
+    /**
+     * Permet de retrouver un hash qui pourra être utilisé comme nom de fichier
+     * uniquement pour le stockage.
+     *
+     * Le hash sera calculé à partir du nom du fichier, de son type MIME
+     * (https://developer.mozilla.org/fr/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types)
+     * et de la date d'upload.
+     *
+     * @return Le hash encodé en base64
+     */
     private Optional<String> getStorageHash(MultipartFile file) {
         String hashString = null;
 
@@ -167,25 +243,4 @@ public class UserController extends GenericController<User, Integer> {
         };
     }
 
-    @GetMapping(value = "/photos/{userId}", produces = { MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE })
-    public ResponseEntity<byte[]> getImage(@PathVariable Integer userId) {
-        Optional<User> userOptional = userRepository.findById(userId);
-
-        if (userOptional.isPresent()) {
-            User user = userOptional.get();
-            String imageName = user.getPhoto();
-
-            if (imageName != null) {
-                try {
-                    Path imagePath = fileStorageService.load(imageName);
-                    byte[] imageBytes = Files.readAllBytes(imagePath);
-                    return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(imageBytes);
-                } catch (IOException e) {
-                    logger.error("Erreur lors de la lecture de l'image : " + e.getMessage());
-                }
-            }
-        }
-
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Image not found.");
-    }
 }

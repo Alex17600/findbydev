@@ -2,7 +2,7 @@ package fr.findByDev.api.models;
 
 import jakarta.persistence.*;
 
-import java.sql.Timestamp;
+import java.util.Date;
 
 @Table(name = "message")
 @Entity
@@ -10,8 +10,8 @@ public class Message {
  
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "Id_message")
-    private Long id;
+    @Column(name = "id_message")
+    private Integer idMessage;
 
     @ManyToOne
     @JoinColumn(name = "id_sender")
@@ -25,21 +25,21 @@ public class Message {
     private String contain;
 
     @Column(name = "date_hour")
-    private Timestamp dateHour;
+    private Date dateHour;
 
     @ManyToOne
-    @JoinColumn(name = "Id_conversation")
+    @JoinColumn(name = "id_conversation")
     private Conversation conversation;
 
     public Message() {
     }
 
-    public Long getId() {
-        return id;
+    public Integer getId() {
+        return idMessage;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setId(Integer idMessage) {
+        this.idMessage = idMessage;
     }
 
     public User getSender() {
@@ -66,11 +66,11 @@ public class Message {
         this.contain = contain;
     }
 
-    public Timestamp getDateHour() {
+    public Date getDateHour() {
         return dateHour;
     }
 
-    public void setDateHour(Timestamp dateHour) {
+    public void setDateHour(Date dateHour) {
         this.dateHour = dateHour;
     }
 
@@ -81,6 +81,4 @@ public class Message {
     public void setConversation(Conversation conversation) {
         this.conversation = conversation;
     }
-
-    
 }

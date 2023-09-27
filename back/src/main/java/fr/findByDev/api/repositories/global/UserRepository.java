@@ -7,6 +7,5 @@ import fr.findByDev.api.repositories.GenericRepository;
 
 @Repository
 public interface UserRepository extends GenericRepository<User, Integer>{
-    
     User findByMail(String mail);
 }

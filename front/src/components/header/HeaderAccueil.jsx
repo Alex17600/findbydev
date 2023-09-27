@@ -26,7 +26,7 @@ const HeaderAccueil = () => {
         <div className={style.headerLarge}>
           <pre className={style.navbar} onClick={()=> navigate("/accueil")}>findByDev&lt;♥/&gt;</pre>
           <p>Application de rencontre pré-compilée</p>
-          <p className={style.navbar} onClick={()=> navigate("/register")}>S'inscrire</p>
+          <p className={style.navbar} onClick={()=> navigate("/register/informations")}>S'inscrire</p>
           <p className={style.navbar} onClick={()=> navigate("/login")}>Se connecter</p>
         </div>
       )}

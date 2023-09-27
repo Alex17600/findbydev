@@ -1,4 +1,4 @@
-package fr.findByDev.api.controllers.tableAssociation;
+package fr.findByDev.api.controllers.global;
 
 import java.util.Optional;
 
@@ -12,36 +12,34 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import fr.findByDev.api.controllers.GenericController;
-import fr.findByDev.api.models.associations.Participate;
-import fr.findByDev.api.repositories.tableAssociation.ParticipateRepository;
+import fr.findByDev.api.models.Alert;
+import fr.findByDev.api.repositories.global.AlertRepository;
 
 @RestController
-@RequestMapping("/participates")
-public class ParticipateController extends GenericController<Participate, Integer> {
+@RequestMapping("alerts")
+public class AlertController extends GenericController<Alert, Integer> {
 
     @Autowired
-    private ParticipateRepository participateRepository;
+    private AlertRepository alertRepository;
 
     @Autowired
-    public ParticipateController (ParticipateRepository participateRepository) {
-        super(participateRepository);
-        this.participateRepository = participateRepository;
+    public AlertController(AlertRepository alertRepository) {
+        super(alertRepository);
+        this.alertRepository = alertRepository;
     }
-
     
     @GetMapping("")
     @ResponseStatus(HttpStatus.OK)
     @CrossOrigin
     @Override
-    public Iterable<Participate> all() {
-        return participateRepository.findAll();
+    public Iterable<Alert> all() {
+        return alertRepository.findAll();
     }
     
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     @CrossOrigin
-    public Optional<Participate> get(@PathVariable Integer id) {
-        return participateRepository.findById(id);
+    public Optional<Alert> get(@PathVariable Integer id) {
+        return alertRepository.findById(id);
     }
-    
 }

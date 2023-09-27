@@ -4,43 +4,44 @@ import jakarta.persistence.*;
 import java.sql.Timestamp;
 
 @Entity
-@Table(name = "alerts")
+@Table(name = "alert")
 public class Alert {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Id_alert")
-    private Integer id;
+    private Integer idAlert;
 
     @Column(name = "id_reported_user")
-    private Integer reportedUserId;
+    private Integer idReportedUser;
 
-    @Column(name = "reason", length = 100, nullable = false)
+    @Column(name = "reason")
     private String reason;
 
     @Column(name = "date_alert")
     private Timestamp dateAlert;
 
     @ManyToOne
-    @JoinColumn(name = "Id_user")
+    @JoinColumn(name = "id_user")
     private User user;
 
     public Alert() {
     }
 
     public Integer getId() {
-        return id;
+        return idAlert;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setId(Integer idAlert) {
+        this.idAlert = idAlert;
     }
 
     public Integer getReportedUserId() {
-        return reportedUserId;
+        return idReportedUser;
     }
 
-    public void setReportedUserId(Integer reportedUserId) {
-        this.reportedUserId = reportedUserId;
+    public void setReportedUserId(Integer idReportedUser) {
+        this.idReportedUser = idReportedUser;
     }
 
     public String getReason() {
@@ -66,6 +67,4 @@ public class Alert {
     public void setUser(User user) {
         this.user = user;
     }
-
-    
 }
