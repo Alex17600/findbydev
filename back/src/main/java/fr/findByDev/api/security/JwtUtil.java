@@ -30,7 +30,6 @@ public class JwtUtil {
     private static final int expireHourToken = 24;
     private static final int expireHourRefreshToken = 72;
 
-
     /**
      * Clef secrète permettant d'effectuer le chiffrement du jeton
      */
@@ -39,22 +38,24 @@ public class JwtUtil {
     /**
      * Création d'un JWT.
      *
-     * @param mail Le nom du l'utilisateur authentifié
-     * @param issuer   L'url du client qui a fait la demandé d'authentification
-     * @param roles    Les rôles de l'utilisateur
+     * @param mail   Le nom du l'utilisateur authentifié
+     * @param issuer L'url du client qui a fait la demandé d'authentification
+     * @param roles  Les rôles de l'utilisateur
      * @return Une représentation sous forme de chaîne de caractères des rôles de
      *         l'utilisateur
      */
-    public static String createAccessToken(String mail, String issuer, Integer idUser, String lastName, String firstName, List<String> roles) {
+    public static String createAccessToken(String mail, String issuer, Integer idUser, String lastName,
+            String firstName, Boolean activeAccount, List<String> roles) {
         try {
             JWTClaimsSet claims = new JWTClaimsSet.Builder()
                     .subject(mail)
                     .issuer(issuer)
                     .claim("idUser", idUser)
                     .claim("mail", mail)
-                    .claim("roles", roles)  
+                    .claim("roles", roles)
                     .claim("last_name", lastName)
-                    .claim("first_name", firstName)         
+                    .claim("first_name", firstName)
+                    .claim("active_account", activeAccount)
                     .expirationTime(Date.from(Instant.now().plusSeconds(expireHourToken * 3600)))
                     .issueTime(new Date())
                     .build();
@@ -126,7 +127,6 @@ public class JwtUtil {
         return new UsernamePasswordAuthenticationToken(username, null, authorities);
     }
 
-
     public static String parseTokenToUsernameUser(String token) throws JOSEException, ParseException, BadJOSEException {
         byte[] secretKey = SECRET.getBytes();
         String tokenParsed = token.substring("Bearer ".length());
@@ -143,7 +143,7 @@ public class JwtUtil {
         return claims.getSubject();
     }
 
-        /**
+    /**
      * Analyse d'un JWT.
      * 
      * @param token Le JWT à traiter

@@ -31,7 +31,7 @@ CREATE TABLE _user_(
    active_account BOOLEAN NOT NULL,
    description VARCHAR(255) ,
    popularity INTEGER,
-   photo BIT VARYING(50)  NOT NULL,
+   photo VARCHAR(150),
    git_profile VARCHAR(50) ,
    type VARCHAR(10)  NOT NULL,
    Id_gender INTEGER NOT NULL,

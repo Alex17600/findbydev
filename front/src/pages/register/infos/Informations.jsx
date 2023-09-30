@@ -1,20 +1,18 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import style from "./Informations.module.scss";
 import { TfiClose } from "react-icons/tfi";
-import { Outlet, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { createUser } from "../../../apis/users";
 import { getAllGenders } from "../../../apis/genders";
 
 const Informations = () => {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const navigate = useNavigate();
-  const [pseudo, setPseudo] = useState("")
+  const [pseudo, setPseudo] = useState("");
   const [lastName, setLastName] = useState("");
   const [firstName, setFirstName] = useState("");
   const [town, setTown] = useState("");
   const [mail, setMail] = useState("");
-  const [password, setPassword] = useState("");
-  const [repeatPassword, setRepeatPassword] = useState("");
   const [birthday, setBirthday] = useState("");
   const [description, setDescription] = useState("");
   const [gitProfile, setGitProfile] = useState("");
@@ -22,6 +20,13 @@ const Informations = () => {
   const [genders, setGenders] = useState([]);
   const [selectedGender, setSelectedGender] = useState("");
   const { userId } = useParams();
+  const [isChecked, setIsChecked] = useState(false);
+  const checkboxConditionRef = useRef(null);
+
+  const handleLabelClick = () => {
+    setIsChecked(!isChecked);
+    checkboxConditionRef.current.checked = !isChecked;
+  };
 
   useEffect(() => {
     const handleResize = () => {
@@ -54,11 +59,6 @@ const Informations = () => {
   const handleRegister = async (e) => {
     e.preventDefault();
 
-    if (password !== repeatPassword) {
-      setError("Les mots de passe ne correspondent pas.");
-      return;
-    }
-
     const jsonData = {
       pseudo,
       lastName,
@@ -66,7 +66,6 @@ const Informations = () => {
       town,
       birthday,
       mail,
-      password,
       description,
       gitProfile,
       gender: {
@@ -79,7 +78,6 @@ const Informations = () => {
 
       if (Array.isArray(createdUser) && createdUser.length > 0) {
         navigate(`../photo?userId=${createdUser[0].id}`);
-
       } else {
         setError("Erreur lors de la création de l'utilisateur.");
       }
@@ -133,22 +131,6 @@ const Informations = () => {
               onChange={(e) => handleChange(e, setMail)}
             />
             <input
-              type="password"
-              placeholder="Mot de passe"
-              autoComplete="password"
-              name="password"
-              value={password}
-              onChange={(e) => handleChange(e, setPassword)}
-            />
-            <input
-              type="password"
-              placeholder="Repetez le mot de passe"
-              autoComplete="password"
-              name="repeatPassword"
-              value={repeatPassword}
-              onChange={(e) => handleChange(e, setRepeatPassword)}
-            />
-            <input
               type="date"
               value={birthday}
               onChange={(e) => handleChange(e, setBirthday)}
@@ -184,14 +166,15 @@ const Informations = () => {
             </div>
 
             <div className={style.bas}>
-              <button>Suivant</button>
-            </div>
-            <div className={style.checkbox}>
-              <input type="checkbox" name="conditions" />
-              <label htmlFor="condition">
-                J’accepte les conditions d’utilisation et la politique du site
-              </label>
-            </div>
+                <div className={style.condition}>
+                  <input type="checkbox" name="conditions" ref={checkboxConditionRef}/>
+                  <label htmlFor="conditions" onClick={handleLabelClick}>
+                    J’accepte les conditions d’utilisation et la politique du
+                    site
+                  </label>
+                </div>
+                <button>Suivant</button>
+              </div>
           </div>
         ) : (
           <div className={style.registerLarge}>
@@ -200,6 +183,13 @@ const Informations = () => {
               {error && <div className={style.errorText}>{error}</div>}
               <div className={style.sections}>
                 <div className={style.leftSection}>
+                  <input
+                    type="text"
+                    placeholder="Pseudo"
+                    autoComplete="name"
+                    value={pseudo}
+                    onChange={(e) => handleChange(e, setPseudo)}
+                  />
                   <input
                     type="text"
                     placeholder="Nom"
@@ -225,22 +215,6 @@ const Informations = () => {
                     autoComplete="email"
                     value={mail}
                     onChange={(e) => handleChange(e, setMail)}
-                  />
-                  <input
-                    type="password"
-                    placeholder="Mot de passe"
-                    autoComplete="password"
-                    name="password"
-                    value={password}
-                    onChange={(e) => handleChange(e, setPassword)}
-                  />
-                  <input
-                    type="password"
-                    placeholder="Repetez le mot de passe"
-                    autoComplete="password"
-                    name="repeatPassword"
-                    value={repeatPassword}
-                    onChange={(e) => handleChange(e, setRepeatPassword)}
                   />
                 </div>
                 <div className={style.rightSection}>
@@ -277,17 +251,16 @@ const Informations = () => {
                       </label>
                     ))}
                   </div>
-
-                  <div className={style.checkbox}>
-                    <input type="checkbox" name="conditions" />
-                    <label htmlFor="condition">
-                      J’accepte les conditions d’utilisation et la politique du
-                      site
-                    </label>
-                  </div>
                 </div>
               </div>
               <div className={style.bas}>
+                <div className={style.condition}>
+                  <input type="checkbox" name="conditions" ref={checkboxConditionRef}/>
+                  <label htmlFor="conditions" onClick={handleLabelClick}>
+                    J’accepte les conditions d’utilisation et la politique du
+                    site
+                  </label>
+                </div>
                 <button>Suivant</button>
               </div>
             </div>

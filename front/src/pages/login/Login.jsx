@@ -3,18 +3,21 @@ import style from "./Login.module.scss";
 import { useNavigate } from "react-router-dom";
 import { TfiClose } from "react-icons/tfi";
 import { saveToken } from "../../data/Token";
+import FirstConnection from "./FirstConnection";
+import jwtDecode from "jwt-decode";
 
 const Login = () => {
   const [mail, setMail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [activeAccount, setActiveAccount] = useState(false);
   const navigate = useNavigate();
 
   useEffect(()=> {
     setMail("");
     setPassword("");
-  }, [])
+  }, [activeAccount])
 
   const handleEmailChange = (event) => {
     setMail(event.target.value);
@@ -44,7 +47,8 @@ const Login = () => {
       return;
     }
   
-    try { 
+    try {
+  
       const response = await fetch("http://localhost:8000/api/login", {
         method: "POST",
         body: JSON.stringify({ mail, password }),
@@ -52,16 +56,29 @@ const Login = () => {
   
       if (response.ok && response.status === 200) {
         const token = response.headers.get("Access_token");
+        const decodedToken = jwtDecode(token);
+        const activeAccount = decodedToken.active_account;
+
+        if (!activeAccount) {
+          
+          saveToken(token, false);
+          setActiveAccount(true);
+        } else {
           saveToken(token, true);
+          setError("");
           navigate("/profil");
-        
+        }
       } else {
         setError("Email ou mot de passe incorrect");
       }
     } catch (error) {
-      // console.error(error);
+       console.error(error);
     }
   };
+
+  if (activeAccount) {
+    return <FirstConnection passwordTemporaly={password} setActiveAccount={setActiveAccount}/>;
+  }
 
   return (
     <form onSubmit={handleLogin}>

@@ -29,7 +29,7 @@ public class PreferController extends GenericController<Prefer, PreferId> {
         this.preferRepository = preferRepository;
     }
 
-        @GetMapping("")
+    @GetMapping("")
     @ResponseStatus(HttpStatus.OK)
     @CrossOrigin
     @Override

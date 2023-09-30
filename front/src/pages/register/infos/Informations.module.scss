@@ -7,7 +7,7 @@
     background-position: center;
     font-family: 'JetBrains Mono', monospace;
 
-    
+
     .errorText {
         background-color: #E96969;
         padding: 5px;
@@ -22,13 +22,71 @@
         background-color: black;
         opacity: 0.8;
 
+        
+        .checkboxGenders {
+            display: flex;
+            margin: auto;
+            margin-top: 15px;
+            
+            input {
+                height: 50px;
+            }
+            label {
+                color: white;
+                cursor: pointer;
+                font-size: 20px;
+                &:hover {
+                    color: #ee9c31;
+                }
+            }
+
+
+            input {
+                margin: 10px 10px;
+                padding: 10px;
+                border-radius: 6px;
+
+                &:focus {
+                    outline: none;
+                }
+
+                &::placeholder {
+                    transition: all 0.2s ease-out;
+                }
+
+                &:focus::placeholder {
+                    transform: translateY(-100%);
+                    font-size: 0.8em;
+                }
+            }
+        }
+
         .bas {
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
+            align-items: center;
+            width: 80%;
+            margin: auto;
+            gap: 20px;
+
+            .condition {
+                align-items: center;
+
+
+                label {
+                    color: white;
+                    cursor: pointer;
+
+                    &:hover {
+                        color: #ee9c31;
+                    }
+                }
+            }
 
             button {
                 padding: 10px 40px;
                 background-color: #ee9c31;
+                font-size: larger;
                 width: fit-content;
                 margin: 10px 0;
                 border-radius: 6px;
@@ -38,7 +96,6 @@
 
                 &:hover {
                     background-color: #9c6318;
-                    font-weight: bold;
                 }
             }
         }
@@ -51,28 +108,9 @@
             margin: 20px auto 0;
         }
 
-        .checkbox {
-            display: flex;
-            margin-bottom: 20px;
-
-            label {
-                font-size: 16px;
-                width: 80%;
-            }
-
-            input {
-                width: auto;
-                padding-left: 20px;
-            }
-        }
-
         input[type="checkbox"] {
-            width: 20px; 
+            width: 20px;
             height: 20px;
-          }
-
-        input[type="file"] {
-            margin: auto;
         }
 
         p {
@@ -115,15 +153,32 @@
         justify-content: center;
         background-repeat: no-repeat;
         background-size: cover;
-        height: 100vh; 
+        height: 100vh;
 
         .bas {
             display: flex;
-            justify-content: flex-end;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+
+            .condition {
+                align-items: center;
+
+
+                label {
+                    color: white;
+                    cursor: pointer;
+
+                    &:hover {
+                        color: #ee9c31;
+                    }
+                }
+            }
 
             button {
                 padding: 10px 40px;
                 background-color: #ee9c31;
+                font-size: larger;
                 width: fit-content;
                 margin: 10px 0;
                 border-radius: 6px;
@@ -133,7 +188,6 @@
 
                 &:hover {
                     background-color: #9c6318;
-                    font-weight: bold;
                 }
             }
         }
@@ -141,7 +195,7 @@
         .blockRegisterLarge {
             display: flex;
             flex-direction: column;
-            width: 70%;
+            max-width: 70%;
             padding: 40px;
             margin: auto;
             background-color: black;
@@ -191,12 +245,47 @@
                     display: flex;
                     flex-direction: column;
 
-                    label {
-                        color: white;
 
-                        cursor: pointer;
+                    .checkboxGenders {
+                        margin-top: 15px;
+                        label {
+                            color: white;
+                            cursor: pointer;
+
+                            &:hover {
+                                color: #ee9c31;
+                            }
+                        }
+
+
+                        input {
+                            margin: 10px 10px;
+                            padding: 10px;
+                            border-radius: 6px;
+
+                            &:focus {
+                                outline: none;
+                            }
+
+                            &::placeholder {
+                                transition: all 0.2s ease-out;
+                            }
+
+                            &:focus::placeholder {
+                                transform: translateY(-100%);
+                                font-size: 0.8em;
+                            }
+                        }
                     }
 
+                    label {
+                        color: white;
+                        cursor: pointer;
+
+                        &:hover {
+                            color: #ee9c31;
+                        }
+                    }
 
                     input {
                         margin: 10px 0;
@@ -228,19 +317,8 @@
                         resize: none;
                         border-radius: 6px;
                     }
-
-                    .checkbox {
-                        margin: 5px;
-                        display: flex;
-                        align-items: left;
-
-                        input[type="checkbox"] {
-                            margin-right: 10px;
-                        }
-                    }
                 }
             }
         }
     }
-
 }

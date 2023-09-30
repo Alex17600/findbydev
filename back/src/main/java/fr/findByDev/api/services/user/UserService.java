@@ -32,7 +32,7 @@ public class UserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String name) throws UsernameNotFoundException {
         User user = userRepository.findByMail(name);
         if (user == null) {
-            
+
             String message = String.format(USER_NOT_FOUND_MESSAGE, name);
             logger.error(message);
             throw new UsernameNotFoundException(message);
@@ -49,7 +49,8 @@ public class UserService implements UserDetailsService {
             }
 
             return new CustomUserDetails(user.getId(), user.getMail(), user.getPassword(), user.getLastName(),
-                    user.getFirstName(), authorities);
+                    user.getFirstName(), user.isActiveAccount(), authorities);
         }
     }
+
 }

@@ -9,5 +9,4 @@ public class FindbydevApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(FindbydevApplication.class, args);
 	}
-
 }

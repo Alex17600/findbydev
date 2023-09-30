@@ -8,7 +8,6 @@ const FilterAuth = ({ children }) => {
   const navigate = useNavigate();
   const location = useLocation();
   
-
   const handleNavigation = useCallback(() => {
 
       if (!token) {

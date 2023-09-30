@@ -10,15 +10,17 @@ public class CustomUserDetails implements UserDetails {
     private String password;
     private String lastName;
     private String firstName;
+    private Boolean activeAccount;
 
     private Collection<? extends GrantedAuthority> authorities;
 
-    public CustomUserDetails(Integer idUser, String mail, String password, String lastName, String firstName, Collection<? extends GrantedAuthority> authorities) {
+    public CustomUserDetails(Integer idUser, String mail, String password, String lastName, String firstName, Boolean activeAccount, Collection<? extends GrantedAuthority> authorities) {
         this.idUser = idUser;
         this.mail = mail;
         this.password = password;
         this.lastName = lastName;
         this.firstName = firstName;
+        this.activeAccount = activeAccount;
         this.authorities = authorities;
 
     }
@@ -77,6 +79,14 @@ public class CustomUserDetails implements UserDetails {
 
     public String getFirstName() {
         return firstName;
+    }
+
+    public Boolean getActiveAccount() {
+        return activeAccount;
+    }
+
+    public void setActiveAccount(Boolean activeAccount) {
+        this.activeAccount = activeAccount;
     }
 
 }

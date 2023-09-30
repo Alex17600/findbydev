@@ -21,7 +21,7 @@ const HeaderAccueil = () => {
   return (
     <div className={style.headerAccueil}>
       {windowWidth < 928 ? (
-        <pre className={style.headerPhone}>findByDev&lt;♥/&gt;</pre>
+        <pre className={style.headerPhone} onClick={()=> navigate("/accueil")}>findByDev&lt;♥/&gt;</pre>
       ) : (
         <div className={style.headerLarge}>
           <pre className={style.navbar} onClick={()=> navigate("/accueil")}>findByDev&lt;♥/&gt;</pre>

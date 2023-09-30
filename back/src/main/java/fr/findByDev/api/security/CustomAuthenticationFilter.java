@@ -124,12 +124,13 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         Integer idUser = user.getIdUser();
         String lastName = user.getLastName(); // Modifier pour récupérer le last_name de l'utilisateur
         String firstName = user.getFirstName();
+        Boolean activeAccount = user.getActiveAccount();
 
         // 3 - on crée le JWT avec le nom de l'utilisateur, l'URL du serveur fournissant
         // le jeton et une représentaiton en chaîne de caractères
         // des rôles
         String accessToken = JwtUtil.createAccessToken(user.getUsername(), request.getRequestURL().toString(), idUser,
-        lastName, firstName, stringAuthorities);
+        lastName, firstName, activeAccount, stringAuthorities);
 
         logger.info(String.format("Création d'un token pour l'utilisateur : {}. Token : ", user.getUsername(),
                 accessToken));

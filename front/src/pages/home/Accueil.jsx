@@ -30,7 +30,7 @@ const Accueil = () => {
       ) : (
         <div className={style.blockRight}>
           <div className={style.textLarge}>
-            <p>Bienvenue sur findBydev ! </p>
+            <p>Bienvenue sur findByDev ! </p>
             <p>
               findBydev est bien plus qu'une simple application de rencontre.
             </p>

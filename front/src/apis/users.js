@@ -61,6 +61,29 @@ export async function createUser(jsonData) {
     }
 }
 
+  //modification mot de passe temporaire
+  export async function updatePassword(newPassword) {
+    try {
+      const response = await fetch(`${URL_API}/reset-password`, {
+        headers: {
+          'Authorization': `Bearer ${getToken()}`,
+          'Content-Type': 'application/json'
+        },
+        method: 'PATCH',
+        body: newPassword 
+      });
+  
+      if (response.ok) {
+        const body = await response.json();
+        return body;
+      } else {
+        throw new Error('Error update password user');
+      }
+    } catch (error) {
+      throw new Error('Error update password user');
+    }
+}
+
 // Fonction downloadPhoto
 export async function downloadPhoto(userId, image) {
   const formData = new FormData();

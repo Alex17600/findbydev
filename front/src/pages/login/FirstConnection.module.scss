@@ -1,0 +1,108 @@
+.firstConnection {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-image: url(../../assets/background/kemllFaD8R7RjKgL5lUe--1--i0bj1flou.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+    width: 100%;
+    height: 100vh;
+    background-position: center;
+    align-items: center;
+
+    .blockLogin {
+        display: flex;
+        flex-direction: column;
+        color: white;
+        background-color: black;
+        opacity: 0.8;
+        border-radius: 6px;
+        padding: 0 20px;
+        width: 80%;
+        margin: auto;
+
+        h1 {
+            margin: auto;
+        }
+
+        .returnIcon {
+            min-width: 50px;
+            cursor: pointer;
+            font-size: 36px;
+            color: white;
+            margin: 20px auto 0;
+        }
+
+        input {
+            width: 80%;
+            margin: 10px auto;
+            padding: 10px;
+            border-radius: 6px;
+
+            &:focus {
+                outline: none;
+            }
+
+            &:last-child {
+                margin-bottom: 40px;
+            }
+        }
+        .bas {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+        }
+        
+        span {
+            cursor: pointer;
+    
+            &:hover {
+                transform: scale(1.1);
+                color: #ee9c31;
+            }
+        }
+    
+        button {
+            padding: 10px 40px;
+            background-color: #ee9c31;
+            width: fit-content;
+            margin: 10px 0;
+            border-radius: 6px;
+            border: none;
+            color: white;
+            cursor: pointer;
+    
+            &:hover {
+                background-color: #9c6318;
+    
+            }
+        }
+    
+        .errorText {
+            background-color: #e96969;
+            padding: 5px;
+            color: white;
+            text-align: center;
+            border-radius: 6px;
+          }
+      
+          .successText {
+            background-color: #66ad1a;
+            padding: 5px;
+      
+            border-radius: 6px;
+      
+            p {
+              padding: 0;
+              color: white;
+              text-align: center;
+            }
+        }
+    
+        .info {
+            opacity: 0.5;
+            text-align: center;
+        }
+    }
+
+}
