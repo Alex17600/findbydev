@@ -1,4 +1,3 @@
-import { getToken } from "../data/Token";
 
 const URL_API = 'http://localhost:8000/api/genders';
 

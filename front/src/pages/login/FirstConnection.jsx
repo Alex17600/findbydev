@@ -93,7 +93,6 @@ const FirstConnexion = ({ passwordTemporaly, setActiveAccount }) => {
 
   return (
     <form className={style.firstConnection} onSubmit={handleSubmit}>
-      <div className={style.blockFirstConnection}>
         {windowWidth < 928 ? (
           <div className={style.blockLogin}>
             <div className={style.returnIcon}>
@@ -184,7 +183,6 @@ const FirstConnexion = ({ passwordTemporaly, setActiveAccount }) => {
             </div>
           </div>
         )}
-      </div>
     </form>
   );
 };
