@@ -60,6 +60,28 @@ public class User {
     public User() {
     }
 
+    
+    public User(Integer idUser, String pseudo, String lastName, String firstName, String town, String birthday,
+            String mail, String password, boolean activeAccount, String description, Integer popularity, String photo,
+            String gitProfile, String type, Gender gender) {
+        this.idUser = idUser;
+        this.pseudo = pseudo;
+        this.lastName = lastName;
+        this.firstName = firstName;
+        this.town = town;
+        this.birthday = birthday;
+        this.mail = mail;
+        this.password = password;
+        this.activeAccount = activeAccount;
+        this.description = description;
+        this.popularity = popularity;
+        this.photo = photo;
+        this.gitProfile = gitProfile;
+        this.type = type;
+        this.gender = gender;
+    }
+
+
     public Integer getId() {
         return idUser;
     }

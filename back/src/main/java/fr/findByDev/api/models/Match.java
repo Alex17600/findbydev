@@ -1,6 +1,6 @@
 package fr.findByDev.api.models;
 
-import java.util.Date;
+import java.sql.Timestamp;
 
 import com.fasterxml.jackson.annotation.JsonView;
 
@@ -18,19 +18,18 @@ public class Match {
 
     @ManyToOne
     @JsonView(View.Match.class)
-    @JoinColumn(name = "Id_user_receiver")
+    @JoinColumn(name = "id_user_receiver")
     @MapsId("idUserReceiver")
-    private User userReceiver;
+    private User receiver;
 
     @ManyToOne
     @JsonView(View.Match.class)
-    @JoinColumn(name = "Id_user_sender")
+    @JoinColumn(name = "id_user_sender")
     @MapsId("idUserSender")
-    private User userSender;
-
+    private User sender;
 
     @Column(name = "date_hour")
-    private Date dateHour;
+    private Timestamp dateHour;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "current_status")
@@ -47,27 +46,27 @@ public class Match {
         this.idMatch = idMatch;
     }
 
-    public User getUserReceiver() {
-        return userReceiver;
+    public User getReceiver() {
+        return receiver;
     }
 
-    public void setUserReceiver(User userReceiver) {
-        this.userReceiver = userReceiver;
+    public void setReceiver(User receiver) {
+        this.receiver = receiver;
     }
 
-    public User getUserSender() {
-        return userSender;
+    public User getSender() {
+        return sender;
     }
 
-    public void setUserSender(User userSender) {
-        this.userSender = userSender;
+    public void setSender(User sender) {
+        this.sender = sender;
     }
 
-    public Date getDateHour() {
+    public Timestamp getDateHour() {
         return dateHour;
     }
 
-    public void setDateHour(Date dateHour) {
+    public void setDateHour(Timestamp dateHour) {
         this.dateHour = dateHour;
     }
 

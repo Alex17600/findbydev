@@ -62,6 +62,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PATCH, "/users/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/genders/**").permitAll()               
                         .requestMatchers(HttpMethod.GET, "/matches/**").permitAll()               
+                        .requestMatchers(HttpMethod.POST, "/matches/**").hasAuthority("ROLE_USER")               
                         .requestMatchers(HttpMethod.GET, "/realises/**").permitAll()               
                         .requestMatchers(HttpMethod.GET, "/experiences/**").permitAll()               
                         .requestMatchers(HttpMethod.GET, "/likes/**").permitAll()               

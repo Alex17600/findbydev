@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
@@ -36,9 +37,12 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 import fr.findByDev.api.controllers.GenericController;
 import fr.findByDev.api.models.User;
+import fr.findByDev.api.models.enums.Status;
+import fr.findByDev.api.repositories.global.MatchRepository;
 import fr.findByDev.api.repositories.global.UserRepository;
 import fr.findByDev.api.security.JwtUtil;
 import fr.findByDev.api.services.emails.ActivationEmail;
@@ -67,9 +71,13 @@ public class UserController extends GenericController<User, Integer> {
     private ActivationEmail passwordEmailService;
 
     @Autowired
-    public UserController(UserRepository userRepository) {
+    private MatchRepository matchRepository;
+
+    @Autowired
+    public UserController(UserRepository userRepository, MatchRepository matchRepository) {
         super(userRepository);
         this.userRepository = userRepository;
+        this.matchRepository = matchRepository;
     }
 
     @GetMapping("")
@@ -85,6 +93,27 @@ public class UserController extends GenericController<User, Integer> {
     @CrossOrigin
     public Optional<User> get(@PathVariable Integer id) {
         return userRepository.findById(id);
+    }
+    /**
+     * Savoir si un user à un match
+     * @param user
+     * @return
+     */
+    @GetMapping("/checkForNewMatches")
+    @ResponseStatus(HttpStatus.OK)
+    @CrossOrigin
+    public Map<String, Boolean> checkForNewMatches(@AuthenticationPrincipal User user) {
+        // Obtenez l'ID de l'utilisateur connecté
+        Integer userId = user.getId();
+
+        // Vérifiez la table Match pour les nouveaux matches de l'utilisateur
+        boolean hasNewMatch = matchRepository.existsByReceiverIdAndCurrentStatus(userId, Status.EN_ATTENTE);
+
+        // Créez une réponse indiquant s'il y a de nouveaux matches ou non
+        Map<String, Boolean> response = new HashMap<>();
+        response.put("hasNewMatch", hasNewMatch);
+
+        return response;
     }
 
     // Recuperation de la photo d'un user

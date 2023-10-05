@@ -1,82 +1,171 @@
-import React, { useRef, useState } from "react";
-import style from "./ProfilMobile.module.scss";
+import React, { useState, useMemo, useRef, useEffect } from "react";
 import TinderCard from "react-tinder-card";
-import Photo from "../../assets/background/téléchargement.jpg";
+import { getAllUsers } from "../../apis/users";
+import style from "./ProfilMobile.module.scss";
 import { FcLike } from "react-icons/fc";
 import { CgDebug } from "react-icons/cg";
 import { FcUndo } from "react-icons/fc";
 import { VscAccount } from "react-icons/vsc";
-import { FiSearch, FiSettings } from "react-icons/fi";
+import { FiSearch } from "react-icons/fi";
 import { AiOutlineMessage } from "react-icons/ai";
+import { GrNotification } from "react-icons/gr";
+import { findPhotoById } from "../../apis/photos";
+import { createMatch } from "../../apis/match";
+import { getToken } from "../../data/Token";
+import jwtDecode from "jwt-decode";
 
 const ProfilMobile = () => {
-  const tinderCardRef = useRef();
-  const [disliked, setDisliked] = useState(false);
+  const [photo, setPhoto] = useState({});
+  const [users, setUsers] = useState([]);
+  const [userConnected, setUserConnected] = useState();
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [hasNewMatch, setHasNewMatch] = useState(false);
+  // eslint-disable-next-line
+  const [lastDirection, setLastDirection] = useState();
+  const currentIndexRef = useRef(currentIndex);
+  // eslint-disable-next-line
+  const [disableUndo, setDisableUndo] = useState(true);
 
-  const onSwipe = (direction) => {
-    if (direction === "right") {
-      console.log("J'aime");
-    } else if (direction === "left") {
-      console.log("Je n'aime pas");
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const data = await getAllUsers();
+        setUsers(data);
+      } catch (error) {
+        console.error(
+          "Erreur lors de la récupération des utilisateurs :",
+          error
+        );
+      }
     }
-    console.log("You swiped: " + direction);
+    const token = getToken();
+    const decodedToken = jwtDecode(token);
+    setUserConnected(decodedToken);
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    async function fetchPhotos() {
+      const photoData = {};
+      for (const user of users) {
+        try {
+          const photoUrl = await findPhotoById(user.id);
+          photoData[user.id] = photoUrl;
+        } catch (error) {
+          console.error("Erreur lors de la récupération de la photo :", error);
+        }
+      }
+      setPhoto(photoData);
+    }
+    fetchPhotos();
+  }, [users]);
+
+  const childRefs = useMemo(
+    () =>
+      Array(users.length)
+        .fill(0)
+        .map((i) => React.createRef()),
+    [users.length]
+  );
+
+  const updateCurrentIndex = (val) => {
+    setCurrentIndex(val);
+    currentIndexRef.current = val;
   };
 
-  const onCardLeftScreen = (myIdentifier) => {
-    console.log(myIdentifier + " left the screen");
-  };
+  const canGoBack = currentIndex < users.length - 1;
+  const canSwipe = currentIndex >= 0;
 
-  const handleSwipeRight = () => {
-    if (tinderCardRef.current) {
-      tinderCardRef.current.swipe("right");
+  const swiped = (direction, id, index) => {
+    setLastDirection(direction);
+    updateCurrentIndex(index);
+    if (index >= 1) {
+      setDisableUndo(false);
     }
   };
 
-  const handleSwipeLeft = () => {
-    if (tinderCardRef.current) {
-      tinderCardRef.current.swipe("left");
-      setDisliked(true);
+  const outOfFrame = (pseudo, idx) => {
+    // console.log(`${pseudo} (${idx}) left the screen!`, currentIndexRef.current);
+    if (currentIndexRef.current > idx) {
+      childRefs[currentIndexRef.current].current.restoreCard();
     }
   };
 
-  //TODO, à terminer Annuler le "dislike"
-  const handleUndoDislike = () => {
-    setDisliked(false);
+  const swipe = async (dir) => {
+    if (canSwipe && currentIndex < users.length) {
+
+      const matchData = {
+        userSender: userConnected.idUser,
+        userReceiver: users[currentIndex].id,
+      };
+
+      try {
+        // Envoyer les ID des utilisateurs au backend pour créer un match
+        const createdMatch = await createMatch(matchData);
+
+        console.log("Match créé avec succès : ", createdMatch);
+      } catch (error) {
+        console.error("Erreur lors de la création du match :", error);
+      }
+      await childRefs[currentIndex].current.swipe(dir);
+      updateCurrentIndex(currentIndex + 1);
+    }
+  };
+
+  const goBack = async () => {
+    if (!canGoBack) return;
+    const newIndex = currentIndex - 1;
+    updateCurrentIndex(newIndex);
+    await childRefs[newIndex].current.restoreCard();
   };
 
   return (
     <div className={style.profilMobile}>
-      <p className={style.pseudo}>Pseudo</p>
-      <TinderCard
-        ref={tinderCardRef}
-        onSwipe={onSwipe}
-        onCardLeftScreen={() => onCardLeftScreen("fooBar")}
-        preventSwipe={["up", "down"]}
-      >
-        <div className={style.card}>
-          <img src={Photo} alt="test" />
-          <div className={style.iconOverlay}>
-            {disliked && (
-              <div className={style.undoDislikeIcon}>
-                <FcUndo onClick={handleUndoDislike} />
-              </div>
-            )}
+      <div>
+        <p className={style.pseudo}>
+          {" "}
+          {users[currentIndex] && users[currentIndex].pseudo}
+        </p>
+        {users.map((user, index) => (
+          <TinderCard
+            ref={childRefs[index]}
+            key={user.id}
+            onSwipe={(dir) => swiped(dir, user.id, index)}
+            onCardLeftScreen={() => outOfFrame(user.pseudo, index)}
+          >
             <div
-              className={style.disLikeIcon}
-              onClick={() => handleSwipeLeft()}
+              className={`${style.card} ${
+                currentIndex === index ? "" : style.hidden
+              }`}
             >
-              <CgDebug />
+              <img src={photo[user.id]} alt={user.pseudo} />
+              <div className={style.iconOverlay}>
+                <div
+                  className={`${style.undoDislikeIcon} ${
+                    currentIndex === 0 ? style.disabled : ""
+                  }`}
+                  onClick={() => goBack()}
+                >
+                  <FcUndo />
+                </div>
+                <div
+                  className={style.disLikeIcon}
+                  onClick={() => swipe("left")}
+                >
+                  <CgDebug />
+                </div>
+                <div className={style.likeIcon} onClick={() => swipe("right")}>
+                  <FcLike />
+                </div>
+              </div>
             </div>
-            <div className={style.likeIcon} onClick={() => handleSwipeRight()}>
-              <FcLike />
-            </div>
-          </div>
-        </div>
-      </TinderCard>
+          </TinderCard>
+        ))}
+      </div>
 
       <div className={style.bottomIcon}>
         <FiSearch />
-        <FiSettings />
+        <GrNotification className={style.notifs}/>
         <AiOutlineMessage />
         <VscAccount />
       </div>

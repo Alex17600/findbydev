@@ -1,5 +1,6 @@
 package fr.findByDev.api.controllers.global;
 
+import java.sql.Timestamp;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,14 +8,20 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import fr.findByDev.api.controllers.GenericController;
 import fr.findByDev.api.models.Match;
+import fr.findByDev.api.models.User;
+import fr.findByDev.api.models.DTO.MatchRequestDTO;
 import fr.findByDev.api.models.associations.MatchId;
+import fr.findByDev.api.models.enums.Status;
 import fr.findByDev.api.repositories.global.MatchRepository;
+import fr.findByDev.api.repositories.global.UserRepository;
 
 @RestController
 @RequestMapping("/matches")
@@ -24,12 +31,15 @@ public class MatchController extends GenericController<Match, MatchId> {
     private MatchRepository matchRepository;
 
     @Autowired
-    public MatchController(MatchRepository matchRepository) {
+    private UserRepository userRepository;
+
+    @Autowired
+    public MatchController(MatchRepository matchRepository, UserRepository userRepository) {
         super(matchRepository);
         this.matchRepository = matchRepository;
+        this.userRepository = userRepository;
     }
-    
-        
+
     @GetMapping("")
     @ResponseStatus(HttpStatus.OK)
     @CrossOrigin
@@ -37,13 +47,43 @@ public class MatchController extends GenericController<Match, MatchId> {
     public Iterable<Match> all() {
         return matchRepository.findAll();
     }
-    
-    
+
     @GetMapping("/{idReceiver}/{idSender}")
     @ResponseStatus(HttpStatus.OK)
     @CrossOrigin
-    public Optional<Match> get(@PathVariable("idReceiver") Integer idReceiver, @PathVariable("idSender") Integer idSender) {
+    public Optional<Match> get(@PathVariable("idReceiver") Integer idReceiver,
+            @PathVariable("idSender") Integer idSender) {
         MatchId matchId = new MatchId(idReceiver, idSender);
         return matchRepository.findById(matchId);
     }
+
+    @PostMapping("/create")
+    @ResponseStatus(HttpStatus.CREATED)
+    @CrossOrigin
+    public Match createMatch(@RequestBody MatchRequestDTO matchData) {
+        Integer userSenderId = matchData.getUserSender();
+        Integer userReceiverId = matchData.getUserReceiver();
+
+        // Recherchez les objets User correspondants dans la base de données
+        User userSender = userRepository.findById(userSenderId).orElse(null);
+        User userReceiver = userRepository.findById(userReceiverId).orElse(null);
+
+        if (userSender == null || userReceiver == null) {
+            throw new IllegalArgumentException("Utilisateur non trouvé.");
+        }
+
+        Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
+
+        MatchId matchId = new MatchId(userSenderId, userReceiverId);
+
+        Match match = new Match();
+        match.setIdMatch(matchId);
+        match.setSender(userSender);
+        match.setReceiver(userReceiver);
+        match.setDateHour(currentTimestamp);
+        match.setCurrentStatus(Status.EN_ATTENTE);
+
+        return matchRepository.save(match);
+    }
+
 }

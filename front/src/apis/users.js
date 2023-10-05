@@ -55,7 +55,7 @@ export async function createUser(jsonData) {
     if (response.ok) {
         const body = await response.json();
         return Array.isArray(body) ? body : [body];
-
+        
     } else {
         throw new Error('Error fetch create user');
     }
