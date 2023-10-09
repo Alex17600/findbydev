@@ -16,6 +16,7 @@ const Sidebar = () => {
     clearToken();
     navigate("accueil");
   };
+  
   return (
     <div className={style.sidebar}>
         <FiSearch size={32} style={{ color: iconColor }}/>

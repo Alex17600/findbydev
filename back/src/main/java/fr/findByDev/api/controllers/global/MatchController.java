@@ -83,7 +83,8 @@ public class MatchController extends GenericController<Match, MatchId> {
         match.setDateHour(currentTimestamp);
         match.setCurrentStatus(Status.EN_ATTENTE);
 
+        match.setIsRead(false);
+
         return matchRepository.save(match);
     }
-
 }

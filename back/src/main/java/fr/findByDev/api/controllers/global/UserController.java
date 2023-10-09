@@ -10,7 +10,7 @@ import java.nio.file.Files;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
@@ -37,9 +37,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 import fr.findByDev.api.controllers.GenericController;
+import fr.findByDev.api.models.Match;
 import fr.findByDev.api.models.User;
 import fr.findByDev.api.models.enums.Status;
 import fr.findByDev.api.repositories.global.MatchRepository;
@@ -93,27 +93,6 @@ public class UserController extends GenericController<User, Integer> {
     @CrossOrigin
     public Optional<User> get(@PathVariable Integer id) {
         return userRepository.findById(id);
-    }
-    /**
-     * Savoir si un user à un match
-     * @param user
-     * @return
-     */
-    @GetMapping("/checkForNewMatches")
-    @ResponseStatus(HttpStatus.OK)
-    @CrossOrigin
-    public Map<String, Boolean> checkForNewMatches(@AuthenticationPrincipal User user) {
-        // Obtenez l'ID de l'utilisateur connecté
-        Integer userId = user.getId();
-
-        // Vérifiez la table Match pour les nouveaux matches de l'utilisateur
-        boolean hasNewMatch = matchRepository.existsByReceiverIdAndCurrentStatus(userId, Status.EN_ATTENTE);
-
-        // Créez une réponse indiquant s'il y a de nouveaux matches ou non
-        Map<String, Boolean> response = new HashMap<>();
-        response.put("hasNewMatch", hasNewMatch);
-
-        return response;
     }
 
     // Recuperation de la photo d'un user
@@ -187,6 +166,74 @@ public class UserController extends GenericController<User, Integer> {
         }
     }
 
+    /**
+     * maj user
+     * @param userId
+     * @return
+     */
+    @PatchMapping("/{userId}")
+    public ResponseEntity<User> updateUser(@PathVariable Integer userId, @RequestBody User updatedUser) {
+        
+        Optional<User> optionalUser = userRepository.findById(userId);
+
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+
+            if (updatedUser.getFirstName() != null) {
+                user.setFirstName(updatedUser.getFirstName());
+            }
+            if (updatedUser.getLastName() != null) {
+                user.setLastName(updatedUser.getLastName());
+            }
+
+
+            // Enregistrez l'utilisateur mis à jour dans la base de données
+            User updated = userRepository.save(user);
+
+            // Retournez l'utilisateur mis à jour en réponse
+            return ResponseEntity.ok(updated);
+        } else {
+            
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+   /**
+    * 
+    * @param userId
+    * @return
+    */
+    @GetMapping("/{userId}/unread-matches")
+    @ResponseStatus(HttpStatus.OK)
+    @CrossOrigin
+    public List<Match> getUnreadMatches(@PathVariable Integer userId) {
+        Optional<User> optionalUser = userRepository.findById(userId);
+
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+
+            // Récupérez tous les matches non lus et en attente de l'utilisateur
+            List<Match> unreadMatches = matchRepository.findByReceiverAndIsReadAndCurrentStatus(user, false, Status.EN_ATTENTE);
+
+            // // Marquez ces matches comme lus
+            // for (Match match : unreadMatches) {
+            //     // match.setIsRead(true);
+            //     matchRepository.save(match);
+            //     // User sender = match.getSender();
+            // }
+
+            return unreadMatches;
+        }
+
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Utilisateur non trouvé");
+    }
+
+    /**
+     * 
+     * @param newPassword
+     * @param headers
+     * @return
+     */
     @PatchMapping("/reset-password")
     @ResponseStatus(HttpStatus.OK)
     @CrossOrigin

@@ -6,10 +6,11 @@ import FilterAuth from "./FilterAuth";
 const Accueil = lazy(() => import("./pages/home/Accueil"));
 const Register = lazy(() => import("./pages/register/Register"));
 const Login = lazy(() => import("./pages/login/Login"));
-const ProfilMobile = lazy(() => import("./pages/profil/ProfilMobile"));
+const ProfilMobile = lazy(() => import("./pages/profil/general/ProfilMobile"));
 const Profil = lazy(() => import("./pages/profil/Profil"));
 const Photo = lazy(() => import("./pages/register/photos/Photo"));
 const Informations = lazy(() => import("./pages/register/infos/Informations"));
+const Account = lazy(() => import("./pages/profil/account/Account"))
 
 const isMobileView = window.innerWidth < 928;
 
@@ -52,6 +53,10 @@ export const router = createBrowserRouter([
         path: "profil",
         element: isMobileView ? <ProfilMobile /> : <Profil />,
       },
+      {
+        path: "profil/:userId/account",
+        element: <Account />,
+      }
     ],
   },
 ]);

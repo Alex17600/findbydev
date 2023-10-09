@@ -4,7 +4,6 @@ const API_URL = 'http://localhost:8000/api/matches';
 const token = getToken();
 
 export async function createMatch(matchData) {
-    console.log(matchData);
     const response = await fetch(`${API_URL}/create`, {
         method: 'POST',
         headers: {

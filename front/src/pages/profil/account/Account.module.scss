@@ -1,0 +1,111 @@
+.account {
+    background-image: url(../../../assets/background/152699-abstract-gold-letters-background.webp);
+    height: 100vh;
+    background-size: cover;
+    background-repeat: no-repeat;
+    overflow-y: auto;
+
+    h1 {
+        color: white;
+        text-align: center;
+    }
+
+    .blockPhoto {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 20px;
+
+        .imgProfil {
+            border-radius: 50%;
+            width: 300px;
+            height: 300px;
+        }
+    }
+
+    .bottomIcon {
+        position: fixed;
+        display: flex;
+        justify-content: space-around;
+        background-color: rgba(255, 255, 255, 0.8);
+        font-size: 50px;
+        width: 100%;
+        bottom: 0;
+        padding: 10px 0;
+
+        .disabled {
+            opacity: 0.5;
+        }
+    }
+
+    .buttonContainer {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+
+        .editButton {
+            background-color: #ee9c31;
+            color: white;
+            padding: 10px 20px;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease-in-out;
+            margin-top: 10px;
+        }
+    }
+
+    .editButtons {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 20px;
+        margin-bottom: 80px;
+
+        .editButton {
+            background-color: #ee9c31;
+            color: white;
+            padding: 10px 20px;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease-in-out;
+            margin-top: 10px;
+        }
+
+        .cancelButton {
+            background-color: red;
+            color: white;
+            padding: 10px 20px;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease-in-out;
+            margin: 10px 41px;
+        }
+    }
+
+
+    .infos {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 20px;
+
+        .inputField {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            margin-bottom: 10px;
+            width: 80%;
+        }
+
+        input[type="text"].editing {
+            border: 2px solid #ee9c31;
+        }
+    }
+}

@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import TinderCard from "react-tinder-card";
-import { getAllUsers } from "../../apis/users";
+import { getAllUsers, unreadMatches } from "../../../apis/users";
 import style from "./ProfilMobile.module.scss";
 import { FcLike } from "react-icons/fc";
 import { CgDebug } from "react-icons/cg";
@@ -9,23 +10,34 @@ import { VscAccount } from "react-icons/vsc";
 import { FiSearch } from "react-icons/fi";
 import { AiOutlineMessage } from "react-icons/ai";
 import { GrNotification } from "react-icons/gr";
-import { findPhotoById } from "../../apis/photos";
-import { createMatch } from "../../apis/match";
-import { getToken } from "../../data/Token";
+import { MdOutlineNotificationsActive } from "react-icons/md";
+import { findPhotoById } from "../../../apis/photos";
+import { createMatch } from "../../../apis/match";
+import { getToken } from "../../../data/Token";
 import jwtDecode from "jwt-decode";
+import Account from "../account/Account";
 
 const ProfilMobile = () => {
+  const navigate = useNavigate();
   const [photo, setPhoto] = useState({});
   const [users, setUsers] = useState([]);
   const [userConnected, setUserConnected] = useState();
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [hasNewMatch, setHasNewMatch] = useState(false);
   // eslint-disable-next-line
   const [lastDirection, setLastDirection] = useState();
   const currentIndexRef = useRef(currentIndex);
   // eslint-disable-next-line
   const [disableUndo, setDisableUndo] = useState(true);
+  const [newMatchFound, setNewMatchFound] = useState(true);
+  const [showAccount, setShowAccount] = useState(false);
 
+  const handleAccountClick = () => {
+    const userId = userConnected.idUser;
+    navigate(`/profil/${userId}/account`);
+    setShowAccount(true);
+  };
+
+  //recuperation des users
   useEffect(() => {
     async function fetchData() {
       try {
@@ -44,6 +56,7 @@ const ProfilMobile = () => {
     fetchData();
   }, []);
 
+  //recuperation des photo associé aux users
   useEffect(() => {
     async function fetchPhotos() {
       const photoData = {};
@@ -84,8 +97,12 @@ const ProfilMobile = () => {
     }
   };
 
+  /**
+   * Gestionnaire d'événements appelé lorsque la carte Tinder quitte l'écran.
+   * @param {string} pseudo - Le nom d'utilisateur de la carte qui quitte l'écran.
+   * @param {number} idx - L'index de la carte dans la liste des cartes d'utilisateurs.
+   */
   const outOfFrame = (pseudo, idx) => {
-    // console.log(`${pseudo} (${idx}) left the screen!`, currentIndexRef.current);
     if (currentIndexRef.current > idx) {
       childRefs[currentIndexRef.current].current.restoreCard();
     }
@@ -93,17 +110,13 @@ const ProfilMobile = () => {
 
   const swipe = async (dir) => {
     if (canSwipe && currentIndex < users.length) {
-
       const matchData = {
         userSender: userConnected.idUser,
         userReceiver: users[currentIndex].id,
       };
 
       try {
-        // Envoyer les ID des utilisateurs au backend pour créer un match
-        const createdMatch = await createMatch(matchData);
-
-        console.log("Match créé avec succès : ", createdMatch);
+        await createMatch(matchData);
       } catch (error) {
         console.error("Erreur lors de la création du match :", error);
       }
@@ -119,56 +132,85 @@ const ProfilMobile = () => {
     await childRefs[newIndex].current.restoreCard();
   };
 
+  //recuperation des matchs de l'user
+  useEffect(() => {
+    async function fetchUnreadMatches() {
+      try {
+        if (userConnected && userConnected.idUser) {
+          const matches = await unreadMatches(userConnected.idUser);
+          
+          if (matches.length > 0) {
+            setNewMatchFound(matches.length > 0 ? true : false);
+          } else {
+            setNewMatchFound(false);
+          }
+        }
+      } catch (error) {
+        console.error(
+          "Erreur lors de la récupération des matchs non lus :",
+          error
+        );
+      }
+    }
+    fetchUnreadMatches();
+  }, [userConnected]);
+
   return (
     <div className={style.profilMobile}>
-      <div>
-        <p className={style.pseudo}>
-          {" "}
-          {users[currentIndex] && users[currentIndex].pseudo}
-        </p>
-        {users.map((user, index) => (
-          <TinderCard
-            ref={childRefs[index]}
-            key={user.id}
-            onSwipe={(dir) => swiped(dir, user.id, index)}
-            onCardLeftScreen={() => outOfFrame(user.pseudo, index)}
-          >
-            <div
-              className={`${style.card} ${
-                currentIndex === index ? "" : style.hidden
-              }`}
+        <div>
+          <p className={style.pseudo}>
+            {users[currentIndex] && users[currentIndex].pseudo}
+          </p>
+          {users.map((user, index) => (
+            <TinderCard
+              ref={childRefs[index]}
+              key={user.id}
+              onSwipe={(dir) => swiped(dir, user.id, index)}
+              onCardLeftScreen={() => outOfFrame(user.pseudo, index)}
             >
-              <img src={photo[user.id]} alt={user.pseudo} />
-              <div className={style.iconOverlay}>
-                <div
-                  className={`${style.undoDislikeIcon} ${
-                    currentIndex === 0 ? style.disabled : ""
-                  }`}
-                  onClick={() => goBack()}
-                >
-                  <FcUndo />
-                </div>
-                <div
-                  className={style.disLikeIcon}
-                  onClick={() => swipe("left")}
-                >
-                  <CgDebug />
-                </div>
-                <div className={style.likeIcon} onClick={() => swipe("right")}>
-                  <FcLike />
+              <div
+                className={`${style.card} ${
+                  currentIndex === index ? "" : style.hidden
+                }`}
+              >
+                <img src={photo[user.id]} alt={user.pseudo} />
+                <div className={style.iconOverlay}>
+                  <div
+                    className={`${style.undoDislikeIcon} ${
+                      currentIndex === 0 ? style.disabled : ""
+                    }`}
+                    onClick={() => goBack()}
+                  >
+                    <FcUndo />
+                  </div>
+                  <div
+                    className={style.disLikeIcon}
+                    onClick={() => swipe("left")}
+                  >
+                    <CgDebug />
+                  </div>
+                  <div
+                    className={style.likeIcon}
+                    onClick={() => swipe("right")}
+                  >
+                    <FcLike />
+                  </div>
                 </div>
               </div>
-            </div>
-          </TinderCard>
-        ))}
-      </div>
-
+            </TinderCard>
+          ))}
+        </div>
       <div className={style.bottomIcon}>
         <FiSearch />
-        <GrNotification className={style.notifs}/>
+        {newMatchFound ? (
+          <MdOutlineNotificationsActive className={style.newmatch} />
+        ) : (
+          <GrNotification />
+        )}
         <AiOutlineMessage />
-        <VscAccount />
+        <VscAccount  onClick={handleAccountClick} />
       </div>
+      {showAccount && <Account/>}
     </div>
   );
 };

@@ -35,6 +35,9 @@ public class Match {
     @Column(name = "current_status")
     private Status currentStatus;
 
+    @Column(name = "is_read")
+    private Boolean isRead;
+
     public Match() {
     }
 
@@ -78,5 +81,12 @@ public class Match {
         this.currentStatus = currentStatus;
     }
 
+    public Boolean getIsRead() {
+        return isRead;
+    }
+
+    public void setIsRead(Boolean isRead) {
+        this.isRead = isRead;
+    }
 
 }

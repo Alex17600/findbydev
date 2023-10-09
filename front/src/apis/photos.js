@@ -40,5 +40,5 @@ export const findPhotoById = async (userId) => {
     } catch (error) {
       throw new Error('Erreur lors de la récupération de la photo : ' + error.message);
     }
-  };
+};
   
