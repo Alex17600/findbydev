@@ -21,20 +21,19 @@ public class MatchId implements Serializable {
         this.idUserReceiver = idUserReceiver;
     }
 
-
-    public Integer getIdUserReceveir() {
+    public Integer getIdUserSender() {
         return idUserSender;
     }
 
-    public void setIdUserReceveir(Integer idUserSender) {
+    public void setIdUserSender(Integer idUserSender) {
         this.idUserSender = idUserSender;
     }
 
-    public Integer getidUserReceiver() {
+    public Integer getIdUserReceiver() {
         return idUserReceiver;
     }
 
-    public void setidUserReceiver(Integer idUserReceiver) {
+    public void setIdUserReceiver(Integer idUserReceiver) {
         this.idUserReceiver = idUserReceiver;
     }
 

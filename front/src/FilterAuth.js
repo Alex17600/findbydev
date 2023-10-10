@@ -26,6 +26,8 @@ const FilterAuth = ({ children }) => {
         navigate("/login");
       } else if (location.pathname === "/login" || location.pathname === "/") {
         navigate("/accueil");
+      } else if (location.pathname === "/profil") {
+        navigate("/profil/card");
       }
     }
 // eslint-disable-next-line

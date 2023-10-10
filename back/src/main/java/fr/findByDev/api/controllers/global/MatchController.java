@@ -1,12 +1,14 @@
 package fr.findByDev.api.controllers.global;
 
 import java.sql.Timestamp;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -87,4 +89,34 @@ public class MatchController extends GenericController<Match, MatchId> {
 
         return matchRepository.save(match);
     }
+
+    @PatchMapping("/update-status")
+    @ResponseStatus(HttpStatus.OK)
+    @CrossOrigin
+    public Match updateMatchStatus(@RequestBody Map<String, Object> data) {
+        try {
+            Integer idUserReceiver = Integer.parseInt((String) data.get("receiver"));
+            Integer idUserSender = Integer.parseInt((String) data.get("sender"));
+            String newStatus = (String) data.get("newStatus");
+    
+            // Recherchez le match correspondant dans la base de données en utilisant les IDs
+            Match match = matchRepository.findByIdMatch(idUserSender, idUserReceiver);
+    
+            if (match != null) {
+                // Assurez-vous que le nouveau statut est valide (VALIDE ou REFUSE)
+                if ("VALIDE".equals(newStatus) || "REFUSE".equals(newStatus)) {
+                    match.setCurrentStatus(Status.valueOf(newStatus));
+                    return matchRepository.save(match);
+                } else {
+                    throw new IllegalArgumentException("Statut invalide.");
+                }
+            } else {
+                throw new IllegalArgumentException("Match introuvable.");
+            }
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("ID utilisateur non valide.");
+        }
+    }
+    
+
 }

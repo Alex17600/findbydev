@@ -15,7 +15,5 @@ public class MatchRequestDTO {
     }
     public void setUserReceiver(Integer userReceiver) {
         this.userReceiver = userReceiver;
-    }
-
-    
+    }   
 }

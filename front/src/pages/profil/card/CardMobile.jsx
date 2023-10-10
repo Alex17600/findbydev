@@ -2,7 +2,7 @@ import React, { useState, useMemo, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import TinderCard from "react-tinder-card";
 import { getAllUsers, unreadMatches } from "../../../apis/users";
-import style from "./ProfilMobile.module.scss";
+import style from "./CardMobile.module.scss";
 import { FcLike } from "react-icons/fc";
 import { CgDebug } from "react-icons/cg";
 import { FcUndo } from "react-icons/fc";
@@ -34,12 +34,12 @@ const ProfilMobile = () => {
 
   const handleAccountClick = () => {
     const userId = userConnected.idUser;
-    navigate(`/profil/${userId}/account`);
+    navigate(`../${userId}/account`);
   };
 
   const handleNotificationsClick = () => {
     const userId = userConnected.idUser;
-    navigate(`/profil/${userId}/notices`);
+    navigate(`../${userId}/notice`);
   };
   
 

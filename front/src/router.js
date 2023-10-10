@@ -6,12 +6,14 @@ import FilterAuth from "./FilterAuth";
 const Accueil = lazy(() => import("./pages/home/Accueil"));
 const Register = lazy(() => import("./pages/register/Register"));
 const Login = lazy(() => import("./pages/login/Login"));
-const ProfilMobile = lazy(() => import("./pages/profil/general/ProfilMobile"));
 const Profil = lazy(() => import("./pages/profil/Profil"));
+const Card = lazy(() => import("./pages/profil/card/Card"));
+const CardMobile = lazy(() => import("./pages/profil/card/CardMobile"));
+const Account = lazy(() => import("./pages/profil/account/Account"));
+const Notice = lazy(() => import("./pages/profil/notice/Notice"));
 const Photo = lazy(() => import("./pages/register/photos/Photo"));
 const Informations = lazy(() => import("./pages/register/infos/Informations"));
-const Account = lazy(() => import("./pages/profil/account/Account"))
-const Notice = lazy(() => import("./pages/profil/notice/Notice"))
+
 
 const isMobileView = window.innerWidth < 928;
 
@@ -50,18 +52,29 @@ export const router = createBrowserRouter([
         path: "login",
         element: <Login />,
       },
+
       {
         path: "profil",
-        element: isMobileView ? <ProfilMobile /> : <Profil />,
-      },
-      {
-        path: "profil/:userId/account",
-        element: <Account />,
-      },
-      {
-        path: "profil/:userId/notices",
-        element: <Notice />,
-      },
+        element: (
+          <Profil>
+            <Outlet/>
+          </Profil>
+        ),
+        children: [
+          {
+            path: "card",
+            element: isMobileView ? <CardMobile /> : <Card />,
+          },
+          {
+            path: ":userId/account",
+            element: <Account />
+          },
+          {
+            path: ":userId/notice",
+            element: <Notice />
+          }
+        ]
+      }
     ],
   },
 ]);

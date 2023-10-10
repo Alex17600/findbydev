@@ -9,6 +9,8 @@ import { GrNotification } from "react-icons/gr";
 import { AiOutlineMessage } from "react-icons/ai";
 import { VscAccount } from "react-icons/vsc";
 import { findPhotoById } from "../../../apis/photos";
+import { getToken } from "../../../data/Token";
+import jwtDecode from "jwt-decode";
 
 const iconColor = "#ee9c31";
 const Account = () => {
@@ -21,10 +23,18 @@ const Account = () => {
   useEffect(() => {
     async function fetchData() {
       try {
-        const data = await findUserById(userId);
-        const photoData = await findPhotoById(userId);
-        setUser(data);
-        setPhoto(photoData);
+        const token = getToken();
+        const decodedToken = jwtDecode(token);
+        const tokenId = decodedToken.idUser;
+
+        if (Number(tokenId) === Number(userId)) {
+          const data = await findUserById(userId);
+          const photoData = await findPhotoById(userId);
+          setUser(data);
+          setPhoto(photoData);
+        } else {
+          navigate("/accueil");
+        }
       } catch (error) {
         console.error(
           "Erreur lors de la récupération de l'utilisateur :",
@@ -35,8 +45,6 @@ const Account = () => {
     fetchData();
     // eslint-disable-next-line
   }, []);
-
-  console.log(user);
 
   const handleLogout = () => {
     clearToken();

@@ -216,7 +216,7 @@ public class UserController extends GenericController<User, Integer> {
 
             // // Marquez ces matches comme lus
             // for (Match match : unreadMatches) {
-            //     // match.setIsRead(true);
+            //     match.setIsRead(true);
             //     matchRepository.save(match);
             //     // User sender = match.getSender();
             // }
