@@ -29,7 +29,6 @@ export const findPhotoById = async (userId) => {
           'Content-Type': 'application/json',
         },
       });
-  
       if (!response.ok) {
         throw new Error('Erreur lors de la récupération de la photo');
       }

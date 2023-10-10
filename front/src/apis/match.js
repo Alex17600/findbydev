@@ -26,8 +26,6 @@ export async function createMatch(matchData) {
 }
 
 export async function updateMatch(data) {
-  console.log(data);
-
   try {
     const response = await fetch(`${API_URL}/update-status`, {
       headers: {
@@ -35,9 +33,7 @@ export async function updateMatch(data) {
         'Content-Type': 'application/json'
       },
       method: 'PATCH',
-      body: JSON.stringify({
-        data
-      })
+      body: JSON.stringify(data)
     });
 
     if (response.ok) {
@@ -50,3 +46,5 @@ export async function updateMatch(data) {
     throw new Error('Erreur lors de la mise à jour du match');
   }
 }
+
+

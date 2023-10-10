@@ -79,11 +79,8 @@ const updateMatchStatus = async (match, newStatus) => {
       newStatus: newStatus
     };
 
-    console.log(data);
-
     const updatedMatch = await updateMatch(data);
     
-
     setMatches((prevMatches) =>
       prevMatches.map((prevMatch) =>
         prevMatch.idMatch === updatedMatch.idMatch ? updatedMatch : prevMatch

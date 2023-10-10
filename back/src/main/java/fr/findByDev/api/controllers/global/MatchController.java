@@ -95,8 +95,8 @@ public class MatchController extends GenericController<Match, MatchId> {
     @CrossOrigin
     public Match updateMatchStatus(@RequestBody Map<String, Object> data) {
         try {
-            Integer idUserReceiver = Integer.parseInt((String) data.get("receiver"));
-            Integer idUserSender = Integer.parseInt((String) data.get("sender"));
+            Integer idUserReceiver = (Integer) data.get("receiver");
+            Integer idUserSender = (Integer) data.get("sender");
             String newStatus = (String) data.get("newStatus");
     
             // Recherchez le match correspondant dans la base de données en utilisant les IDs
