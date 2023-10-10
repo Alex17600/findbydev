@@ -206,8 +206,7 @@ public class UserController extends GenericController<User, Integer> {
     @GetMapping("/{userId}/unread-matches")
     @ResponseStatus(HttpStatus.OK)
     @CrossOrigin
-    public List<Match> getUnreadMatches(@PathVariable Integer userId) {
-        Optional<User> optionalUser = userRepository.findById(userId);
+    public List<Match> getUnreadMatches(@PathVariable Integer userId) {        Optional<User> optionalUser = userRepository.findById(userId);
 
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();

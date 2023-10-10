@@ -11,11 +11,11 @@ import { FiSearch } from "react-icons/fi";
 import { AiOutlineMessage } from "react-icons/ai";
 import { GrNotification } from "react-icons/gr";
 import { MdOutlineNotificationsActive } from "react-icons/md";
+import { IoIosReturnLeft } from "react-icons/io"
 import { findPhotoById } from "../../../apis/photos";
 import { createMatch } from "../../../apis/match";
 import { getToken } from "../../../data/Token";
 import jwtDecode from "jwt-decode";
-import Account from "../account/Account";
 
 const ProfilMobile = () => {
   const navigate = useNavigate();
@@ -25,24 +25,39 @@ const ProfilMobile = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   // eslint-disable-next-line
   const [lastDirection, setLastDirection] = useState();
+  const [reachedEndOfList, setReachedEndOfList] = useState(false);
   const currentIndexRef = useRef(currentIndex);
   // eslint-disable-next-line
   const [disableUndo, setDisableUndo] = useState(true);
   const [newMatchFound, setNewMatchFound] = useState(true);
-  const [showAccount, setShowAccount] = useState(false);
+
 
   const handleAccountClick = () => {
     const userId = userConnected.idUser;
     navigate(`/profil/${userId}/account`);
-    setShowAccount(true);
   };
+
+  const handleNotificationsClick = () => {
+    const userId = userConnected.idUser;
+    navigate(`/profil/${userId}/notices`);
+  };
+  
 
   //recuperation des users
   useEffect(() => {
+    const token = getToken();
+    const decodedToken = jwtDecode(token);
+    setUserConnected(decodedToken);
+
     async function fetchData() {
       try {
         const data = await getAllUsers();
-        setUsers(data);
+        // Exclure l'utilisateur connecté de la liste
+        const filteredUsers = data.filter(
+          (user) => user.id !== decodedToken.idUser
+        );
+        console.log(filteredUsers);
+        setUsers(filteredUsers);
       } catch (error) {
         console.error(
           "Erreur lors de la récupération des utilisateurs :",
@@ -50,13 +65,11 @@ const ProfilMobile = () => {
         );
       }
     }
-    const token = getToken();
-    const decodedToken = jwtDecode(token);
-    setUserConnected(decodedToken);
+
     fetchData();
   }, []);
 
-  //recuperation des photo associé aux users
+  //recuperation des photos associées aux users
   useEffect(() => {
     async function fetchPhotos() {
       const photoData = {};
@@ -114,6 +127,10 @@ const ProfilMobile = () => {
         userSender: userConnected.idUser,
         userReceiver: users[currentIndex].id,
       };
+      //vérif fin de liste
+      if (currentIndex === users.length - 1) {
+        setReachedEndOfList(true);
+      }
 
       try {
         await createMatch(matchData);
@@ -138,7 +155,7 @@ const ProfilMobile = () => {
       try {
         if (userConnected && userConnected.idUser) {
           const matches = await unreadMatches(userConnected.idUser);
-          
+
           if (matches.length > 0) {
             setNewMatchFound(matches.length > 0 ? true : false);
           } else {
@@ -155,62 +172,84 @@ const ProfilMobile = () => {
     fetchUnreadMatches();
   }, [userConnected]);
 
+
+  // Fonction pour réinitialiser la liste des cartes Tinder
+  const resetCardList = () => {
+    // Mettez à jour currentIndex et réinitialisez reachedEndOfList
+    setCurrentIndex(0);
+    setReachedEndOfList(false);
+    // Réinitialisez la liste des cartes Tinder
+    childRefs.forEach((ref, index) => {
+      if (ref.current) {
+        ref.current.restoreCard();
+      }
+    });
+  };
+
   return (
     <div className={style.profilMobile}>
-        <div>
-          <p className={style.pseudo}>
-            {users[currentIndex] && users[currentIndex].pseudo}
-          </p>
-          {users.map((user, index) => (
-            <TinderCard
-              ref={childRefs[index]}
-              key={user.id}
-              onSwipe={(dir) => swiped(dir, user.id, index)}
-              onCardLeftScreen={() => outOfFrame(user.pseudo, index)}
+      <div>
+        <p className={style.pseudo}>
+          {users[currentIndex] && users[currentIndex].pseudo}
+        </p>
+        {users.map((user, index) => (
+          <TinderCard
+            ref={childRefs[index]}
+            key={user.id}
+            onSwipe={(dir) => swiped(dir, user.id, index)}
+            onCardLeftScreen={() => outOfFrame(user.pseudo, index)}
+          >
+            <div
+              className={`${style.card} ${
+                currentIndex === index ? "" : style.hidden
+              }`}
             >
-              <div
-                className={`${style.card} ${
-                  currentIndex === index ? "" : style.hidden
-                }`}
-              >
-                <img src={photo[user.id]} alt={user.pseudo} />
-                <div className={style.iconOverlay}>
-                  <div
-                    className={`${style.undoDislikeIcon} ${
-                      currentIndex === 0 ? style.disabled : ""
-                    }`}
-                    onClick={() => goBack()}
-                  >
-                    <FcUndo />
-                  </div>
-                  <div
-                    className={style.disLikeIcon}
-                    onClick={() => swipe("left")}
-                  >
-                    <CgDebug />
-                  </div>
-                  <div
-                    className={style.likeIcon}
-                    onClick={() => swipe("right")}
-                  >
-                    <FcLike />
-                  </div>
+              <img src={photo[user.id]} alt={user.pseudo} />
+              <div className={style.iconOverlay}>
+                <div
+                  className={`${style.undoDislikeIcon} ${
+                    currentIndex === 0 ? style.disabled : ""
+                  }`}
+                  onClick={() => goBack()}
+                >
+                  <FcUndo />
+                </div>
+                <div
+                  className={style.disLikeIcon}
+                  onClick={() => swipe("left")}
+                >
+                  <CgDebug />
+                </div>
+                <div className={style.likeIcon} onClick={() => swipe("right")}>
+                  <FcLike />
                 </div>
               </div>
-            </TinderCard>
-          ))}
-        </div>
+            </div>
+          </TinderCard>
+        ))}
+        {/* Composant spécial lorsque la fin de la liste est atteinte */}
+        {reachedEndOfList && (
+          <div className={style.endOfListCard}>
+            <div className={style.endOfListMessage}>
+              Il n'y a plus d'autres profils pour le moment.
+            </div>
+            <div className={style.scrollToStartIcon} onClick={resetCardList}>
+              <IoIosReturnLeft />
+            </div>
+          </div>
+        )}
+      </div>
       <div className={style.bottomIcon}>
         <FiSearch />
         {newMatchFound ? (
-          <MdOutlineNotificationsActive className={style.newmatch} />
+          <MdOutlineNotificationsActive className={style.newmatch} onClick={handleNotificationsClick}/>
         ) : (
           <GrNotification />
         )}
         <AiOutlineMessage />
-        <VscAccount  onClick={handleAccountClick} />
+        <VscAccount onClick={handleAccountClick} />
       </div>
-      {showAccount && <Account/>}
+
     </div>
   );
 };

@@ -82,6 +82,7 @@ CREATE TABLE _match_(
    Id_user_sender INTEGER,
    date_hour DATE,
    current_status status,
+   is_read BOOLEAN,
    PRIMARY KEY(Id_user_receiver, Id_user_sender),
    FOREIGN KEY(Id_user_receiver) REFERENCES _user_(Id_user),
    FOREIGN KEY(Id_user_sender) REFERENCES _user_(Id_user)

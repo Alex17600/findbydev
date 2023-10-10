@@ -11,6 +11,7 @@ const Profil = lazy(() => import("./pages/profil/Profil"));
 const Photo = lazy(() => import("./pages/register/photos/Photo"));
 const Informations = lazy(() => import("./pages/register/infos/Informations"));
 const Account = lazy(() => import("./pages/profil/account/Account"))
+const Notice = lazy(() => import("./pages/profil/notice/Notice"))
 
 const isMobileView = window.innerWidth < 928;
 
@@ -56,7 +57,11 @@ export const router = createBrowserRouter([
       {
         path: "profil/:userId/account",
         element: <Account />,
-      }
+      },
+      {
+        path: "profil/:userId/notices",
+        element: <Notice />,
+      },
     ],
   },
 ]);
