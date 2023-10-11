@@ -16,6 +16,8 @@ import fr.findByDev.api.repositories.GenericRepository;
 @Repository
 public interface MatchRepository extends GenericRepository<Match, MatchId>{
     List<Match> findByReceiverAndIsReadAndCurrentStatus(User receiver, boolean isRead, Status currentStatus);
+
+    List<Match> findByReceiverAndCurrentStatus(User receiver, Status currentStatus);
     
    @Query("SELECT m FROM Match m WHERE m.idMatch.idUserSender = :idUserSender AND m.idMatch.idUserReceiver = :idUserReceiver")
     Match findByIdMatch(@Param("idUserSender") Integer idUserSender, @Param("idUserReceiver") Integer idUserReceiver);

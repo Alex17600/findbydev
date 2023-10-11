@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { TfiClose } from "react-icons/tfi";
 import { updatePassword } from "../../apis/users";
 
-
 const FirstConnexion = ({ passwordTemporaly, setActiveAccount }) => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
@@ -38,14 +37,20 @@ const FirstConnexion = ({ passwordTemporaly, setActiveAccount }) => {
     if (!/(?=.*[a-z])/.test(newPassword)) {
       missingRequirements.push("une minuscule");
     }
+    
     if (!/(?=.*[A-Z])/.test(newPassword)) {
       missingRequirements.push("une majuscule");
     }
+
     if (!/(?=.*\d)/.test(newPassword)) {
       missingRequirements.push("un chiffre");
     }
-    if (newPassword.length < 8) {
-      missingRequirements.push("au moins 8 caractères");
+
+    if (!/[!@#$%^&*]/.test(newPassword)) {
+      missingRequirements.push("un caractère spécial (!, @, #, $, %, ^, &, *)");
+    }
+    if (newPassword.length < 12) {
+      missingRequirements.push("au moins 12 caractères");
     }
 
     if (newPassword === passwordTemporaly) {
@@ -82,7 +87,7 @@ const FirstConnexion = ({ passwordTemporaly, setActiveAccount }) => {
           setTimeout(() => {
             event.target.children[0].disabled = false;
             setActiveAccount(true);
-            navigate("/login")
+            navigate("/login");
           }, 3000);
         }
       }
@@ -93,8 +98,55 @@ const FirstConnexion = ({ passwordTemporaly, setActiveAccount }) => {
 
   return (
     <form className={style.firstConnection} onSubmit={handleSubmit}>
-        {windowWidth < 928 ? (
-          <div className={style.blockLogin}>
+      {windowWidth < 928 ? (
+        <div className={style.blockLogin}>
+          <div className={style.returnIcon}>
+            <TfiClose onClick={() => navigate("/accueil")} />
+          </div>
+          <h1>Connectez-vous</h1>
+          {error && <div className={style.errorText}>{error}</div>}
+          {!error && !success && (
+            <div className={style.info}>
+              Minimum 8 caractères avec une majuscule, minuscule et un chiffre
+            </div>
+          )}
+          {success && (
+            <div className={style.successText}>
+              <p>
+                Modification réussie ! Vous allez être redirigé vers l'écran de
+                connexion
+              </p>
+            </div>
+          )}
+          <input
+            type="password"
+            placeholder="Nouveau mot de passe"
+            autoComplete="current-password"
+            name="new-password"
+            value={newPassword}
+            onChange={handleNewPasswordChange}
+          />
+          <input
+            type="password"
+            placeholder="Repetez votre mot de passe"
+            autoComplete="current-password"
+            name="repeat-new-password"
+            value={repeatNewPassword}
+            onChange={handleRepeatNewPasswordChange}
+          />
+          <div className={style.bas}>
+            <p>
+              Pas encore de compte?{" "}
+              <span onClick={() => navigate("/register/informations")}>
+                Créez en-un ici
+              </span>
+            </p>
+            <button type="submit">Confirmer</button>
+          </div>
+        </div>
+      ) : (
+        <div className={style.popup}>
+          <div className={style.popupContent}>
             <div className={style.returnIcon}>
               <TfiClose onClick={() => navigate("/accueil")} />
             </div>
@@ -130,59 +182,11 @@ const FirstConnexion = ({ passwordTemporaly, setActiveAccount }) => {
               onChange={handleRepeatNewPasswordChange}
             />
             <div className={style.bas}>
-              <p>
-                Pas encore de compte?{" "}
-                <span onClick={() => navigate("/register/informations")}>
-                  Créez en-un ici
-                </span>
-              </p>
               <button type="submit">Confirmer</button>
             </div>
           </div>
-        ) : (
-          <div className={style.popup}>
-            <div className={style.popupContent}>
-              <div className={style.returnIcon}>
-                <TfiClose onClick={() => navigate("/accueil")} />
-              </div>
-              <h1>Connectez-vous</h1>
-              {error && <div className={style.errorText}>{error}</div>}
-              {!error && !success && (
-                <div className={style.info}>
-                  Minimum 8 caractères avec une majuscule, minuscule et un
-                  chiffre
-                </div>
-              )}
-              {success && (
-                <div className={style.successText}>
-                  <p>
-                    Modification réussie ! Vous allez être redirigé vers l'écran
-                    de connexion
-                  </p>
-                </div>
-              )}
-              <input
-                type="password"
-                placeholder="Nouveau mot de passe"
-                autoComplete="current-password"
-                name="new-password"
-                value={newPassword}
-                onChange={handleNewPasswordChange}
-              />
-              <input
-                type="password"
-                placeholder="Repetez votre mot de passe"
-                autoComplete="current-password"
-                name="repeat-new-password"
-                value={repeatNewPassword}
-                onChange={handleRepeatNewPasswordChange}
-              />
-              <div className={style.bas}>
-                <button type="submit">Confirmer</button>
-              </div>
-            </div>
-          </div>
-        )}
+        </div>
+      )}
     </form>
   );
 };

@@ -1,4 +1,4 @@
-import React, {} from "react";
+import React, { Fragment } from "react";
 import { Outlet } from "react-router-dom";
 
 
@@ -6,9 +6,9 @@ const Profil = () => {
 
 
   return (
-    <div>
-      <Outlet />
-    </div>
+    <Fragment>
+      <Outlet/>
+    </Fragment>
   );
 };
 

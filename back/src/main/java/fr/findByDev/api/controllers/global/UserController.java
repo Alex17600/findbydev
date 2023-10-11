@@ -168,60 +168,110 @@ public class UserController extends GenericController<User, Integer> {
 
     /**
      * maj user
+     * 
      * @param userId
      * @return
      */
     @PatchMapping("/{userId}")
     public ResponseEntity<User> updateUser(@PathVariable Integer userId, @RequestBody User updatedUser) {
-        
+
         Optional<User> optionalUser = userRepository.findById(userId);
 
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
 
+            if (updatedUser.getPassword() != null) {
+                user.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
+            }
+
+            if (updatedUser.getDescription() != null) {
+                user.setDescription(updatedUser.getDescription());
+            }
+
+            if (updatedUser.getPseudo() != null) {
+                user.setPseudo(updatedUser.getPseudo());
+            }
+
+            if (updatedUser.getLastName() != null) {
+                user.setDescription(updatedUser.getLastName());
+            }
+
             if (updatedUser.getFirstName() != null) {
                 user.setFirstName(updatedUser.getFirstName());
             }
-            if (updatedUser.getLastName() != null) {
-                user.setLastName(updatedUser.getLastName());
+
+            if (updatedUser.getTown() != null) {
+                user.setTown(updatedUser.getTown());
             }
 
+            if (updatedUser.getGitProfile() != null) {
+                user.setGitProfile(updatedUser.getGitProfile());
+            }
 
-            // Enregistrez l'utilisateur mis à jour dans la base de données
+            if (updatedUser.getMail() != null) {
+                user.setMail(updatedUser.getMail());
+            }
+
+            if (updatedUser.getBirthday() != null) {
+                user.setBirthday(updatedUser.getBirthday());
+            }
+
             User updated = userRepository.save(user);
 
-            // Retournez l'utilisateur mis à jour en réponse
             return ResponseEntity.ok(updated);
         } else {
-            
+
             return ResponseEntity.notFound().build();
         }
     }
 
-   /**
-    * 
-    * @param userId
-    * @return
-    */
+    /**
+     * 
+     * @param userId
+     * @return
+     */
     @GetMapping("/{userId}/unread-matches")
     @ResponseStatus(HttpStatus.OK)
     @CrossOrigin
-    public List<Match> getUnreadMatches(@PathVariable Integer userId) {        Optional<User> optionalUser = userRepository.findById(userId);
+    public List<Match> getUnreadMatches(@PathVariable Integer userId) {
+        Optional<User> optionalUser = userRepository.findById(userId);
 
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
 
             // Récupérez tous les matches non lus et en attente de l'utilisateur
-            List<Match> unreadMatches = matchRepository.findByReceiverAndIsReadAndCurrentStatus(user, false, Status.EN_ATTENTE);
-
-            // // Marquez ces matches comme lus
-            // for (Match match : unreadMatches) {
-            //     match.setIsRead(true);
-            //     matchRepository.save(match);
-            //     // User sender = match.getSender();
-            // }
-
+            List<Match> unreadMatches = matchRepository.findByReceiverAndIsReadAndCurrentStatus(user, false,
+                    Status.EN_ATTENTE);
             return unreadMatches;
+        }
+
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Utilisateur non trouvé");
+    }
+
+    /**
+     * 
+     * @param userId
+     * @return
+     */
+    @GetMapping("/{userId}/read-matches")
+    @ResponseStatus(HttpStatus.OK)
+    @CrossOrigin
+    public List<Match> getReadMatches(@PathVariable Integer userId) {
+        Optional<User> optionalUser = userRepository.findById(userId);
+
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+
+            // Récupérez tous les matches non lus et en attente de l'utilisateur
+            List<Match> readMatches = matchRepository.findByReceiverAndCurrentStatus(user, Status.EN_ATTENTE);
+
+            // Marquez ces matches comme lus
+            for (Match match : readMatches) {
+                match.setIsRead(true);
+                matchRepository.save(match);
+            }
+
+            return readMatches;
         }
 
         throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Utilisateur non trouvé");
@@ -253,6 +303,12 @@ public class UserController extends GenericController<User, Integer> {
         return null;
     }
 
+    /**
+     * 
+     * @param userId
+     * @param image
+     * @return
+     */
     @PatchMapping(value = "/{userId}/upload-photo", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     @ResponseStatus(HttpStatus.OK)
     public User downloadPhoto(@PathVariable Integer userId, @RequestPart MultipartFile image) {
@@ -352,12 +408,13 @@ public class UserController extends GenericController<User, Integer> {
     }
 
     public String generatePasswordWithCriteria() {
-        int passwordLength = 10;
+        int passwordLength = 11;
         String upperCaseLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         String lowerCaseLetters = "abcdefghijklmnopqrstuvwxyz";
         String digits = "0123456789";
+        String specialChars = "!@#$%^&*()_-+=<>?";
 
-        String allChars = upperCaseLetters + lowerCaseLetters + digits;
+        String allChars = upperCaseLetters + lowerCaseLetters + digits + specialChars;
         Random random = new Random();
 
         StringBuilder password = new StringBuilder();
@@ -371,11 +428,15 @@ public class UserController extends GenericController<User, Integer> {
         // Add at least one digit
         password.append(digits.charAt(random.nextInt(digits.length())));
 
+        // Add at least one special character
+        password.append(specialChars.charAt(random.nextInt(specialChars.length())));
+
         // Fill the rest of the password with random characters
-        for (int i = 3; i < passwordLength; i++) {
+        for (int i = 4; i < passwordLength; i++) {
             password.append(allChars.charAt(random.nextInt(allChars.length())));
         }
 
         return password.toString();
     }
+
 }

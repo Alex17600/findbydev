@@ -2,6 +2,8 @@ import { lazy } from "react";
 import { createBrowserRouter, Outlet } from "react-router-dom";
 import App from "./App";
 import FilterAuth from "./FilterAuth";
+import { getToken } from "./data/Token";
+import jwtDecode from "jwt-decode";
 
 const Accueil = lazy(() => import("./pages/home/Accueil"));
 const Register = lazy(() => import("./pages/register/Register"));
@@ -14,6 +16,10 @@ const Notice = lazy(() => import("./pages/profil/notice/Notice"));
 const Photo = lazy(() => import("./pages/register/photos/Photo"));
 const Informations = lazy(() => import("./pages/register/infos/Informations"));
 
+const token = getToken();
+const decodedToken = jwtDecode(token);
+const userConnected = decodedToken;
+console.log(userConnected);
 
 const isMobileView = window.innerWidth < 928;
 
@@ -57,7 +63,7 @@ export const router = createBrowserRouter([
         path: "profil",
         element: (
           <Profil>
-            <Outlet/>
+            <Outlet userConnected={userConnected}/>
           </Profil>
         ),
         children: [
@@ -67,7 +73,7 @@ export const router = createBrowserRouter([
           },
           {
             path: ":userId/account",
-            element: <Account />
+            element: <Account  userConnected={userConnected}/>
           },
           {
             path: ":userId/notice",

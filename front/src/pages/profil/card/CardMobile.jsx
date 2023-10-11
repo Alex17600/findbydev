@@ -11,7 +11,7 @@ import { FiSearch } from "react-icons/fi";
 import { AiOutlineMessage } from "react-icons/ai";
 import { GrNotification } from "react-icons/gr";
 import { MdOutlineNotificationsActive } from "react-icons/md";
-import { IoIosReturnLeft } from "react-icons/io"
+import { IoIosReturnLeft } from "react-icons/io";
 import { findPhotoById } from "../../../apis/photos";
 import { createMatch } from "../../../apis/match";
 import { getToken } from "../../../data/Token";
@@ -31,7 +31,6 @@ const ProfilMobile = () => {
   const [disableUndo, setDisableUndo] = useState(true);
   const [newMatchFound, setNewMatchFound] = useState(true);
 
-
   const handleAccountClick = () => {
     const userId = userConnected.idUser;
     navigate(`../${userId}/account`);
@@ -41,7 +40,6 @@ const ProfilMobile = () => {
     const userId = userConnected.idUser;
     navigate(`../${userId}/notice`);
   };
-  
 
   //recuperation des users
   useEffect(() => {
@@ -56,7 +54,7 @@ const ProfilMobile = () => {
         const filteredUsers = data.filter(
           (user) => user.id !== decodedToken.idUser
         );
-        console.log(filteredUsers);
+        
         setUsers(filteredUsers);
       } catch (error) {
         console.error(
@@ -172,7 +170,6 @@ const ProfilMobile = () => {
     fetchUnreadMatches();
   }, [userConnected]);
 
-
   // Fonction pour réinitialiser la liste des cartes Tinder
   const resetCardList = () => {
     // Mettez à jour currentIndex et réinitialisez reachedEndOfList
@@ -242,14 +239,16 @@ const ProfilMobile = () => {
       <div className={style.bottomIcon}>
         <FiSearch />
         {newMatchFound ? (
-          <MdOutlineNotificationsActive className={style.newmatch} onClick={handleNotificationsClick}/>
+          <MdOutlineNotificationsActive
+            className={style.newmatch}
+            onClick={handleNotificationsClick}
+          />
         ) : (
-          <GrNotification />
+          <GrNotification onClick={handleNotificationsClick} />
         )}
         <AiOutlineMessage />
         <VscAccount onClick={handleAccountClick} />
       </div>
-
     </div>
   );
 };
