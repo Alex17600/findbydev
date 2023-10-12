@@ -1,24 +1,19 @@
 import React, { useState, useMemo, useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import TinderCard from "react-tinder-card";
-import { getAllUsers, unreadMatches } from "../../../apis/users";
+import { getAllUsers } from "../../../apis/users";
 import style from "./CardMobile.module.scss";
 import { FcLike } from "react-icons/fc";
 import { CgDebug } from "react-icons/cg";
 import { FcUndo } from "react-icons/fc";
-import { VscAccount } from "react-icons/vsc";
-import { FiSearch } from "react-icons/fi";
-import { AiOutlineMessage } from "react-icons/ai";
-import { GrNotification } from "react-icons/gr";
-import { MdOutlineNotificationsActive } from "react-icons/md";
 import { IoIosReturnLeft } from "react-icons/io";
 import { findPhotoById } from "../../../apis/photos";
 import { createMatch } from "../../../apis/match";
 import { getToken } from "../../../data/Token";
 import jwtDecode from "jwt-decode";
+import FooterMobile from "../../../components/footer/FooterMobile";
+import { useNavigate } from "react-router-dom";
 
 const ProfilMobile = () => {
-  const navigate = useNavigate();
   const [photo, setPhoto] = useState({});
   const [users, setUsers] = useState([]);
   const [userConnected, setUserConnected] = useState();
@@ -29,17 +24,7 @@ const ProfilMobile = () => {
   const currentIndexRef = useRef(currentIndex);
   // eslint-disable-next-line
   const [disableUndo, setDisableUndo] = useState(true);
-  const [newMatchFound, setNewMatchFound] = useState(true);
-
-  const handleAccountClick = () => {
-    const userId = userConnected.idUser;
-    navigate(`../${userId}/account`);
-  };
-
-  const handleNotificationsClick = () => {
-    const userId = userConnected.idUser;
-    navigate(`../${userId}/notice`);
-  };
+  const navigate = useNavigate();
 
   //recuperation des users
   useEffect(() => {
@@ -54,7 +39,7 @@ const ProfilMobile = () => {
         const filteredUsers = data.filter(
           (user) => user.id !== decodedToken.idUser
         );
-        
+
         setUsers(filteredUsers);
       } catch (error) {
         console.error(
@@ -147,29 +132,6 @@ const ProfilMobile = () => {
     await childRefs[newIndex].current.restoreCard();
   };
 
-  //recuperation des matchs de l'user
-  useEffect(() => {
-    async function fetchUnreadMatches() {
-      try {
-        if (userConnected && userConnected.idUser) {
-          const matches = await unreadMatches(userConnected.idUser);
-
-          if (matches.length > 0) {
-            setNewMatchFound(matches.length > 0 ? true : false);
-          } else {
-            setNewMatchFound(false);
-          }
-        }
-      } catch (error) {
-        console.error(
-          "Erreur lors de la récupération des matchs non lus :",
-          error
-        );
-      }
-    }
-    fetchUnreadMatches();
-  }, [userConnected]);
-
   // Fonction pour réinitialiser la liste des cartes Tinder
   const resetCardList = () => {
     // Mettez à jour currentIndex et réinitialisez reachedEndOfList
@@ -190,39 +152,46 @@ const ProfilMobile = () => {
           {users[currentIndex] && users[currentIndex].pseudo}
         </p>
         {users.map((user, index) => (
-          <TinderCard
-            ref={childRefs[index]}
-            key={user.id}
-            onSwipe={(dir) => swiped(dir, user.id, index)}
-            onCardLeftScreen={() => outOfFrame(user.pseudo, index)}
-          >
-            <div
-              className={`${style.card} ${
-                currentIndex === index ? "" : style.hidden
-              }`}
+            <TinderCard
+              ref={childRefs[index]}
+              key={user.id}
+              onSwipe={(dir) => swiped(dir, user.id, index)}
+              onCardLeftScreen={() => outOfFrame(user.pseudo, index)}
             >
-              <img src={photo[user.id]} alt={user.pseudo} />
-              <div className={style.iconOverlay}>
-                <div
-                  className={`${style.undoDislikeIcon} ${
-                    currentIndex === 0 ? style.disabled : ""
-                  }`}
-                  onClick={() => goBack()}
-                >
-                  <FcUndo />
-                </div>
-                <div
-                  className={style.disLikeIcon}
-                  onClick={() => swipe("left")}
-                >
-                  <CgDebug />
-                </div>
-                <div className={style.likeIcon} onClick={() => swipe("right")}>
-                  <FcLike />
+              <div
+              onClick={() => {
+                console.log("Clique sur la carte de l'utilisateur ID", user.id);
+                navigate(`/profil/${user.id}/user-details`);
+              }}
+                className={`${style.card} ${
+                  currentIndex === index ? "" : style.hidden
+                }`}
+              >
+                <img src={photo[user.id]} alt={user.pseudo} />
+                <div className={style.iconOverlay}>
+                  <div
+                    className={`${style.undoDislikeIcon} ${
+                      currentIndex === 0 ? style.disabled : ""
+                    }`}
+                    onClick={() => goBack()}
+                  >
+                    <FcUndo />
+                  </div>
+                  <div
+                    className={style.disLikeIcon}
+                    onClick={() => swipe("left")}
+                  >
+                    <CgDebug />
+                  </div>
+                  <div
+                    className={style.likeIcon}
+                    onClick={() => swipe("right")}
+                  >
+                    <FcLike />
+                  </div>
                 </div>
               </div>
-            </div>
-          </TinderCard>
+            </TinderCard>
         ))}
         {/* Composant spécial lorsque la fin de la liste est atteinte */}
         {reachedEndOfList && (
@@ -236,19 +205,7 @@ const ProfilMobile = () => {
           </div>
         )}
       </div>
-      <div className={style.bottomIcon}>
-        <FiSearch />
-        {newMatchFound ? (
-          <MdOutlineNotificationsActive
-            className={style.newmatch}
-            onClick={handleNotificationsClick}
-          />
-        ) : (
-          <GrNotification onClick={handleNotificationsClick} />
-        )}
-        <AiOutlineMessage />
-        <VscAccount onClick={handleAccountClick} />
-      </div>
+      <FooterMobile />
     </div>
   );
 };

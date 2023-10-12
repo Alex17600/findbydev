@@ -1,0 +1,77 @@
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import style from "./FooterMobile.module.scss";
+import { FiSearch } from "react-icons/fi";
+import { GrNotification } from "react-icons/gr";
+import { AiOutlineMessage } from "react-icons/ai";
+import { VscAccount } from "react-icons/vsc";
+import { MdOutlineNotificationsActive } from "react-icons/md";
+import { getToken } from "../../data/Token";
+import jwtDecode from "jwt-decode";
+import { unreadMatches } from "../../apis/users";
+
+const FooterMobile = () => {
+  const [userConnected, setUserConnected] = useState();
+  const [newMatchFound, setNewMatchFound] = useState(true);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    try {
+      const token = getToken();
+      const decodedToken = jwtDecode(token);
+      setUserConnected(decodedToken);
+    } catch (error) {}
+  }, []);
+
+  //recuperation des matchs de l'user
+  useEffect(() => {
+    async function fetchUnreadMatches() {
+      try {
+        if (userConnected && userConnected.idUser) {
+          const matches = await unreadMatches(userConnected.idUser);
+
+          if (matches.length > 0) {
+            setNewMatchFound(matches.length > 0 ? true : false);
+          } else {
+            setNewMatchFound(false);
+          }
+        }
+      } catch (error) {
+        console.error(
+          "Erreur lors de la récupération des matchs non lus :",
+          error
+        );
+      }
+    }
+    fetchUnreadMatches();
+  }, [userConnected]);
+  
+
+  const handleNotificationsClick = () => {
+    const userId = userConnected.idUser;
+    navigate(`../${userId}/notice`);
+  };
+
+  const handleAccountClick = () => {
+    const userId = userConnected.idUser;
+    navigate(`../${userId}/account`);
+  };
+
+  return (
+    <div className={style.bottomIcon}>
+      <FiSearch />
+      {newMatchFound ? (
+        <MdOutlineNotificationsActive
+          className={style.newmatch}
+          onClick={handleNotificationsClick}
+        />
+      ) : (
+        <GrNotification onClick={handleNotificationsClick} />
+      )}
+      <AiOutlineMessage />
+      <VscAccount onClick={handleAccountClick}/>
+    </div>
+  );
+};
+
+export default FooterMobile;

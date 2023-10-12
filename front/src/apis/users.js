@@ -155,13 +155,34 @@ export async function readMatches(userId) {
 export async function updateUser(userId, updateData) {
   // const formData = new FormData();
   // formData.append("image", image);
-  console.log(userId, updateData);
+
   const response = await fetch(`${URL_API}/${userId}`, {
     method: 'PATCH',
     headers: {
-      'Content-Type': 'application/json', 
+      'Content-Type': 'application/json',
     },
     body: JSON.stringify(updateData),
+  });
+
+  if (response.ok) {
+    const body = await response.json();
+    return Array.isArray(body) ? body : [body];
+  } else {
+    throw new Error('Erreur lors de la requête pour télécharger la photo');
+  }
+}
+
+//mise à jour de sa photo de profil sur le compte
+export async function updateProfileImageWithAuth(userId, image) {
+  const formData = new FormData();
+  formData.append("image", image);
+  const token = getToken();
+  const response = await fetch(`${URL_API}/${userId}/update-photo`, {
+    method: 'PATCH',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+    body: formData,
   });
 
   if (response.ok) {

@@ -1,0 +1,31 @@
+.userProfile {
+    background-image: url(../../../assets/background/152699-abstract-gold-letters-background.webp);
+    height: 100vh;
+    background-size: cover;
+    background-repeat: no-repeat;
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    .cardProfile {
+        display: flex;
+        flex-direction: column;
+        background-color: white;
+        width: 80%;
+        margin: 20px auto;
+        border-radius: 6px;
+
+        .photo {
+            margin: 20px auto 0;
+        }
+
+        h1, p {
+            text-align: center;
+        }
+
+        .description {
+            border: 1px solid black;
+            width: 80%;
+            margin:0 auto 10px;
+        }
+    }
+}

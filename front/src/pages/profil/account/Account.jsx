@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import style from "./Account.module.scss";
-import { findUserById, updateUser } from "../../../apis/users";
+import {
+  findUserById,
+  updateUser,
+  updateProfileImageWithAuth,
+} from "../../../apis/users";
 import { clearToken } from "../../../data/Token";
 import { BiLogOut } from "react-icons/bi";
-import { FiSearch } from "react-icons/fi";
-import { GrNotification } from "react-icons/gr";
-import { AiOutlineMessage } from "react-icons/ai";
-import { VscAccount } from "react-icons/vsc";
+import { FaPencilAlt } from "react-icons/fa";
 import { findPhotoById } from "../../../apis/photos";
+import FooterMobile from "../../../components/footer/FooterMobile";
 
-const iconColor = "#ee9c31";
+const iconColor = "#ffffff";
 
 const Account = ({ userConnected }) => {
   const { userId } = useParams();
@@ -19,6 +21,7 @@ const Account = ({ userConnected }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
+  const [newProfileImage, setNewProfileImage] = useState(null);
   const [formValues, setFormValues] = useState({
     description: "",
     pseudo: "",
@@ -30,8 +33,10 @@ const Account = ({ userConnected }) => {
     birthday: "",
   });
   const [updatePassword, setUpdatePassword] = useState(false);
+  const [modalPhoto, setModalPhoto] = useState(false);
   const [errorText, setErrorText] = useState("");
   const [successText, setSuccessText] = useState("");
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
   const navigate = useNavigate();
 
@@ -57,7 +62,10 @@ const Account = ({ userConnected }) => {
           navigate("/accueil");
         }
       } catch (error) {
-        console.error("Erreur lors de la récupération de l'utilisateur :", error);
+        console.error(
+          "Erreur lors de la récupération de l'utilisateur :",
+          error
+        );
       }
     }
     fetchData();
@@ -127,7 +135,7 @@ const Account = ({ userConnected }) => {
       }
 
       if (Object.keys(updateData).length === 0) {
-        // Aucune donnée à mettre à jour
+        // Aucune donnée à mettre à jour!!!
         setSuccessText("Aucune donnée à mettre à jour.");
         return;
       }
@@ -140,15 +148,76 @@ const Account = ({ userConnected }) => {
     }
   };
 
+  const openModalPhoto = () => {
+    setModalPhoto(true);
+  };
+
+  const closeModalPhoto = () => {
+    setModalPhoto(false);
+  };
+
+  const handleImageUpload = async () => {
+    try {
+      if (!newProfileImage) {
+        setErrorText("Veuillez sélectionner une image.");
+        return;
+      }
+
+      const response = await updateProfileImageWithAuth(
+        userConnected.idUser,
+        newProfileImage
+      );
+      console.log(response);
+      
+      setSuccessText("L'image de profil a été mise à jour avec succès.");
+      setShowSuccessMessage(true);
+
+      setTimeout(() => {
+        setShowSuccessMessage(false);
+        setModalPhoto(false);
+        window.location.reload();
+      }, 3000);
+    } catch (error) {
+      setErrorText("Erreur lors de la mise à jour.");
+    }
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    setNewProfileImage(file);
+  };
+
   return (
     <div className={style.account}>
       <div className={style.logoutIcon} onClick={handleLogout}>
-        <BiLogOut size={32} style={{ color: iconColor }} />
+        <BiLogOut size={40} style={{ color: iconColor }} />
       </div>
       <h1>Bienvenue sur votre compte {user.pseudo}</h1>
       <div className={style.blockPhoto}>
         <img src={photo} alt={user.pseudo} className={style.imgProfil} />
+        {isEditing && (
+          <button className={style.editPhotoButton} onClick={openModalPhoto}>
+            <FaPencilAlt />
+          </button>
+        )}
       </div>
+      {/* modal image */}
+      {modalPhoto && (
+        <div className={style.modal}>
+          <div className={style.modalContent}>
+            {showSuccessMessage && (
+              <div className={style.successMessage}>{successText}</div>
+            )}
+            <span className={style.closeModal} onClick={closeModalPhoto}>
+              &times;
+            </span>
+            <h2>Modifier l'image de profil</h2>
+            <input type="file" accept="image/*" onChange={handleImageChange} />
+            <button onClick={handleImageUpload}>Envoyer</button>
+          </div>
+        </div>
+      )}
+      {/* fin modal */}
       <div className={style.buttonContainer}>
         {!isEditing && (
           <button className={style.editButton} onClick={toggleEditing}>
@@ -251,23 +320,28 @@ const Account = ({ userConnected }) => {
             </div>
           </div>
           <div className={style.newPassword}>
-            <label>Ancien mot de passe</label>
-            <input
-              type="password"
-              placeholder="Ancien mot de passe"
-              onChange={(e) => setOldPassword(e.target.value)}
-              autoComplete="current-password"
-            />
-            <label>Nouveau mot de passe</label>
-            <input
-              type="password"
-              placeholder="Nouveau mot de passe"
-              onChange={(e) => setNewPassword(e.target.value)}
-              autoComplete="current-password"
-            />
+            <form>
+              <label>Ancien mot de passe</label>
+              <input
+                type="password"
+                placeholder="Ancien mot de passe"
+                onChange={(e) => setOldPassword(e.target.value)}
+                autoComplete="current-password"
+              />
+              <label>Nouveau mot de passe</label>
+              <input
+                type="password"
+                placeholder="Nouveau mot de passe"
+                onChange={(e) => setNewPassword(e.target.value)}
+                autoComplete="current-password"
+              />
+            </form>
           </div>
           <div className={style.editButtons}>
-            <button className={style.editButton} onClick={updatedUserWithtoutPic}>
+            <button
+              className={style.editButton}
+              onClick={updatedUserWithtoutPic}
+            >
               Confirmer
             </button>
             <button
@@ -281,13 +355,7 @@ const Account = ({ userConnected }) => {
           </div>
         </>
       )}
-
-      <div className={style.bottomIcon}>
-        <FiSearch />
-        <GrNotification />
-        <AiOutlineMessage />
-        <VscAccount className={style.disabled} />
-      </div>
+      <FooterMobile />
     </div>
   );
 };

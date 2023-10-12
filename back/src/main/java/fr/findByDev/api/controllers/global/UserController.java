@@ -95,6 +95,15 @@ public class UserController extends GenericController<User, Integer> {
         return userRepository.findById(id);
     }
 
+    // @PostMapping("/{id}/create-view")
+    // @ResponseStatus(HttpStatus.OK)
+    // @CrossOrigin
+    // public Optional<User> postView(@PathVariable Integer id) {
+    //     User userView = userRepository.findById(id).orElse(null);
+    //     userView.setView(userView.getView() + 1);
+    //     return userRepository.findById(id);
+    // }
+
     // Recuperation de la photo d'un user
     @GetMapping("/{idUser}/photo")
     public ResponseEntity<byte[]> getPhoto(@PathVariable Integer idUser) {
@@ -304,7 +313,8 @@ public class UserController extends GenericController<User, Integer> {
     }
 
     /**
-     * 
+     * Patch de l'user en y ajoutant sa photo 
+     * (ce n'est donc pas un POST)
      * @param userId
      * @param image
      * @return
@@ -312,6 +322,50 @@ public class UserController extends GenericController<User, Integer> {
     @PatchMapping(value = "/{userId}/upload-photo", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     @ResponseStatus(HttpStatus.OK)
     public User downloadPhoto(@PathVariable Integer userId, @RequestPart MultipartFile image) {
+
+        Optional<User> optionalUser = userRepository.findById(userId);
+
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+
+            try {
+                if (!image.isEmpty()) {
+                    logger.info("Sauvegarde du fichier image");
+
+                    String storageHash = getStorageHash(image).get();
+                    Path rootLocation = this.fileStorageService.getRootLocation();
+                    String fileExtension = mimeTypeToExtension(image.getContentType());
+                    storageHash = storageHash + fileExtension;
+                    Path saveLocation = rootLocation.resolve(storageHash);
+                    Files.deleteIfExists(saveLocation);
+                    Files.copy(image.getInputStream(), saveLocation);
+
+                    user.setPhoto(storageHash);
+
+                    return userRepository.save(user);
+                }
+            } catch (IOException e) {
+                logger.error(e.getMessage());
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                        "Impossible de sauvegarder l'image.");
+            }
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Utilisateur non trouvé");
+        }
+
+        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Impossible de sauvegarder la ressource.");
+    }
+
+    /**
+     * Méthode pour patch sa photo sur son compte avec une authorisation
+     * (On est pas cnsé acceder à son compte si pas de token, donc authorisation)
+     * @param userId
+     * @param image
+     * @return
+     */
+    @PatchMapping(value = "/{userId}/update-photo", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    @ResponseStatus(HttpStatus.OK)
+    public User updatePhoto(@PathVariable Integer userId, @RequestPart MultipartFile image) {
 
         Optional<User> optionalUser = userRepository.findById(userId);
 

@@ -1,8 +1,10 @@
 import { useNavigate } from "react-router-dom";
 import style from "./HeaderAccueil.module.scss";
 import { useEffect, useState } from 'react';
+import { getToken } from "../../data/Token";
 
 const HeaderAccueil = () => {
+  const token = getToken();
     const navigate = useNavigate();
     const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
@@ -21,7 +23,7 @@ const HeaderAccueil = () => {
   return (
     <div className={style.headerAccueil}>
       {windowWidth < 928 ? (
-        <pre className={style.headerPhone} onClick={()=> navigate("/accueil")}>findByDev&lt;♥/&gt;</pre>
+        <pre className={style.headerPhone} onClick={()=> navigate(token ? "/profil/card" : "/accueil")}>findByDev&lt;♥/&gt;</pre>
       ) : (
         <div className={style.headerLarge}>
           <pre className={style.navbar} onClick={()=> navigate("/accueil")}>findByDev&lt;♥/&gt;</pre>

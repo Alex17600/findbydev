@@ -5,6 +5,7 @@ import FilterAuth from "./FilterAuth";
 import { getToken } from "./data/Token";
 import jwtDecode from "jwt-decode";
 
+
 const Accueil = lazy(() => import("./pages/home/Accueil"));
 const Register = lazy(() => import("./pages/register/Register"));
 const Login = lazy(() => import("./pages/login/Login"));
@@ -14,12 +15,13 @@ const CardMobile = lazy(() => import("./pages/profil/card/CardMobile"));
 const Account = lazy(() => import("./pages/profil/account/Account"));
 const Notice = lazy(() => import("./pages/profil/notice/Notice"));
 const Photo = lazy(() => import("./pages/register/photos/Photo"));
+const UserDetails = lazy(() => import("./pages/profil/userDetails/UserDetails"));
 const Informations = lazy(() => import("./pages/register/infos/Informations"));
 
 const token = getToken();
 const decodedToken = jwtDecode(token);
 const userConnected = decodedToken;
-console.log(userConnected);
+
 
 const isMobileView = window.innerWidth < 928;
 
@@ -78,6 +80,10 @@ export const router = createBrowserRouter([
           {
             path: ":userId/notice",
             element: <Notice />
+          },
+          {
+            path: ":userIdSelected/user-details",
+            element: <UserDetails />
           }
         ]
       }

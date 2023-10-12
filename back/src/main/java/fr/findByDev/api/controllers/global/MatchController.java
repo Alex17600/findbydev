@@ -86,8 +86,12 @@ public class MatchController extends GenericController<Match, MatchId> {
         match.setCurrentStatus(Status.EN_ATTENTE);
 
         match.setIsRead(false);
+        
+        userReceiver.setPopularity(userReceiver.getPopularity() + 5);
+        userRepository.save(userReceiver);
 
         return matchRepository.save(match);
+
     }
 
     @PatchMapping("/update-status")
@@ -98,6 +102,7 @@ public class MatchController extends GenericController<Match, MatchId> {
             Integer idUserReceiver = (Integer) data.get("receiver");
             Integer idUserSender = (Integer) data.get("sender");
             String newStatus = (String) data.get("newStatus");
+            User userSender = userRepository.findById(idUserSender).orElse(null);
     
             // Recherchez le match correspondant dans la base de données en utilisant les IDs
             Match match = matchRepository.findByIdMatch(idUserSender, idUserReceiver);
@@ -106,6 +111,7 @@ public class MatchController extends GenericController<Match, MatchId> {
                 // Assurez-vous que le nouveau statut est valide (VALIDE ou REFUSE)
                 if ("VALIDE".equals(newStatus) || "REFUSE".equals(newStatus)) {
                     match.setCurrentStatus(Status.valueOf(newStatus));
+                    userSender.setPopularity(userSender.getPopularity()+5);
                     return matchRepository.save(match);
                 } else {
                     throw new IllegalArgumentException("Statut invalide.");

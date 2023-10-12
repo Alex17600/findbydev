@@ -7,11 +7,8 @@ import { readMatches } from "../../../apis/users";
 import { findPhotoById } from "../../../apis/photos";
 import { RxCross2 } from "react-icons/rx";
 import { AiTwotoneHeart } from "react-icons/ai";
-import { FiSearch } from "react-icons/fi";
-import { GrNotification } from "react-icons/gr";
-import { AiOutlineMessage } from "react-icons/ai";
-import { VscAccount } from "react-icons/vsc";
 import { updateMatch } from "../../../apis/match";
+import FooterMobile from "../../../components/footer/FooterMobile";
 
 const Notice = () => {
   const { userId } = useParams();
@@ -163,12 +160,7 @@ const Notice = () => {
           </div>
         </div>
       ))}
-      <div className={style.bottomIcon}>
-        <FiSearch />
-        <GrNotification />
-        <AiOutlineMessage />
-        <VscAccount onClick={handleAccountClick} />
-      </div>
+      <FooterMobile/>
     </div>
   );
 };

@@ -60,6 +60,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/users/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/users/**").permitAll()
                         .requestMatchers(HttpMethod.PATCH, "/users/**").permitAll()
+                        .requestMatchers(HttpMethod.PATCH, "/users/{userid}/update-photo").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN") 
                         .requestMatchers(HttpMethod.GET, "/genders/**").permitAll()               
                         .requestMatchers(HttpMethod.GET, "/matches/**").permitAll()               
                         .requestMatchers(HttpMethod.POST, "/matches/**").hasAuthority("ROLE_USER")               

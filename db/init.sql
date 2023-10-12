@@ -35,6 +35,7 @@ CREATE TABLE _user_(
    git_profile VARCHAR(50) ,
    type VARCHAR(10)  NOT NULL,
    Id_gender INTEGER NOT NULL,
+   view INTEGER,
    PRIMARY KEY(Id_user),
    FOREIGN KEY(Id_gender) REFERENCES gender(Id_gender)
 );
