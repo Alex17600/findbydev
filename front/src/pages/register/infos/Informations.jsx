@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import style from "./Informations.module.scss";
 import { TfiClose } from "react-icons/tfi";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { createUser } from "../../../apis/users";
 import { getAllGenders } from "../../../apis/genders";
 
@@ -19,7 +19,6 @@ const Informations = () => {
   const [error, setError] = useState("");
   const [genders, setGenders] = useState([]);
   const [selectedGender, setSelectedGender] = useState("");
-  const { userId } = useParams();
   const [isChecked, setIsChecked] = useState(false);
   const checkboxConditionRef = useRef(null);
 
@@ -77,7 +76,8 @@ const Informations = () => {
       const createdUser = await createUser(jsonData);
 
       if (Array.isArray(createdUser) && createdUser.length > 0) {
-        navigate(`../photo?userId=${createdUser[0].id}`);
+        // navigate(`../photo?userId=${createdUser[0].id}`);
+        navigate(`../language?userId=${createdUser[0].id}`);
       } else {
         setError("Erreur lors de la création de l'utilisateur.");
       }
@@ -96,6 +96,7 @@ const Informations = () => {
               <TfiClose onClick={() => navigate("/accueil")} />
             </div>
             <p>Inscription</p>
+            <p>Etape 1/3</p>
             {error && <div className={style.errorText}>{error}</div>}
             <input
               type="text"
@@ -140,7 +141,7 @@ const Informations = () => {
               rows="10"
               cols="33"
               type="text"
-              placeholder="Décrivez-vous en quelques mots..."
+              placeholder="Décrivez-vous en quelques mots...(limité a 1000 caractères)"
               value={description}
               onChange={(e) => handleChange(e, setDescription)}
             />

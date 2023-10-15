@@ -32,8 +32,10 @@ const Account = ({ userConnected }) => {
     mail: "",
     birthday: "",
   });
+  // eslint-disable-next-line
   const [updatePassword, setUpdatePassword] = useState(false);
   const [modalPhoto, setModalPhoto] = useState(false);
+  // eslint-disable-next-line
   const [errorText, setErrorText] = useState("");
   const [successText, setSuccessText] = useState("");
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);

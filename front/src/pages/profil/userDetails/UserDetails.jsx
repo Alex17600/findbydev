@@ -9,6 +9,7 @@ const UserDetails = () => {
   const { userIdSelected } = useParams();
   const [userData, setUserData] = useState(null);
   const [photo, setPhoto] = useState({});
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchUserSelected = async () => {
@@ -30,12 +31,20 @@ const UserDetails = () => {
     fetchUserSelected();
   }, [userIdSelected]);
 
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
   return (
     <>
       <div className={style.userProfile}>
         <div className={style.cardProfile}>
           <div className={style.photo}>
-            <img src={photo} alt={userData?.pseudo} />
+            <img src={photo} alt={userData?.pseudo} onClick={openModal}/>
           </div>
           <div className={style.infos}>
             <h1>{userData?.pseudo}</h1>
@@ -47,10 +56,22 @@ const UserDetails = () => {
               <p>Description() =&gt; </p>
               <p>{userData?.description}</p>
             </div>
+            {/* <div className={userData?.}>
+
+            </div> */}
           </div>
         </div>
+        {isModalOpen && (
+        <div className={style.modalOverlay} onClick={closeModal}>
+          <div className={style.modal}>
+            <img src={photo} alt={userData?.pseudo} />
+            <button onClick={closeModal}>Fermer</button>
+          </div>
+        </div>
+      )}
       </div>
       <FooterMobile />
+
     </>
   );
 };

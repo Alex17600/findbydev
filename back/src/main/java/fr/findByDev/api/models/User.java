@@ -57,8 +57,6 @@ public class User {
     @JoinColumn(name = "id_gender")
     private Gender gender;
 
-    @Column(name = "view")
-    private Integer view;
 
     public User() {
     }
@@ -66,7 +64,7 @@ public class User {
     
     public User(Integer idUser, String pseudo, String lastName, String firstName, String town, String birthday,
             String mail, String password, boolean activeAccount, String description, Integer popularity, String photo,
-            String gitProfile, String type, Gender gender, Integer view) {
+            String gitProfile, String type, Gender gender) {
         this.idUser = idUser;
         this.pseudo = pseudo;
         this.lastName = lastName;
@@ -82,7 +80,6 @@ public class User {
         this.gitProfile = gitProfile;
         this.type = type;
         this.gender = gender;
-        this.view = view;
     }
 
 
@@ -205,17 +202,5 @@ public class User {
     public void setType(String type) {
         this.type = type;
     }
-
-
-    public Integer getView() {
-        return view;
-    }
-
-
-    public void setView(Integer view) {
-        this.view = view;
-    }
-
-    
 }
 

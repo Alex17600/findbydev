@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation, useParams  } from "react-router-dom";
 import style from "./FooterMobile.module.scss";
 import { FiSearch } from "react-icons/fi";
 import { GrNotification } from "react-icons/gr";
@@ -14,6 +14,8 @@ const FooterMobile = () => {
   const [userConnected, setUserConnected] = useState();
   const [newMatchFound, setNewMatchFound] = useState(true);
   const navigate = useNavigate();
+  const location = useLocation();
+  const { userId } = useParams(); 
 
   useEffect(() => {
     try {
@@ -57,19 +59,24 @@ const FooterMobile = () => {
     navigate(`../${userId}/account`);
   };
 
+
   return (
     <div className={style.bottomIcon}>
       <FiSearch />
       {newMatchFound ? (
         <MdOutlineNotificationsActive
-          className={style.newmatch}
+        className={location.pathname.endsWith(`/profil/${userId}/notice`) ? style.disabled : style.newmatch}
           onClick={handleNotificationsClick}
         />
       ) : (
-        <GrNotification onClick={handleNotificationsClick} />
+        <GrNotification 
+        className={location.pathname.endsWith(`/profil/${userId}/notice`) ? style.disabled : null}
+        onClick={handleNotificationsClick} />
       )}
       <AiOutlineMessage />
-      <VscAccount onClick={handleAccountClick}/>
+      <VscAccount 
+      className={location.pathname.endsWith(`/profil/${userId}/account`) ? style.disabled : null}
+      onClick={handleAccountClick}/>
     </div>
   );
 };

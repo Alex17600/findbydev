@@ -9,21 +9,18 @@ import { RxCross2 } from "react-icons/rx";
 import { AiTwotoneHeart } from "react-icons/ai";
 import { updateMatch } from "../../../apis/match";
 import FooterMobile from "../../../components/footer/FooterMobile";
+import IconEndList from "../../../assets/icons/list-end.svg";
 
 const Notice = () => {
   const { userId } = useParams();
-  const [userConnected, setUserConnected] = useState();
+  const [userConnected, setUserConnected] = useState(null);
   const [matches, setMatches] = useState([]);
   const [userPhotos, setUserPhotos] = useState({});
-  const [like, setLike] = useState(new Array(matches.length).fill(false));
-  const [dislike, setDislike] = useState(new Array(matches.length).fill(false));
+  const [like, setLike] = useState([]);
+  const [dislike, setDislike] = useState([]);
+  const [remainingMatches, setRemainingMatches] = useState(0);
 
   const navigate = useNavigate();
-
-  const handleAccountClick = () => {
-    const userId = userConnected.idUser;
-    navigate(`../${userId}/account`);
-  };
 
   useEffect(() => {
     const token = getToken();
@@ -36,7 +33,6 @@ const Notice = () => {
     }
   }, [userId, navigate]);
 
-  // Récupération des matchs de l'utilisateur
   useEffect(() => {
     async function fetchReadMatches() {
       try {
@@ -45,6 +41,7 @@ const Notice = () => {
           setMatches(matchesData);
           setLike(new Array(matchesData.length).fill(false));
           setDislike(new Array(matchesData.length).fill(false));
+          setRemainingMatches(matchesData.length);
         }
       } catch (error) {
         console.error(
@@ -82,7 +79,6 @@ const Notice = () => {
 
       await updateMatch(data);
 
-      // Mettre à jour la liste des matchs visuellement
       if (newStatus === "VALIDE") {
         setLike((prevLikes) => {
           const newLikes = [...prevLikes];
@@ -96,6 +92,8 @@ const Notice = () => {
           return newDislikes;
         });
       }
+
+      setRemainingMatches((prevRemainingMatches) => prevRemainingMatches - 1);
     } catch (error) {
       console.error(
         "Erreur lors de la mise à jour du statut du match :",
@@ -135,32 +133,52 @@ const Notice = () => {
 
   return (
     <div className={style.notice}>
-      {matches.map((match, index) => (
-        <div
-          key={index}
-          className={`${style.match} ${
-            like[index]
-              ? `${style.like}`
-              : dislike[index]
-              ? `${style.dislike}`
-              : ""
-          }`}
-        >
-          <img src={userPhotos[match.sender.id]} alt={match.sender.pseudo} />
-          <div className={style.infoMatch}>
-            <p>{match.sender.pseudo}</p>
-            <p>Match reçu le: {formatMatchDate(match.dateHour)}</p>
-            <div className={style.buttons}>
-              <RxCross2 onClick={() => handleRejectMatch(match, index)} />
-              <AiTwotoneHeart
-                color="red"
-                onClick={() => handleAcceptMatch(match, index)}
-              />
-            </div>
-          </div>
+      {remainingMatches === 0 ? (
+        <div className={style.endListBlock}>
+          <label>Revenir aux profils</label>
+          <img
+            src={IconEndList}
+            alt="icone de fin de liste"
+            onClick={() => navigate("../card")}
+          />
+          <p className={style.endMatch}>Pas de match pour le moment</p>
         </div>
-      ))}
-      <FooterMobile/>
+      ) : (
+        matches.map((match, index) => {
+          if (like[index] || dislike[index]) {
+            return null;
+          }
+          return (
+            <div
+              key={index}
+              className={`${style.match} ${
+                like[index]
+                  ? `${style.like}`
+                  : dislike[index]
+                  ? `${style.dislike}`
+                  : ""
+              }`}
+            >
+              <img
+                src={userPhotos[match.sender.id]}
+                alt={match.sender.pseudo}
+              />
+              <div className={style.infoMatch}>
+                <p>{match.sender.pseudo}</p>
+                <p>Match reçu le: {formatMatchDate(match.dateHour)}</p>
+                <div className={style.buttons}>
+                  <RxCross2 onClick={() => handleRejectMatch(match, index)} />
+                  <AiTwotoneHeart
+                    color="red"
+                    onClick={() => handleAcceptMatch(match, index)}
+                  />
+                </div>
+              </div>
+            </div>
+          );
+        })
+      )}
+      <FooterMobile />
     </div>
   );
 };

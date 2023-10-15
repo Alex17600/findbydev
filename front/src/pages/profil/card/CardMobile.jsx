@@ -13,7 +13,7 @@ import jwtDecode from "jwt-decode";
 import FooterMobile from "../../../components/footer/FooterMobile";
 import { useNavigate } from "react-router-dom";
 
-const ProfilMobile = () => {
+const CardMobile = () => {
   const [photo, setPhoto] = useState({});
   const [users, setUsers] = useState([]);
   const [userConnected, setUserConnected] = useState();
@@ -152,46 +152,49 @@ const ProfilMobile = () => {
           {users[currentIndex] && users[currentIndex].pseudo}
         </p>
         {users.map((user, index) => (
-            <TinderCard
-              ref={childRefs[index]}
-              key={user.id}
-              onSwipe={(dir) => swiped(dir, user.id, index)}
-              onCardLeftScreen={() => outOfFrame(user.pseudo, index)}
+          <TinderCard
+            ref={childRefs[index]}
+            key={user.id}
+            onSwipe={(dir) => swiped(dir, user.id, index)}
+            onCardLeftScreen={() => outOfFrame(user.pseudo, index)}
+          >
+            <div
+              className={`${style.card} ${
+                currentIndex === index ? "" : style.hidden
+              }`}
             >
-              <div
-              onClick={() => {
-                console.log("Clique sur la carte de l'utilisateur ID", user.id);
-                navigate(`/profil/${user.id}/user-details`);
-              }}
-                className={`${style.card} ${
-                  currentIndex === index ? "" : style.hidden
-                }`}
-              >
-                <img src={photo[user.id]} alt={user.pseudo} />
-                <div className={style.iconOverlay}>
-                  <div
-                    className={`${style.undoDislikeIcon} ${
-                      currentIndex === 0 ? style.disabled : ""
-                    }`}
-                    onClick={() => goBack()}
-                  >
-                    <FcUndo />
-                  </div>
-                  <div
-                    className={style.disLikeIcon}
-                    onClick={() => swipe("left")}
-                  >
-                    <CgDebug />
-                  </div>
-                  <div
-                    className={style.likeIcon}
-                    onClick={() => swipe("right")}
-                  >
-                    <FcLike />
-                  </div>
+              <img
+                src={photo[user.id]}
+                alt={user.pseudo}
+                onClick={() => {
+                  console.log(
+                    "Clique sur la carte de l'utilisateur ID",
+                    user.id
+                  );
+                  navigate(`/profil/${user.id}/user-details`);
+                }}
+              />
+              <div className={style.iconOverlay}>
+                <div
+                  className={`${style.undoDislikeIcon} ${
+                    currentIndex === 0 ? style.disabled : ""
+                  }`}
+                  onClick={() => goBack()}
+                >
+                  <FcUndo />
+                </div>
+                <div
+                  className={style.disLikeIcon}
+                  onClick={() => swipe("left")}
+                >
+                  <CgDebug />
+                </div>
+                <div className={style.likeIcon} onClick={() => swipe("right")}>
+                  <FcLike />
                 </div>
               </div>
-            </TinderCard>
+            </div>
+          </TinderCard>
         ))}
         {/* Composant spécial lorsque la fin de la liste est atteinte */}
         {reachedEndOfList && (
@@ -210,4 +213,4 @@ const ProfilMobile = () => {
   );
 };
 
-export default ProfilMobile;
+export default CardMobile;

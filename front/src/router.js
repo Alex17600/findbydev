@@ -8,19 +8,21 @@ import jwtDecode from "jwt-decode";
 
 const Accueil = lazy(() => import("./pages/home/Accueil"));
 const Register = lazy(() => import("./pages/register/Register"));
+const Informations = lazy(() => import("./pages/register/infos/Informations"));
+const Language = lazy(() => import("./pages/register/languages/Language"));
+const Photo = lazy(() => import("./pages/register/photos/Photo"));
 const Login = lazy(() => import("./pages/login/Login"));
 const Profil = lazy(() => import("./pages/profil/Profil"));
 const Card = lazy(() => import("./pages/profil/card/Card"));
 const CardMobile = lazy(() => import("./pages/profil/card/CardMobile"));
 const Account = lazy(() => import("./pages/profil/account/Account"));
 const Notice = lazy(() => import("./pages/profil/notice/Notice"));
-const Photo = lazy(() => import("./pages/register/photos/Photo"));
+
 const UserDetails = lazy(() => import("./pages/profil/userDetails/UserDetails"));
-const Informations = lazy(() => import("./pages/register/infos/Informations"));
+
 
 const token = getToken();
-const decodedToken = jwtDecode(token);
-const userConnected = decodedToken;
+const userConnected = token ? jwtDecode(token) : null;
 
 
 const isMobileView = window.innerWidth < 928;
@@ -49,6 +51,10 @@ export const router = createBrowserRouter([
           {
             path: "informations",
             element: <Informations />,
+          },
+          {
+            path: "language",
+            element: <Language />,
           },
           {
             path: "photo",

@@ -1,0 +1,35 @@
+.language {
+    background-image: url(../../../assets/background/kemllFaD8R7RjKgL5lUe--1--i0bj1flou.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+    width: 100%;
+    height: fit-content;
+    background-position: center;
+    font-family: 'JetBrains Mono', monospace;
+
+    .blockLanguage {
+        display: flex;
+        flex-direction: column;
+        background-color: black;
+        opacity: 0.8;
+
+        input {
+            margin: 10px 10px;
+            padding: 10px;
+            border-radius: 6px;
+
+            &:focus {
+                outline: none;
+            }
+
+            &::placeholder {
+                transition: all 0.2s ease-out;
+            }
+
+            &:focus::placeholder {
+                transform: translateY(-100%);
+                font-size: 0.8em;
+            }
+        }
+    }
+}

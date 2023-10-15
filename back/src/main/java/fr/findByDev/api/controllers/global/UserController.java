@@ -95,15 +95,6 @@ public class UserController extends GenericController<User, Integer> {
         return userRepository.findById(id);
     }
 
-    // @PostMapping("/{id}/create-view")
-    // @ResponseStatus(HttpStatus.OK)
-    // @CrossOrigin
-    // public Optional<User> postView(@PathVariable Integer id) {
-    //     User userView = userRepository.findById(id).orElse(null);
-    //     userView.setView(userView.getView() + 1);
-    //     return userRepository.findById(id);
-    // }
-
     // Recuperation de la photo d'un user
     @GetMapping("/{idUser}/photo")
     public ResponseEntity<byte[]> getPhoto(@PathVariable Integer idUser) {
