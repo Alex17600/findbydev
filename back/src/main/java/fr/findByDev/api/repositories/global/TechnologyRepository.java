@@ -6,5 +6,5 @@ import fr.findByDev.api.repositories.GenericRepository;
 
 @Repository
 public interface TechnologyRepository extends GenericRepository<Technology, Integer>{
-    
+    Technology findByName(String name);
 }

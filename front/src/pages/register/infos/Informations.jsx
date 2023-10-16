@@ -42,7 +42,7 @@ const Informations = () => {
       } catch (error) {
         console.error("Erreur lors de la récupération des genres:", error);
       }
-    }
+    };
 
     fetchGenders();
 
@@ -96,7 +96,7 @@ const Informations = () => {
               <TfiClose onClick={() => navigate("/accueil")} />
             </div>
             <p>Inscription</p>
-            <p>Etape 1/3</p>
+            <p>Étape 1/3</p>
             {error && <div className={style.errorText}>{error}</div>}
             <input
               type="text"

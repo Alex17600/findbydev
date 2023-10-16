@@ -62,7 +62,5 @@ public class PreferId implements Serializable {
         } else if (!idTechnology.equals(other.idTechnology))
             return false;
         return true;
-    }
-
-    
+    }   
 }

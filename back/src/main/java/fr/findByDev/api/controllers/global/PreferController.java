@@ -7,14 +7,21 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import fr.findByDev.api.controllers.GenericController;
 import fr.findByDev.api.models.Prefer;
+import fr.findByDev.api.models.Technology;
+import fr.findByDev.api.models.User;
+import fr.findByDev.api.models.DTO.PreferDTO;
 import fr.findByDev.api.models.associations.PreferId;
 import fr.findByDev.api.repositories.PreferRepository;
+import fr.findByDev.api.repositories.global.TechnologyRepository;
+import fr.findByDev.api.repositories.global.UserRepository;
 
 @RestController
 @RequestMapping("/prefers")
@@ -24,9 +31,17 @@ public class PreferController extends GenericController<Prefer, PreferId> {
     private PreferRepository preferRepository;
 
     @Autowired
-    public PreferController(PreferRepository preferRepository) {
+    private UserRepository userRepository;
+
+    @Autowired
+    private TechnologyRepository technologyRepository;
+
+    @Autowired
+    public PreferController(PreferRepository preferRepository, UserRepository userRepository, TechnologyRepository technologyRepository) {
         super(preferRepository);
         this.preferRepository = preferRepository;
+        this.userRepository = userRepository;
+        this.technologyRepository = technologyRepository;
     }
 
     @GetMapping("")
@@ -40,8 +55,33 @@ public class PreferController extends GenericController<Prefer, PreferId> {
     @GetMapping("/{idUser}/{idTechnology}")
     @ResponseStatus(HttpStatus.OK)
     @CrossOrigin
-    public Optional<Prefer> get(@PathVariable("idUser") Integer idUser, @PathVariable("idTechnology") Integer idTechnology) {
+    public Optional<Prefer> get(@PathVariable("idUser") Integer idUser,
+            @PathVariable("idTechnology") Integer idTechnology) {
         PreferId preferId = new PreferId(idUser, idTechnology);
         return preferRepository.findById(preferId);
+    }
+
+    @PostMapping("create")
+    @CrossOrigin
+    public Prefer save(@RequestBody PreferDTO preferData) {
+        Integer idUser = preferData.getIdUser();
+        Integer idTechnology = preferData.getIdTechnology();
+
+        User user =  userRepository.findById(idUser).orElse(null);
+        Technology technology = technologyRepository.findById(idTechnology).orElse(null);
+
+        
+        if (user == null || technology == null) {
+            throw new IllegalArgumentException("Utilisateur ou technology non trouvé.");
+        }
+
+        PreferId preferId = new PreferId(idUser, idTechnology);
+
+        Prefer prefer = new Prefer();
+        prefer.setIdPrefer(preferId);
+        prefer.setUser(user);
+        prefer.setTechnology(technology);
+
+        return preferRepository.save(prefer); 
     }
 }

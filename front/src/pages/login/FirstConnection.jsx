@@ -49,8 +49,8 @@ const FirstConnexion = ({ passwordTemporaly, setActiveAccount }) => {
     if (!/[!@#$%^&*]/.test(newPassword)) {
       missingRequirements.push("un caractère spécial (!, @, #, $, %, ^, &, *)");
     }
-    if (newPassword.length < 12) {
-      missingRequirements.push("au moins 12 caractères");
+    if (newPassword.length < 11) {
+      missingRequirements.push("au moins 11 caractères");
     }
 
     if (newPassword === passwordTemporaly) {

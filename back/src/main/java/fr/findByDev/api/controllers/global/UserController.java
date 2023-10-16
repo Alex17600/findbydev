@@ -349,7 +349,7 @@ public class UserController extends GenericController<User, Integer> {
 
     /**
      * Méthode pour patch sa photo sur son compte avec une authorisation
-     * (On est pas cnsé acceder à son compte si pas de token, donc authorisation)
+     * (On est pas censé acceder à son compte si pas de token, donc authorisation)
      * @param userId
      * @param image
      * @return

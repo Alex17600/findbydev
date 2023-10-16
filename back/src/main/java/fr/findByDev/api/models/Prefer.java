@@ -23,6 +23,12 @@ public class Prefer {
     public Prefer() {
     }
 
+    public Prefer(PreferId idPrefer, User user, Technology technology) {
+        this.idPrefer = idPrefer;
+        this.user = user;
+        this.technology = technology;
+    }
+
     public PreferId getIdPrefer() {
         return idPrefer;
     }

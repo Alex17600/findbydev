@@ -41,6 +41,10 @@ export const router = createBrowserRouter([
         element: <Accueil />,
       },
       {
+        path: "language",
+        element: <Language />,
+      },
+      {
         path: "register",
         element: (
           <Register>
@@ -52,10 +56,10 @@ export const router = createBrowserRouter([
             path: "informations",
             element: <Informations />,
           },
-          {
-            path: "language",
-            element: <Language />,
-          },
+          // {
+          //   path: "language",
+          //   element: <Language />,
+          // },
           {
             path: "photo",
             element: <Photo />,

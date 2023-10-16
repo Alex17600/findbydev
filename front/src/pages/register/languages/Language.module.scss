@@ -13,6 +13,35 @@
         background-color: black;
         opacity: 0.8;
 
+        h1, p {
+            color: white;
+            text-align: center;
+        }
+
+        .languagesIcons {
+            display: flex;
+            justify-content: space-between;
+            width: 80%;
+            flex-wrap: wrap;
+            margin: auto;
+
+            .nameIcon {
+                p {
+                    margin: 0;
+                }
+
+                .iconLanguage {
+                    background-color: white;
+                    padding: 10px;
+                    border-radius: 15px;
+                    min-height: 48px;
+                    margin: 10px; 
+                }
+            }
+
+
+        }
+
         input {
             margin: 10px 10px;
             padding: 10px;

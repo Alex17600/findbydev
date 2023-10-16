@@ -3,7 +3,7 @@ import { getToken } from "../data/Token";
 const URL_API = 'http://localhost:8000/api/technologies';
 
 //findByAll
-export async function getAllPhotos() {
+export async function getAllTechnologies() {
     const response = await fetch(`${URL_API}`, {
         headers: {
             'Authorization': `Bearer ${getToken()}`,
@@ -14,6 +14,25 @@ export async function getAllPhotos() {
         const body = await response.json();
         return Array.isArray(body) ? body : [body];
 
+    } else {
+        throw new Error('Error fetch Get users');
+    }
+}
+
+//findPhotobyId
+export async function getIconTechnologie(id) {
+    const response = await fetch(`${URL_API}/${id}/icon`, {
+        headers: {
+            'Authorization': `Bearer ${getToken()}`,
+        },
+    });
+    
+    if (response.ok) {
+
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob); // Créez une URL à partir du Blob
+        return url;
+        
     } else {
         throw new Error('Error fetch Get users');
     }
