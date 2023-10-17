@@ -7,5 +7,5 @@ import fr.findByDev.api.repositories.GenericRepository;
 
 @Repository
 public interface NoticeRepository extends GenericRepository<Notice, Integer> {
-    
+
 }

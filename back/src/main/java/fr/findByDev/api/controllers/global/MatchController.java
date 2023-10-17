@@ -6,7 +6,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
+
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -19,21 +19,20 @@ import org.springframework.web.bind.annotation.RestController;
 
 import fr.findByDev.api.controllers.GenericController;
 import fr.findByDev.api.models.Match;
-import fr.findByDev.api.models.Notice;
+
 import fr.findByDev.api.models.User;
 import fr.findByDev.api.models.DTO.MatchRequestDTO;
 import fr.findByDev.api.models.associations.MatchId;
 import fr.findByDev.api.models.enums.Status;
 import fr.findByDev.api.repositories.global.MatchRepository;
-import fr.findByDev.api.repositories.global.NoticeRepository;
-import fr.findByDev.api.repositories.global.UserRepository;
 
+import fr.findByDev.api.repositories.global.UserRepository;
 
 @RestController
 @RequestMapping("/matches")
 public class MatchController extends GenericController<Match, MatchId> {
 
-    private final SimpMessagingTemplate messagingTemplate;
+
 
     @Autowired
     private MatchRepository matchRepository;
@@ -42,14 +41,11 @@ public class MatchController extends GenericController<Match, MatchId> {
     private UserRepository userRepository;
 
     @Autowired
-    private NoticeRepository noticeRepository;
-
-    @Autowired
-    public MatchController(MatchRepository matchRepository, UserRepository userRepository, SimpMessagingTemplate messagingTemplate) {
+    public MatchController(MatchRepository matchRepository, UserRepository userRepository
+            ) {
         super(matchRepository);
         this.matchRepository = matchRepository;
         this.userRepository = userRepository;
-        this.messagingTemplate = messagingTemplate;
     }
 
     @GetMapping("")
@@ -119,27 +115,11 @@ public class MatchController extends GenericController<Match, MatchId> {
             Match match = matchRepository.findByIdMatch(idUserSender, idUserReceiver);
 
             if (match != null) {
-                if ("VALIDE".equals(newStatus)) {
-                Notice notice = new Notice();
-                notice.setSenderId(idUserSender);
-                notice.setReceiverId(idUserReceiver);
-                notice.setMessage("Votre match a été accepté.");
-                notice.setIsRead(false);
-                notice.setCreatedAt(new Timestamp(System.currentTimeMillis()));
-
-                noticeRepository.save(notice);
-
-                // Utilisez la connexion WebSocket pour envoyer une notification au sender
-                String notificationMessage = "Votre match a été accepté.";
-                messagingTemplate.convertAndSendToUser(userSender.getPseudo(), "/queue/notifications", notificationMessage);
-                }
-
                 // Assurez-vous que le nouveau statut est valide (VALIDE ou REFUSE)
                 if ("VALIDE".equals(newStatus) || "REFUSE".equals(newStatus)) {
                     match.setCurrentStatus(Status.valueOf(newStatus));
                     userSender.setPopularity(userSender.getPopularity() + 5);
                     return matchRepository.save(match);
-
                 } else {
                     throw new IllegalArgumentException("Statut invalide.");
                 }
@@ -150,4 +130,5 @@ public class MatchController extends GenericController<Match, MatchId> {
             throw new IllegalArgumentException("ID utilisateur non valide.");
         }
     }
+
 }

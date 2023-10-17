@@ -57,10 +57,10 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers(HttpMethod.POST, "/login/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/verify-recaptcha/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/users/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/users/**").permitAll()
                         .requestMatchers(HttpMethod.PATCH, "/users/**").permitAll()
+                        .requestMatchers(HttpMethod.PATCH, "/notices/**").hasAuthority("ROLE_USER")  
                         .requestMatchers(HttpMethod.PATCH, "/users/{userid}/update-photo").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN") 
                         .requestMatchers(HttpMethod.GET, "/genders/**").permitAll()               
                         .requestMatchers(HttpMethod.GET, "/matches/**").permitAll()               

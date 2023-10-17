@@ -1,4 +1,4 @@
-package fr.findByDev.api.services.websocket;
+package fr.findByDev.api.services.webSocket;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
@@ -14,14 +14,12 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/websocket").withSockJS();
+        registry.addEndpoint("/app/notice").withSockJS();
     }
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-        registry.setApplicationDestinationPrefixes("/app"); // Préfixe pour les messages de l'application
-        registry.enableSimpleBroker("/topic"); // Préfixe pour les messages destinés aux clients (destination des
-                                               // abonnés)
+        registry.setApplicationDestinationPrefixes("/app");
+        registry.enableSimpleBroker("/queue", "/topic");
     }
-
 }

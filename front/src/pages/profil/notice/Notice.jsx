@@ -10,6 +10,8 @@ import { AiTwotoneHeart } from "react-icons/ai";
 import { updateMatch } from "../../../apis/match";
 import FooterMobile from "../../../components/footer/FooterMobile";
 import IconEndList from "../../../assets/icons/list-end.svg";
+import connectWebSocket from "../../../configuration/connectWebSocket";
+import { createNotice } from "../../../apis/notice";
 
 
 const Notice = () => {
@@ -20,6 +22,7 @@ const Notice = () => {
   const [like, setLike] = useState([]);
   const [dislike, setDislike] = useState([]);
   const [remainingMatches, setRemainingMatches] = useState(0);
+
 
   const navigate = useNavigate();
 
@@ -78,15 +81,19 @@ const Notice = () => {
         newStatus: newStatus,
       };
 
-      if (newStatus === "VALIDE") {
-        // Utilisez la connexion WebSocket pour envoyer une notification au sender.
-        // Par exemple, vous pourriez utiliser Stomp pour envoyer un message vers un endpoint spécifique (destiné au sender).
-        // Vous pouvez définir un endpoint approprié côté serveur et l'envoyer ici.
-        // Pour simplifier, voici comment vous pourriez envoyer un message :
-        stompClient.send("/app/notices", {}, JSON.stringify(data));
+      await updateMatch(data);
+
+      const noticeData =  {
+        senderId: match.sender.id,
+        receiverId: match.receiver.id
       }
 
-      await updateMatch(data);
+      await createNotice(noticeData);
+      debugger
+      if (newStatus === "VALIDE") {
+        const stompClient = connectWebSocket(match.sender.id); 
+        stompClient.send(`/app/notice/${match.sender.id}/queue/notifications`, {}, JSON.stringify(noticeData));
+      }
 
       if (newStatus === "VALIDE") {
         setLike((prevLikes) => {

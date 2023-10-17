@@ -4,7 +4,7 @@ import { TfiClose } from "react-icons/tfi";
 import { useNavigate } from "react-router-dom";
 import { createUser } from "../../../apis/users";
 import { getAllGenders } from "../../../apis/genders";
-import ReCAPTCHA from "react-google-recaptcha";
+// import ReCAPTCHA from "react-google-recaptcha";
 
 const Informations = () => {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
