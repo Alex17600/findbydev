@@ -1,8 +1,10 @@
 package fr.findByDev.api.models.DTO;
 
+import java.util.List;
+
 public class PreferDTO {
     private Integer idUser;
-    private Integer idTechnology;
+    private List<Integer> idTechnologys;
 
     public Integer getIdUser() {
         return idUser;
@@ -10,11 +12,11 @@ public class PreferDTO {
     public void setIdUser(Integer idUser) {
         this.idUser = idUser;
     }
-    public Integer getIdTechnology() {
-        return idTechnology;
+    public List<Integer> getIdTechnologys() {
+        return idTechnologys;
     }
-    public void setIdTechnology(Integer idTechnology) {
-        this.idTechnology = idTechnology;
+    public void setIdTechnologys(List<Integer> idTechnologys) {
+        this.idTechnologys = idTechnologys;
     }
     
 }

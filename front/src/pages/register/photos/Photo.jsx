@@ -13,24 +13,28 @@ const Photo = () => {
 
   const handlePhotoUpload = async (e) => {
     e.preventDefault();
-
     if (!image) {
       console.error("Aucune image sélectionnée.");
       return;
     }
-
     try {
+      
       const response = await downloadPhoto(userId, image);
 
       if (response.ok) {
-        const imageUrl = URL.createObjectURL(image);
+        const imageUrl = URL.createObjectURL(image); 
         setImage(imageUrl);
+  
+        setTimeout(() => {
+          navigate("/profil");
+        }, 3000);
       } else {
-        console.error(
-          "Erreur lors du téléchargement de la photo :",
-          response.status
-        );
+        setTimeout(() => {
+          navigate("/profil/card");
+        }, 3000);
+        console.error("Erreur lors du téléchargement de la photo.");
       }
+
     } catch (error) {
       console.error("Erreur lors du téléchargement de la photo :", error);
     }

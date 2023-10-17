@@ -11,6 +11,7 @@ import { updateMatch } from "../../../apis/match";
 import FooterMobile from "../../../components/footer/FooterMobile";
 import IconEndList from "../../../assets/icons/list-end.svg";
 
+
 const Notice = () => {
   const { userId } = useParams();
   const [userConnected, setUserConnected] = useState(null);
@@ -76,6 +77,14 @@ const Notice = () => {
         sender: match.sender.id,
         newStatus: newStatus,
       };
+
+      if (newStatus === "VALIDE") {
+        // Utilisez la connexion WebSocket pour envoyer une notification au sender.
+        // Par exemple, vous pourriez utiliser Stomp pour envoyer un message vers un endpoint spécifique (destiné au sender).
+        // Vous pouvez définir un endpoint approprié côté serveur et l'envoyer ici.
+        // Pour simplifier, voici comment vous pourriez envoyer un message :
+        stompClient.send("/app/notices", {}, JSON.stringify(data));
+      }
 
       await updateMatch(data);
 

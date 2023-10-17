@@ -96,9 +96,8 @@ export async function downloadPhoto(userId, image) {
     body: formData,
   });
 
-  if (response.ok) {
-    const body = await response.json();
-    return Array.isArray(body) ? body : [body];
+  if (response.status === 200) {
+    return true;
   } else {
     throw new Error('Erreur lors de la requête pour télécharger la photo');
   }

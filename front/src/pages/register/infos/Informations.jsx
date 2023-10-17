@@ -4,6 +4,7 @@ import { TfiClose } from "react-icons/tfi";
 import { useNavigate } from "react-router-dom";
 import { createUser } from "../../../apis/users";
 import { getAllGenders } from "../../../apis/genders";
+import ReCAPTCHA from "react-google-recaptcha";
 
 const Informations = () => {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
@@ -17,9 +18,11 @@ const Informations = () => {
   const [description, setDescription] = useState("");
   const [gitProfile, setGitProfile] = useState("");
   const [error, setError] = useState("");
+  const [succes, setSucces] = useState("");
   const [genders, setGenders] = useState([]);
   const [selectedGender, setSelectedGender] = useState("");
   const [isChecked, setIsChecked] = useState(false);
+
   const checkboxConditionRef = useRef(null);
 
   const handleLabelClick = () => {
@@ -42,7 +45,7 @@ const Informations = () => {
       } catch (error) {
         console.error("Erreur lors de la récupération des genres:", error);
       }
-    };
+    }
 
     fetchGenders();
 
@@ -57,7 +60,6 @@ const Informations = () => {
 
   const handleRegister = async (e) => {
     e.preventDefault();
-
     const jsonData = {
       pseudo,
       lastName,
@@ -70,16 +72,24 @@ const Informations = () => {
       gender: {
         idGender: selectedGender,
       },
+
     };
+
+    console.log(jsonData);
 
     try {
       const createdUser = await createUser(jsonData);
 
       if (Array.isArray(createdUser) && createdUser.length > 0) {
-        // navigate(`../photo?userId=${createdUser[0].id}`);
-        navigate(`../language?userId=${createdUser[0].id}`);
+        setSucces("Inscritpion réussie, vous allez recevoir un email");
+        setError("");
+
+        setTimeout(() => {
+          navigate("/login");
+        }, 3000);
       } else {
         setError("Erreur lors de la création de l'utilisateur.");
+        setSucces("");
       }
     } catch (error) {
       console.error(error);
@@ -96,8 +106,8 @@ const Informations = () => {
               <TfiClose onClick={() => navigate("/accueil")} />
             </div>
             <p>Inscription</p>
-            <p>Étape 1/3</p>
             {error && <div className={style.errorText}>{error}</div>}
+            {succes && <div className={style.succesText}>{succes}</div>}
             <input
               type="text"
               placeholder="Pseudo"
@@ -136,7 +146,6 @@ const Informations = () => {
               value={birthday}
               onChange={(e) => handleChange(e, setBirthday)}
             />
-            {/* TODO: À placer le reCaptcha */}
             <textarea
               rows="10"
               cols="33"
@@ -165,17 +174,19 @@ const Informations = () => {
                 </label>
               ))}
             </div>
-
             <div className={style.bas}>
-                <div className={style.condition}>
-                  <input type="checkbox" name="conditions" ref={checkboxConditionRef}/>
-                  <label htmlFor="conditions" onClick={handleLabelClick}>
-                    J’accepte les conditions d’utilisation et la politique du
-                    site
-                  </label>
-                </div>
-                <button>Suivant</button>
+              <div className={style.condition}>
+                <input
+                  type="checkbox"
+                  name="conditions"
+                  ref={checkboxConditionRef}
+                />
+                <label htmlFor="conditions" onClick={handleLabelClick}>
+                  J’accepte les conditions d’utilisation et la politique du site
+                </label>
               </div>
+              <button>Suivant</button>
+            </div>
           </div>
         ) : (
           <div className={style.registerLarge}>
@@ -256,7 +267,11 @@ const Informations = () => {
               </div>
               <div className={style.bas}>
                 <div className={style.condition}>
-                  <input type="checkbox" name="conditions" ref={checkboxConditionRef}/>
+                  <input
+                    type="checkbox"
+                    name="conditions"
+                    ref={checkboxConditionRef}
+                  />
                   <label htmlFor="conditions" onClick={handleLabelClick}>
                     J’accepte les conditions d’utilisation et la politique du
                     site

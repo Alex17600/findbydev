@@ -87,7 +87,7 @@ const FirstConnexion = ({ passwordTemporaly, setActiveAccount }) => {
           setTimeout(() => {
             event.target.children[0].disabled = false;
             setActiveAccount(true);
-            navigate("/login");
+            navigate("/register/language");
           }, 3000);
         }
       }
@@ -160,8 +160,7 @@ const FirstConnexion = ({ passwordTemporaly, setActiveAccount }) => {
             {success && (
               <div className={style.successText}>
                 <p>
-                  Modification réussie ! Vous allez être redirigé vers l'écran
-                  de connexion
+                  Modification réussie ! On aimerait en savoir plus sur vous...
                 </p>
               </div>
             )}

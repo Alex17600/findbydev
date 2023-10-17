@@ -19,6 +19,7 @@ CREATE TABLE experience(
    PRIMARY KEY(Id_experience)
 );
 
+
 CREATE TABLE _user_(
    Id_user SERIAL,
    pseudo VARCHAR(50)  NOT NULL,
@@ -38,6 +39,18 @@ CREATE TABLE _user_(
    view INTEGER,
    PRIMARY KEY(Id_user),
    FOREIGN KEY(Id_gender) REFERENCES gender(Id_gender)
+);
+
+CREATE TABLE notice (
+   Id_notice SERIAL,
+   sender_id INTEGER NOT NULL,
+   receiver_id INTEGER NOT NULL,
+   message TEXT NOT NULL, 
+   is_read BOOLEAN NOT NULL,
+   created_at TIMESTAMP NOT NULL,
+   PRIMARY KEY (Id_notice),
+   FOREIGN KEY (sender_id) REFERENCES _user_(Id_user),
+   FOREIGN KEY (receiver_id) REFERENCES _user_(Id_user)
 );
 
 CREATE TABLE alert(

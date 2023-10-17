@@ -1,5 +1,7 @@
 package fr.findByDev.api.controllers.global;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +39,8 @@ public class PreferController extends GenericController<Prefer, PreferId> {
     private TechnologyRepository technologyRepository;
 
     @Autowired
-    public PreferController(PreferRepository preferRepository, UserRepository userRepository, TechnologyRepository technologyRepository) {
+    public PreferController(PreferRepository preferRepository, UserRepository userRepository,
+            TechnologyRepository technologyRepository) {
         super(preferRepository);
         this.preferRepository = preferRepository;
         this.userRepository = userRepository;
@@ -63,25 +66,33 @@ public class PreferController extends GenericController<Prefer, PreferId> {
 
     @PostMapping("create")
     @CrossOrigin
-    public Prefer save(@RequestBody PreferDTO preferData) {
+    public List<Prefer> save(@RequestBody PreferDTO preferData) {
         Integer idUser = preferData.getIdUser();
-        Integer idTechnology = preferData.getIdTechnology();
+        List<Integer> idTechnologies = preferData.getIdTechnologys();
 
-        User user =  userRepository.findById(idUser).orElse(null);
-        Technology technology = technologyRepository.findById(idTechnology).orElse(null);
+        User user = userRepository.findById(idUser).orElse(null);
 
-        
-        if (user == null || technology == null) {
-            throw new IllegalArgumentException("Utilisateur ou technology non trouvé.");
+        if (user == null) {
+            throw new IllegalArgumentException("Utilisateur non trouvé.");
         }
 
-        PreferId preferId = new PreferId(idUser, idTechnology);
+        List<Prefer> prefers = new ArrayList<>();
 
-        Prefer prefer = new Prefer();
-        prefer.setIdPrefer(preferId);
-        prefer.setUser(user);
-        prefer.setTechnology(technology);
+        for (Integer idTechnology : idTechnologies) {
+            Technology technology = technologyRepository.findById(idTechnology).orElse(null);
 
-        return preferRepository.save(prefer); 
+            if (technology != null) {
+                PreferId preferId = new PreferId(idUser, idTechnology);
+
+                Prefer prefer = new Prefer();
+                prefer.setIdPrefer(preferId);
+                prefer.setUser(user);
+                prefer.setTechnology(technology);
+
+                prefers.add(preferRepository.save(prefer));
+            }
+        }
+
+        return prefers;
     }
 }

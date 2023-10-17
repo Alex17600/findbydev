@@ -97,6 +97,7 @@ public class UserController extends GenericController<User, Integer> {
 
     // Recuperation de la photo d'un user
     @GetMapping("/{idUser}/photo")
+    @CrossOrigin
     public ResponseEntity<byte[]> getPhoto(@PathVariable Integer idUser) {
         Optional<User> optionalUser = userRepository.findById(idUser);
 
@@ -137,6 +138,7 @@ public class UserController extends GenericController<User, Integer> {
     @CrossOrigin
     public ResponseEntity<?> createUser(@RequestBody User jsonData) {
         try {
+
             String randomPassword = generatePasswordWithCriteria();
 
             User newUser = new User();
@@ -304,8 +306,9 @@ public class UserController extends GenericController<User, Integer> {
     }
 
     /**
-     * Patch de l'user en y ajoutant sa photo 
+     * Patch de l'user en y ajoutant sa photo
      * (ce n'est donc pas un POST)
+     * 
      * @param userId
      * @param image
      * @return
@@ -350,6 +353,7 @@ public class UserController extends GenericController<User, Integer> {
     /**
      * Méthode pour patch sa photo sur son compte avec une authorisation
      * (On est pas censé acceder à son compte si pas de token, donc authorisation)
+     * 
      * @param userId
      * @param image
      * @return
