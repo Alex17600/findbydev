@@ -1,36 +1,21 @@
-import SockJS from 'sockjs-client';
-import Stomp from 'webstomp-client';
+import SockJS from 'sockjs-client'; // Pour la gestion WebSocket via SockJS
+import Stomp from 'stompjs'; // Pour la gestion du protocole STOMP sur WebSocket
 
-const connectWebSocket = (senderPseudo, onMessageReceived, onError) => {
-    const socket = new SockJS("/app/notice");
+
+const connectWebSocket = (senderId) => {
+
+    const socket = new SockJS('/ws');
     const stompClient = Stomp.over(socket);
+  
+    stompClient.connect({}, () => {
 
-    stompClient.connect({}, (frame) => {
-        console.log('Connecté à WebSocket');
-
-        // Associez le nom d'utilisateur (le pseudo du sender) à sa session WebSocket
-        stompClient.subscribe(`/app/notice/${senderPseudo}/queue/notifications`, (message) => {
-            // Traitez les notifications ici
-            console.log('Notification reçue:', message);
-
-            if (onMessageReceived) {
-                onMessageReceived(JSON.parse(message.body));
-            }
-        });
-    }, (error) => {
-        console.error('Erreur de connexion à WebSocket :', error);
-        if (onError) {
-            onError(error);
-        }
+      const notificationTopic = `/topic/notifications/user/${senderId}`; 
+      stompClient.subscribe(notificationTopic, (message) => {
+        const notification = JSON.parse(message.body); 
+        console.log('Notification reçue :', notification);
+      });
     });
-
-    // Gestion de la déconnexion
-    stompClient.ws.onclose = () => {
-        console.log('Déconnexion de WebSocket');
-       
-    };
-
-    return stompClient;
-};
-
-export default connectWebSocket;
+  };
+  
+  export default connectWebSocket;
+  

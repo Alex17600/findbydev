@@ -19,6 +19,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+
 /**
  * Classe de configuration des mécanismes de sécurité de l'application.
  */
@@ -68,6 +69,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/account/**").hasAuthority("ROLE_USER")               
                         .requestMatchers(HttpMethod.POST, "/prefers/**").hasAuthority("ROLE_USER")               
                         .requestMatchers(HttpMethod.GET, "/technologies/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
+                        .requestMatchers("/app/notice/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/realises/**").permitAll()               
                         .requestMatchers(HttpMethod.GET, "/experiences/**").permitAll()               
                         .requestMatchers(HttpMethod.GET, "/likes/**").permitAll()               

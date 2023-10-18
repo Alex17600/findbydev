@@ -9,9 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import fr.findByDev.api.controllers.GenericController;
 import fr.findByDev.api.models.Notice;
-import fr.findByDev.api.models.User;
 import fr.findByDev.api.repositories.global.NoticeRepository;
-import fr.findByDev.api.repositories.global.UserRepository;
 
 import org.springframework.http.HttpStatus;
 
@@ -19,15 +17,11 @@ import org.springframework.http.HttpStatus;
 @RequestMapping("/notices")
 public class NoticeController extends GenericController<Notice, Integer> {
 
-    
     @Autowired
     private NoticeRepository noticeRepository;
 
     @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private SimpMessagingTemplate messagingTemplate;  
+    private SimpMessagingTemplate messagingTemplate;
 
     @Autowired
     public NoticeController(NoticeRepository noticeRepository) {
@@ -50,28 +44,25 @@ public class NoticeController extends GenericController<Notice, Integer> {
         try {
             Integer senderId = (Integer) dataNotice.get("senderId");
             Integer receiverId = (Integer) dataNotice.get("receiverId");
-    
-            User userSender = userRepository.findById(senderId).orElse(null);
-        
-                // Si la notice n'existe pas, créez-en une nouvelle
-                Notice newNotice = new Notice();
-                newNotice.setSenderId(senderId);
-                newNotice.setReceiverId(receiverId);
-                newNotice.setMessage("Votre match a été accepté.");
-                newNotice.setIsRead(false);
-                newNotice.setCreatedAt(new Timestamp(System.currentTimeMillis()));
-    
-                noticeRepository.save(newNotice);
-    
-                // Utilisez la connexion WebSocket pour envoyer une notification au sender
-                String notificationMessage = "Votre match a été accepté.";
-                messagingTemplate.convertAndSendToUser(userSender.getPseudo(), "/app/notice/" + userSender.getPseudo() + "/queue/notifications", notificationMessage);
 
-    
-                return newNotice; 
+
+            // Si la notice n'existe pas, créez-en une nouvelle
+            Notice newNotice = new Notice();
+            newNotice.setSenderId(senderId);
+            newNotice.setReceiverId(receiverId);
+            newNotice.setMessage("Votre match a été accepté.");
+            newNotice.setIsRead(false);
+            newNotice.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+
+            noticeRepository.save(newNotice);
+
+            String senderNotificationTopic = "/topic/notifications/user/" + senderId;
+            messagingTemplate.convertAndSend(senderNotificationTopic, "Vous avez une nouvelle notification.");
             
+            return newNotice;
+
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("ID utilisateur non valide.");
         }
-    }    
+    }
 }

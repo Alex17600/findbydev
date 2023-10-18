@@ -23,7 +23,6 @@ const Notice = () => {
   const [dislike, setDislike] = useState([]);
   const [remainingMatches, setRemainingMatches] = useState(0);
 
-
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -83,17 +82,20 @@ const Notice = () => {
 
       await updateMatch(data);
 
-      const noticeData =  {
+      const noticeData = {
         senderId: match.sender.id,
-        receiverId: match.receiver.id
-      }
+        receiverId: match.receiver.id,
+      };
 
       await createNotice(noticeData);
       debugger
+      
       if (newStatus === "VALIDE") {
-        const stompClient = connectWebSocket(match.sender.id); 
-        stompClient.send(`/app/notice/${match.sender.id}/queue/notifications`, {}, JSON.stringify(noticeData));
+
+        //mettre le websocket dans ce if
+        connectWebSocket(match.sender.id);
       }
+
 
       if (newStatus === "VALIDE") {
         setLike((prevLikes) => {
