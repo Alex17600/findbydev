@@ -63,8 +63,4 @@ public class ConcerneId implements Serializable {
             return false;
         return true;
     }
-
-    
-    
-
 }

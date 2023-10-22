@@ -1,5 +1,4 @@
 CREATE TYPE status AS ENUM ('VALIDE', 'EN_ATTENTE', 'REFUSE');
-
 CREATE TABLE technology(
    Id_technology SERIAL,
    name VARCHAR(50)  NOT NULL,
@@ -19,7 +18,6 @@ CREATE TABLE experience(
    PRIMARY KEY(Id_experience)
 );
 
-
 CREATE TABLE _user_(
    Id_user SERIAL,
    pseudo VARCHAR(50)  NOT NULL,
@@ -32,25 +30,22 @@ CREATE TABLE _user_(
    active_account BOOLEAN NOT NULL,
    description VARCHAR(255) ,
    popularity INTEGER,
-   photo VARCHAR(150),
+   photo BIT VARYING(50)  NOT NULL,
    git_profile VARCHAR(50) ,
    type VARCHAR(10)  NOT NULL,
-   Id_gender INTEGER NOT NULL,
    view INTEGER,
+   Id_gender INTEGER NOT NULL,
    PRIMARY KEY(Id_user),
    FOREIGN KEY(Id_gender) REFERENCES gender(Id_gender)
 );
 
-CREATE TABLE notice (
-   Id_notice SERIAL,
-   sender_id INTEGER NOT NULL,
-   receiver_id INTEGER NOT NULL,
-   message TEXT NOT NULL, 
-   is_read BOOLEAN NOT NULL,
-   created_at TIMESTAMP NOT NULL,
-   PRIMARY KEY (Id_notice),
-   FOREIGN KEY (sender_id) REFERENCES _user_(Id_user),
-   FOREIGN KEY (receiver_id) REFERENCES _user_(Id_user)
+CREATE TABLE message(
+   Id_message SERIAL,
+   contain VARCHAR(1000)  NOT NULL,
+   date_hour DATE,
+   Id_user INTEGER NOT NULL,
+   PRIMARY KEY(Id_message),
+   FOREIGN KEY(Id_user) REFERENCES _user_(Id_user)
 );
 
 CREATE TABLE alert(
@@ -61,26 +56,6 @@ CREATE TABLE alert(
    Id_user INTEGER NOT NULL,
    PRIMARY KEY(Id_alert),
    FOREIGN KEY(Id_user) REFERENCES _user_(Id_user)
-);
-
-CREATE TABLE conversation(
-   Id_conversation SERIAL,
-   date_debut DATE ,
-   archived BOOLEAN,
-   Id_user INTEGER NOT NULL,
-   PRIMARY KEY(Id_conversation),
-   FOREIGN KEY(Id_user) REFERENCES _user_(Id_user)
-);
-
-CREATE TABLE message(
-   Id_message SERIAL,
-   id_sender INTEGER NOT NULL,
-   id_receiver INTEGER NOT NULL,
-   contain VARCHAR(1000)  NOT NULL,
-   date_hour DATE,
-   Id_conversation INTEGER NOT NULL,
-   PRIMARY KEY(Id_message),
-   FOREIGN KEY(Id_conversation) REFERENCES conversation(Id_conversation)
 );
 
 CREATE TABLE prefer(
@@ -125,6 +100,21 @@ CREATE TABLE _like_(
    FOREIGN KEY(Id_user) REFERENCES _user_(Id_user),
    FOREIGN KEY(Id_experience) REFERENCES experience(Id_experience)
 );
+
+CREATE TABLE conversation(
+   Id_user_receiver INTEGER,
+   Id_user_sender INTEGER,
+   Id_message INTEGER,
+   date_debut TIMESTAMP,
+   archived BOOLEAN NOT NULL,
+   PRIMARY KEY(Id_user_receiver, Id_user_sender, Id_message),
+   FOREIGN KEY(Id_user_receiver) REFERENCES _user_(Id_user),
+   FOREIGN KEY(Id_user_sender) REFERENCES _user_(Id_user),
+   FOREIGN KEY(Id_message) REFERENCES message(Id_message)
+);
+
+
+
 
 
 INSERT INTO gender (name)
@@ -218,3 +208,30 @@ VALUES
 (4, 'Comportement abusif', '2023-09-24 19:20:00', 4),
 (2, 'Harcèlement', '2023-09-23 08:55:00', 5);
 
+-- Insertion de données dans la table "message"
+INSERT INTO message (Id_user, contain, date_hour)
+VALUES
+(1, 'Message 1 de l''utilisateur 1 à l''utilisateur 2', '2023-09-27 12:01:00'),
+(2, 'Message 2 de l''utilisateur 2 à l''utilisateur 1', '2023-09-27 12:31:00'),
+(3, 'Message 3 de l''utilisateur 3 à l''utilisateur 4', '2023-09-27 13:01:00'),
+(4, 'Message 4 de l''utilisateur 4 à l''utilisateur 3', '2023-09-27 13:31:00'),
+(5, 'Message 5 de l''utilisateur 5 à l''utilisateur 6', '2023-09-27 14:01:00'),
+(6, 'Message 6 de l''utilisateur 6 à l''utilisateur 5', '2023-09-27 14:31:00'),
+(7, 'Message 7 de l''utilisateur 7 à l''utilisateur 8', '2023-09-27 15:01:00'),
+(8, 'Message 8 de l''utilisateur 8 à l''utilisateur 7', '2023-09-27 15:31:00'),
+(9, 'Message 9 de l''utilisateur 9 à l''utilisateur 10', '2023-09-27 16:01:00'),
+(10, 'Message 10 de l''utilisateur 10 à l''utilisateur 9', '2023-09-27 16:31:00');
+
+-- Insertion de données dans la table "conversation"
+INSERT INTO conversation (Id_user_receiver, Id_user_sender, Id_message, date_debut, archived)
+VALUES
+(1, 2, 1, '2023-09-27 12:00:00', true),
+(2, 1, 2, '2023-09-27 12:30:00', true),
+(3, 4, 3, '2023-09-27 13:00:00', false),
+(4, 3, 4, '2023-09-27 13:30:00', true),
+(5, 6, 5, '2023-09-27 14:00:00', false),
+(6, 5, 6, '2023-09-27 14:30:00', true),
+(7, 8, 7, '2023-09-27 15:00:00', false),
+(8, 7, 8, '2023-09-27 15:30:00', true),
+(9, 10, 9, '2023-09-27 16:00:00', false),
+(10, 9, 10, '2023-09-27 16:30:00', true);

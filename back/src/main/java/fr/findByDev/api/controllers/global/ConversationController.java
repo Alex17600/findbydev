@@ -1,5 +1,6 @@
 package fr.findByDev.api.controllers.global;
-import java.util.Optional;
+
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,11 +14,10 @@ import fr.findByDev.api.controllers.GenericController;
 import fr.findByDev.api.models.Conversation;
 import fr.findByDev.api.repositories.global.ConversationRepository;
 
-
 @RestController
 @RequestMapping("/conversations")
-public class ConversationController extends GenericController<Conversation, Integer>{
-    
+public class ConversationController extends GenericController<Conversation, Integer> {
+
     @Autowired
     private ConversationRepository conversationRepository;
 
@@ -34,11 +34,10 @@ public class ConversationController extends GenericController<Conversation, Inte
     public Iterable<Conversation> all() {
         return conversationRepository.findAll();
     }
-    
-    @GetMapping("/{id}")
+
+    @GetMapping("/{idUser}")
     @ResponseStatus(HttpStatus.OK)
     @CrossOrigin
-    public Optional<Conversation> get(@PathVariable Integer id) {
-        return conversationRepository.findById(id);
+    public List<Conversation> getConversationFromidUser() {
     }
 }

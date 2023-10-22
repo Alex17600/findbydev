@@ -4,7 +4,6 @@ import java.sql.Timestamp;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import fr.findByDev.api.controllers.GenericController;
@@ -20,8 +19,6 @@ public class NoticeController extends GenericController<Notice, Integer> {
     @Autowired
     private NoticeRepository noticeRepository;
 
-    @Autowired
-    private SimpMessagingTemplate messagingTemplate;
 
     @Autowired
     public NoticeController(NoticeRepository noticeRepository) {
@@ -55,9 +52,6 @@ public class NoticeController extends GenericController<Notice, Integer> {
             newNotice.setCreatedAt(new Timestamp(System.currentTimeMillis()));
 
             noticeRepository.save(newNotice);
-
-            String senderNotificationTopic = "/topic/notifications/user/" + senderId;
-            messagingTemplate.convertAndSend(senderNotificationTopic, "Vous avez une nouvelle notification.");
             
             return newNotice;
 

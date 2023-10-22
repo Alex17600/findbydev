@@ -7,11 +7,8 @@ import { readMatches } from "../../../apis/users";
 import { findPhotoById } from "../../../apis/photos";
 import { RxCross2 } from "react-icons/rx";
 import { AiTwotoneHeart } from "react-icons/ai";
-import { updateMatch } from "../../../apis/match";
 import FooterMobile from "../../../components/footer/FooterMobile";
 import IconEndList from "../../../assets/icons/list-end.svg";
-import connectWebSocket from "../../../configuration/connectWebSocket";
-import { createNotice } from "../../../apis/notice";
 
 
 const Notice = () => {
@@ -74,28 +71,12 @@ const Notice = () => {
 
   const updateMatchStatus = async (match, newStatus, index) => {
     try {
+      // eslint-disable-next-line
       const data = {
         receiver: match.receiver.id,
         sender: match.sender.id,
         newStatus: newStatus,
       };
-
-      await updateMatch(data);
-
-      const noticeData = {
-        senderId: match.sender.id,
-        receiverId: match.receiver.id,
-      };
-
-      await createNotice(noticeData);
-      debugger
-      
-      if (newStatus === "VALIDE") {
-
-        //mettre le websocket dans ce if
-        connectWebSocket(match.sender.id);
-      }
-
 
       if (newStatus === "VALIDE") {
         setLike((prevLikes) => {
