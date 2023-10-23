@@ -1,35 +1,80 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import style from "./Message.module.scss";
-import { getConversationsForLoggedInUser } from '../../../apis/conversation';
+import { getConversationsForLoggedInUser } from "../../../apis/conversation";
+import { findPhotoById } from "../../../apis/photos";
+import { findUserById } from "../../../apis/users";
+import FooterMobile from "../../../components/footer/FooterMobile";
 
-const Message = ({userConnected }) => {
-    const [conversations, setConversations] = useState([]);
+const Message = ({ userConnected }) => {
+  const [conversations, setConversations] = useState([]);
+  const [userPhotos, setUserPhotos] = useState({});
+  const [userMatches, setUserMatches] = useState({});
 
-    useEffect(() => {
-        const fetchAllConversation = async () => {
+  useEffect(() => {
+    const fetchAllConversation = async () => {
+      try {
+        const data = await getConversationsForLoggedInUser(
+          userConnected.idUser
+        );
+        setConversations(data);
+      } catch (error) {
+        console.error(
+          "Erreur lors de la récupération des conversations :",
+          error
+        );
+      }
+    };
 
-            try {
-              const data = await getConversationsForLoggedInUser(userConnected.idUser);
-                setConversations(data);
-                console.log(conversations);
-            } catch (error) {
-              console.error(
-                "Erreur lors de la récupération des conversations :",
-                error
-              );
-            }
-        };
-    
-        fetchAllConversation();
-      }, []);
+    fetchAllConversation();
+  }, [userConnected]);
 
-    return (
-        <div className={style.message}>
-            <div className={style.messageBox}>
-                test
+  useEffect(() => {
+    async function fetchUserPhotosAndMatches() {
+      try {
+        const photos = {};
+        const matches = {};
+        for (const conversation of conversations) {
+          // Trouver l'ID de l'utilisateur qui n'est pas l'utilisateur connecté
+          const otherUserId =
+            conversation.user1 === userConnected.idUser
+              ? conversation.user2
+              : conversation.user1;
+          const photo = await findPhotoById(otherUserId);
+          photos[otherUserId] = photo;
+          const match = await findUserById(otherUserId);
+          matches[otherUserId] = match;
+        }
+        setUserPhotos(photos);
+        setUserMatches(matches);
+      } catch (error) {
+        console.error("Erreur lors de la récupération des photos :", error);
+      }
+    }
+    fetchUserPhotosAndMatches();
+  }, [conversations]);
+
+
+  return (
+    <div className={style.message}>
+      <div className={style.messageBox}>
+        <div className={style.conversations}>
+          {conversations.map((conversation) => (
+            <div key={conversation.idConversation} className={style.fiche}>
+              {userPhotos[conversation.user2] && (
+                <img
+                  src={userPhotos[conversation.user2]}
+                  alt={`personne liké`}
+                />
+              )}
+              <p>{userMatches[conversation.user2] ? userMatches[conversation.user2].pseudo : "Utilisateur"}</p>
             </div>
+          ))}
         </div>
-    );
+      </div>
+      <FooterMobile />
+    </div>
+  );
 };
 
 export default Message;
+

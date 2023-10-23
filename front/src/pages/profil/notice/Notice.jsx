@@ -4,6 +4,7 @@ import style from "./Notice.module.scss";
 import jwtDecode from "jwt-decode";
 import { getToken } from "../../../data/Token";
 import { readMatches } from "../../../apis/users";
+import { updateMatch } from "../../../apis/match";
 import { findPhotoById } from "../../../apis/photos";
 import { RxCross2 } from "react-icons/rx";
 import { AiTwotoneHeart } from "react-icons/ai";
@@ -71,12 +72,14 @@ const Notice = () => {
 
   const updateMatchStatus = async (match, newStatus, index) => {
     try {
-      // eslint-disable-next-line
+      
       const data = {
         receiver: match.receiver.id,
         sender: match.sender.id,
         newStatus: newStatus,
       };
+
+      await updateMatch(data);
 
       if (newStatus === "VALIDE") {
         setLike((prevLikes) => {

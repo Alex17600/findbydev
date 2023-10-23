@@ -17,6 +17,7 @@ const FooterMobile = () => {
   const location = useLocation();
   const { userId } = useParams(); 
 
+
   useEffect(() => {
     try {
       const token = getToken();
@@ -51,13 +52,18 @@ const FooterMobile = () => {
 
   const handleNotificationsClick = () => {
     const userId = userConnected.idUser;
-    navigate(`../${userId}/notice`);
+    navigate(`/profil/${userId}/notice`);
   };
 
   const handleAccountClick = () => {
     const userId = userConnected.idUser;
-    navigate(`../${userId}/account`);
+    navigate(`/profil/${userId}/account`);
   };
+
+  const handleMessageClick = () => {
+    const userId = userConnected.idUser;
+    navigate(`/tchat/${userId}/message`);
+  }
 
 
   return (
@@ -73,7 +79,7 @@ const FooterMobile = () => {
         className={location.pathname.endsWith(`/profil/${userId}/notice`) ? style.disabled : null}
         onClick={handleNotificationsClick} />
       )}
-      <AiOutlineMessage />
+      <AiOutlineMessage onClick={handleMessageClick}/>
       <VscAccount 
       className={location.pathname.endsWith(`/profil/${userId}/account`) ? style.disabled : null}
       onClick={handleAccountClick}/>

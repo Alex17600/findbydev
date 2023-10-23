@@ -28,8 +28,8 @@ public class ConversationService {
         if (user1 != null && user2 != null) {
             // Créez une nouvelle conversation
             Conversation conversation = new Conversation();
-            conversation.setSender(user1);
-            conversation.setReceiver(user2);
+            conversation.setUser1(userId2);
+            conversation.setUser2(userId2);
             conversation.setArchived(false);
 
             conversation = conversationRepository.save(conversation);

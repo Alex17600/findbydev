@@ -20,11 +20,11 @@ const Photo = () => {
     try {
       
       const response = await downloadPhoto(userId, image);
-
+      console.log(response);
       if (response.ok) {
         const imageUrl = URL.createObjectURL(image); 
         setImage(imageUrl);
-  
+        
         setTimeout(() => {
           navigate("/profil");
         }, 3000);

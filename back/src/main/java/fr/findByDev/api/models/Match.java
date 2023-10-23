@@ -88,5 +88,4 @@ public class Match {
     public void setIsRead(Boolean isRead) {
         this.isRead = isRead;
     }
-
 }

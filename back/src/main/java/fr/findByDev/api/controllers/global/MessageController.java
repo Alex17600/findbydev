@@ -1,5 +1,6 @@
 package fr.findByDev.api.controllers.global;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import fr.findByDev.api.controllers.GenericController;
+import fr.findByDev.api.models.Conversation;
 import fr.findByDev.api.models.Message;
 import fr.findByDev.api.repositories.global.MessageRepository;
 import fr.findByDev.api.services.websocket.MessageService;
@@ -61,4 +63,14 @@ public class MessageController extends GenericController<Message, Integer> {
 
         messagingTemplate.convertAndSend("/topic/public", savedMessage);
     }
+
+    @GetMapping("/{conversationId}/conversation")
+    @ResponseStatus(HttpStatus.OK)
+    @CrossOrigin
+    public List<Message> getMessagesByConversationId(@PathVariable Integer conversationId) {
+
+        List<Message> messages = messageRepository.findMessagesByConversationId(conversationId);
+        return messages;
+    }
+    
 }

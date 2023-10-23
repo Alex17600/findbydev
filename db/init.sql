@@ -30,22 +30,12 @@ CREATE TABLE _user_(
    active_account BOOLEAN NOT NULL,
    description VARCHAR(255) ,
    popularity INTEGER,
-   photo BIT VARYING(50)  NOT NULL,
+   photo VARCHAR NOT NULL,
    git_profile VARCHAR(50) ,
    type VARCHAR(10)  NOT NULL,
-   view INTEGER,
    Id_gender INTEGER NOT NULL,
    PRIMARY KEY(Id_user),
    FOREIGN KEY(Id_gender) REFERENCES gender(Id_gender)
-);
-
-CREATE TABLE message(
-   Id_message SERIAL,
-   contain VARCHAR(1000)  NOT NULL,
-   date_hour DATE,
-   Id_user INTEGER NOT NULL,
-   PRIMARY KEY(Id_message),
-   FOREIGN KEY(Id_user) REFERENCES _user_(Id_user)
 );
 
 CREATE TABLE alert(
@@ -70,7 +60,7 @@ CREATE TABLE _match_(
    Id_user_receiver INTEGER,
    Id_user_sender INTEGER,
    date_hour DATE,
-   current_status status,
+   current_status VARCHAR,
    is_read BOOLEAN,
    PRIMARY KEY(Id_user_receiver, Id_user_sender),
    FOREIGN KEY(Id_user_receiver) REFERENCES _user_(Id_user),
@@ -102,18 +92,28 @@ CREATE TABLE _like_(
 );
 
 CREATE TABLE conversation(
-   Id_user_receiver INTEGER,
-   Id_user_sender INTEGER,
-   Id_message INTEGER,
-   date_debut TIMESTAMP,
+   Id_conversation SERIAL,
+   date_debut TIMESTAMP NOT NULL,
    archived BOOLEAN NOT NULL,
-   PRIMARY KEY(Id_user_receiver, Id_user_sender, Id_message),
-   FOREIGN KEY(Id_user_receiver) REFERENCES _user_(Id_user),
-   FOREIGN KEY(Id_user_sender) REFERENCES _user_(Id_user),
-   FOREIGN KEY(Id_message) REFERENCES message(Id_message)
+   user1 INTEGER NOT NULL,
+   user2 INTEGER NOT NULL,
+   PRIMARY KEY(Id_conversation),
+   FOREIGN KEY(user1) REFERENCES _user_(Id_user),
+   FOREIGN KEY(user2) REFERENCES _user_(Id_user)
 );
 
-
+CREATE TABLE message (
+   Id_message SERIAL,
+   contain VARCHAR(1000) NOT NULL,
+   date_hour TIMESTAMP NOT NULL,
+   Id_conversation INTEGER NOT NULL,
+   Id_user_sender INTEGER NOT NULL, 
+   Id_user_receiver INTEGER NOT NULL, 
+   PRIMARY KEY(Id_message),
+   FOREIGN KEY(Id_conversation) REFERENCES conversation(Id_conversation),
+   FOREIGN KEY(Id_user_sender) REFERENCES _user_(Id_user),
+   FOREIGN KEY(Id_user_receiver) REFERENCES _user_(Id_user)
+);
 
 
 
@@ -129,18 +129,18 @@ VALUES ('Autre');
 -- Insertion d'utilisateurs avec des pseudonymes Git aléatoires et des valeurs factices pour la photo
 INSERT INTO _user_ (pseudo, lastname, firstname, town, birthday, mail, password, active_account, description, popularity, photo, git_profile, id_gender, type)
 VALUES
-  ('p1', 'Doe', 'John', 'New York', '1990-05-15', 'user@user.user', '$2y$10$hdcop0JmljwX0pkef.p5IOClt6qXxN.rOX7Q3Atzg/Ldx90cAH86W', true, 'Software Engineer', 100, '', 'john_git', 1, 'U'),
-  ('p2', 'admin', 'admin', 'Philadelphia', '1998-08-07', 'admin@admin.admin', '$2y$10$hdcop0JmljwX0pkef.p5IOClt6qXxN.rOX7Q3Atzg/Ldx90cAH86W', true, 'QA Engineer', 78, '', 'alex_git', 2, 'A'),
-  ('p3', 'Doe', 'John', 'New York', '1990-05-15', 'john@example.com', '$2y$10$hdcop0JmljwX0pkef.p5IOClt6qXxN.rOX7Q3Atzg/Ldx90cAH86W', true, 'Web Developer', 85, '', 'johndoe', 1, 'U'),
-  ('p4', 'Smith', 'Alice', 'Los Angeles', '1988-03-20', 'alice@example.com', '$2y$10$hdcop0JmljwX0pkef.p5IOClt6qXxN.rOX7Q3Atzg/Ldx90cAH86W', true, 'Software Engineer', 92, '', 'alicesmith', 2, 'U'),
-  ('p5', 'Brown', 'Michael', 'Chicago', '1992-09-10', 'michael@example.com', '$2y$10$hdcop0JmljwX0pkef.p5IOClt6qXxN.rOX7Q3Atzg/Ldx90cAH86W', false, 'Data Scientist', 78, '', 'michaelbrown', 1, 'U'),
-  ('p6', 'Johnson', 'Emily', 'Houston', '1985-12-05', 'emily@example.com', '$2y$10$hdcop0JmljwX0pkef.p5IOClt6qXxN.rOX7Q3Atzg/Ldx90cAH86W', true, 'UX Designer', 89, '', 'emilyjohnson', 2, 'U'),
-  ('p7', 'Williams', 'Daniel', 'San Francisco', '1991-07-25', 'daniel@example.com', '$2y$10$hdcop0JmljwX0pkef.p5IOClt6qXxN.rOX7Q3Atzg/Ldx90cAH86W', true, 'Full Stack Developer', 88, '', 'danwilliams', 1, 'U'),
-  ('p8', 'Lee', 'Olivia', 'Boston', '1987-04-12', 'olivia@example.com', '$2y$10$hdcop0JmljwX0pkef.p5IOClt6qXxN.rOX7Q3Atzg/Ldx90cAH86W', true, 'Product Manager', 91, '', 'oliviale', 2, 'U'),
-  ('p9', 'Garcia', 'Matthew', 'Seattle', '1989-08-30', 'matthew@example.com', '$2y$10$hdcop0JmljwX0pkef.p5IOClt6qXxN.rOX7Q3Atzg/Ldx90cAH86W', false, 'Network Engineer', 82, '', 'matthewgarcia', 1, 'U'),
-  ('p10', 'Martinez', 'Sophia', 'Austin', '1993-02-18', 'sophia@example.com', '$2y$10$hdcop0JmljwX0pkef.p5IOClt6qXxN.rOX7Q3Atzg/Ldx90cAH86W', true, 'Frontend Developer', 86, '', 'sophiamartinez', 2, 'U'),
-  ('p11', 'Lopez', 'William', 'Miami', '1986-11-08', 'william@example.com', '$2y$10$hdcop0JmljwX0pkef.p5IOClt6qXxN.rOX7Q3Atzg/Ldx90cAH86W', true, 'Database Administrator', 79, '', 'williamlopez', 1, 'U'),
-  ('p12', 'Harris', 'Mia', 'Denver', '1990-06-22', 'mia@example.com', '$2y$10$hdcop0JmljwX0pkef.p5IOClt6qXxN.rOX7Q3Atzg/Ldx90cAH86W', true, 'Graphic Designer', 87, '', 'miaharris', 2, 'U');
+  ('ByteWizard42', 'Doe', 'John', 'New York', '1990-05-15', 'user@user.user', '$2y$10$hdcop0JmljwX0pkef.p5IOClt6qXxN.rOX7Q3Atzg/Ldx90cAH86W', true, 'Software Engineer', 100, '', 'john_git', 1, 'U'),
+  ('CodeNinjaX', 'admin', 'admin', 'Philadelphia', '1998-08-07', 'admin@admin.admin', '$2y$10$hdcop0JmljwX0pkef.p5IOClt6qXxN.rOX7Q3Atzg/Ldx90cAH86W', true, 'QA Engineer', 78, '', 'alex_git', 2, 'A'),
+  ('PixelPirate', 'Doe', 'John', 'New York', '1990-05-15', 'john@example.com', '$2y$10$hdcop0JmljwX0pkef.p5IOClt6qXxN.rOX7Q3Atzg/Ldx90cAH86W', true, 'Web Developer', 85, '', 'johndoe', 1, 'U'),
+  ('GeekGuru123', 'Smith', 'Alice', 'Los Angeles', '1988-03-20', 'alice@example.com', '$2y$10$hdcop0JmljwX0pkef.p5IOClt6qXxN.rOX7Q3Atzg/Ldx90cAH86W', true, 'Software Engineer', 92, '', 'alicesmith', 2, 'U'),
+  ('TechJunkie42', 'Brown', 'Michael', 'Chicago', '1992-09-10', 'michael@example.com', '$2y$10$hdcop0JmljwX0pkef.p5IOClt6qXxN.rOX7Q3Atzg/Ldx90cAH86W', false, 'Data Scientist', 78, '', 'michaelbrown', 1, 'U'),
+  ('DigiDungeonMaster', 'Johnson', 'Emily', 'Houston', '1985-12-05', 'emily@example.com', '$2y$10$hdcop0JmljwX0pkef.p5IOClt6qXxN.rOX7Q3Atzg/Ldx90cAH86W', true, 'UX Designer', 89, '', 'emilyjohnson', 2, 'U'),
+  ('CyberspaceHero', 'Williams', 'Daniel', 'San Francisco', '1991-07-25', 'daniel@example.com', '$2y$10$hdcop0JmljwX0pkef.p5IOClt6qXxN.rOX7Q3Atzg/Ldx90cAH86W', true, 'Full Stack Developer', 88, '', 'danwilliams', 1, 'U'),
+  ('QuantumCoder', 'Lee', 'Olivia', 'Boston', '1987-04-12', 'olivia@example.com', '$2y$10$hdcop0JmljwX0pkef.p5IOClt6qXxN.rOX7Q3Atzg/Ldx90cAH86W', true, 'Product Manager', 91, '', 'oliviale', 2, 'U'),
+  ('DataVoyagerX', 'Garcia', 'Matthew', 'Seattle', '1989-08-30', 'matthew@example.com', '$2y$10$hdcop0JmljwX0pkef.p5IOClt6qXxN.rOX7Q3Atzg/Ldx90cAH86W', false, 'Network Engineer', 82, '', 'matthewgarcia', 1, 'U'),
+  ('DataVoyagerX', 'Martinez', 'Sophia', 'Austin', '1993-02-18', 'sophia@example.com', '$2y$10$hdcop0JmljwX0pkef.p5IOClt6qXxN.rOX7Q3Atzg/Ldx90cAH86W', true, 'Frontend Developer', 86, '', 'sophiamartinez', 2, 'U'),
+  ('BinarySorcerer', 'Lopez', 'William', 'Miami', '1986-11-08', 'william@example.com', '$2y$10$hdcop0JmljwX0pkef.p5IOClt6qXxN.rOX7Q3Atzg/Ldx90cAH86W', true, 'Database Administrator', 79, '', 'williamlopez', 1, 'U'),
+  ('AIWhisperer', 'Harris', 'Mia', 'Denver', '1990-06-22', 'mia@example.com', '$2y$10$hdcop0JmljwX0pkef.p5IOClt6qXxN.rOX7Q3Atzg/Ldx90cAH86W', true, 'Graphic Designer', 87, '', 'miaharris', 2, 'U');
 
 INSERT INTO "_match_" (Id_user_receiver, Id_user_sender, date_hour, current_status) 
 VALUES 
@@ -208,30 +208,41 @@ VALUES
 (4, 'Comportement abusif', '2023-09-24 19:20:00', 4),
 (2, 'Harcèlement', '2023-09-23 08:55:00', 5);
 
--- Insertion de données dans la table "message"
-INSERT INTO message (Id_user, contain, date_hour)
-VALUES
-(1, 'Message 1 de l''utilisateur 1 à l''utilisateur 2', '2023-09-27 12:01:00'),
-(2, 'Message 2 de l''utilisateur 2 à l''utilisateur 1', '2023-09-27 12:31:00'),
-(3, 'Message 3 de l''utilisateur 3 à l''utilisateur 4', '2023-09-27 13:01:00'),
-(4, 'Message 4 de l''utilisateur 4 à l''utilisateur 3', '2023-09-27 13:31:00'),
-(5, 'Message 5 de l''utilisateur 5 à l''utilisateur 6', '2023-09-27 14:01:00'),
-(6, 'Message 6 de l''utilisateur 6 à l''utilisateur 5', '2023-09-27 14:31:00'),
-(7, 'Message 7 de l''utilisateur 7 à l''utilisateur 8', '2023-09-27 15:01:00'),
-(8, 'Message 8 de l''utilisateur 8 à l''utilisateur 7', '2023-09-27 15:31:00'),
-(9, 'Message 9 de l''utilisateur 9 à l''utilisateur 10', '2023-09-27 16:01:00'),
-(10, 'Message 10 de l''utilisateur 10 à l''utilisateur 9', '2023-09-27 16:31:00');
 
--- Insertion de données dans la table "conversation"
-INSERT INTO conversation (Id_user_receiver, Id_user_sender, Id_message, date_debut, archived)
+-- Insérer des conversations avec des messages
+
+-- Conversation 1 entre l'utilisateur 1 et l'utilisateur 2
+INSERT INTO conversation (date_debut, archived, user1, user2)
+VALUES ('2023-09-27 12:00:00', false, 1, 2);
+
+-- Messages pour la conversation 1
+INSERT INTO message (contain, date_hour, Id_conversation, Id_user_sender, Id_user_receiver)
 VALUES
-(1, 2, 1, '2023-09-27 12:00:00', true),
-(2, 1, 2, '2023-09-27 12:30:00', true),
-(3, 4, 3, '2023-09-27 13:00:00', false),
-(4, 3, 4, '2023-09-27 13:30:00', true),
-(5, 6, 5, '2023-09-27 14:00:00', false),
-(6, 5, 6, '2023-09-27 14:30:00', true),
-(7, 8, 7, '2023-09-27 15:00:00', false),
-(8, 7, 8, '2023-09-27 15:30:00', true),
-(9, 10, 9, '2023-09-27 16:00:00', false),
-(10, 9, 10, '2023-09-27 16:30:00', true);
+  ('Salut, comment ça va ?', '2023-09-27 12:01:00', 1, 1, 2),
+  ('Salut ! Ça va bien, merci !', '2023-09-27 12:02:00', 1, 2, 1),
+  ('Qu''est-ce que tu fais en ce moment ?', '2023-09-27 12:03:00', 1, 1, 2),
+  ('Je travaille sur un projet de développement web. Et toi ?', '2023-09-27 12:04:00', 1, 2, 1);
+
+-- Conversation 2 entre l'utilisateur 3 et l'utilisateur 4
+INSERT INTO conversation (date_debut, archived,user1, user2)
+VALUES ('2023-09-27 14:00:00', false, 3, 4);
+
+-- Messages pour la conversation 2
+INSERT INTO message (contain, date_hour, Id_conversation, Id_user_sender, Id_user_receiver)
+VALUES
+  ('Salut, comment ça va ?', '2023-09-27 14:01:00', 2, 3, 4),
+  ('Ça va bien, merci !', '2023-09-27 14:02:00', 2, 4, 3),
+  ('Tu veux faire quelque chose ce week-end ?', '2023-09-27 14:03:00', 2, 3, 4),
+  ('Je suis occupé ce week-end. Peut-être la semaine prochaine ?', '2023-09-27 14:04:00', 2, 4, 3);
+
+-- Conversation 3 entre l'utilisateur 5 et l'utilisateur 6
+INSERT INTO conversation (date_debut, archived, user1, user2)
+VALUES ('2023-09-27 16:00:00', false, 5, 6);
+
+-- Messages pour la conversation 3
+INSERT INTO message (contain, date_hour, Id_conversation, Id_user_sender, Id_user_receiver)
+VALUES
+  ('Bonjour, ça va ?', '2023-09-27 16:01:00', 3, 5, 6),
+  ('Ça va, et toi ?', '2023-09-27 16:02:00', 3, 6, 5),
+  ('J''ai une question à propos du projet sur lequel nous travaillons.', '2023-09-27 16:03:00', 3, 5, 6),
+  ('D''accord, pose ta question.', '2023-09-27 16:04:00', 3, 6, 5);

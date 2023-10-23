@@ -35,9 +35,10 @@ public class ConversationController extends GenericController<Conversation, Inte
         return conversationRepository.findAll();
     }
 
-    @GetMapping("/{idUser}")
+    @GetMapping("/search/{userId}")
     @ResponseStatus(HttpStatus.OK)
     @CrossOrigin
-    public List<Conversation> getConversationFromidUser() {
+    public List<Conversation> getConversationsForUser(@PathVariable Integer userId) {
+        return conversationRepository.findByUser1OrUser2(userId, userId);
     }
 }

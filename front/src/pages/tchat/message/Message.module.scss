@@ -7,6 +7,26 @@
 
     .messageBox {
         background-color: rgba(0, 0, 0, 0.5);
+        color: black;
+
+        .conversations {
+            display: flex;
+            flex-direction: column;
+
+            .fiche {
+                display: flex;
+                // align-items: center;
+                margin: 10px;
+                background-color: white;
+                border-radius: 6px;
+
+                img {
+                    border-radius: 50%;
+                    max-width: 100px;
+                    margin: 5px;
+                }
+            }
+        }
     }
 
 }

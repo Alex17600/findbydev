@@ -21,8 +21,8 @@ export async function getAllConversations() {
 }
 
 //findConversationbyId
-export async function getConversationsForLoggedInUser(idReceiver, idSender) {
-    const response = await fetch(`${URL_API}/${idReceiver}/${idSender}`, {
+export async function getConversationsForLoggedInUser(userId) {
+    const response = await fetch(`${URL_API}/search/${userId}`, {
         headers: {
             'Authorization': `Bearer ${getToken()}`,
         },

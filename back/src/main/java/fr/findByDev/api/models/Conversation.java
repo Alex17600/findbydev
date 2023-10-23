@@ -1,14 +1,14 @@
 package fr.findByDev.api.models;
 
 
-import java.util.Date;
+import java.sql.Date;
 
-import fr.findByDev.api.models.associations.ConversationId;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 @Table(name = "conversation")
 @Entity
 @Getter
@@ -17,26 +17,20 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Conversation {
 
-    @EmbeddedId
-    private ConversationId idConversation;
-
-    @ManyToOne
-    @JoinColumn(name = "Id_user_sender") 
-    @MapsId("idUserSender")
-    private User sender;
-
-    @ManyToOne
-    @JoinColumn(name = "Id_user_receiver")
-    @MapsId("idUserReceiver")
-    private User receiver;
-
-    @ManyToOne
-    @JoinColumn(name = "id_message")
-    private Message message;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name =  "id_conversation")
+    private Integer idConversation;
 
     @Column(name = "date_debut")
     private Date dateDebut;
 
     @Column(name = "archived")
     private Boolean archived;
+
+    @Column(name = "user1")
+    private Integer user1;
+
+    @Column(name = "user2")
+    private Integer user2;
 }

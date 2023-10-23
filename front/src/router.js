@@ -102,7 +102,7 @@ export const router = createBrowserRouter([
         ),
         children: [
           {
-            path: "message",
+            path: ":userId/message",
             element: <Message userConnected={userConnected}/>
           }
         ],

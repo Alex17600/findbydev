@@ -20,7 +20,7 @@ public class Message {
     @Column(name = "id_message")
     private Integer idMessage;
 
-    @Column(name = "contain", length = 1000)
+    @Column(name = "contain")
     private String contain;
 
     @Column(name = "date_hour")
@@ -29,4 +29,16 @@ public class Message {
     @ManyToOne
     @JoinColumn(name = "id_user")
     private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "id_user_sender")
+    private User userSender;
+
+    @ManyToOne
+    @JoinColumn(name = "id_user_receiver")
+    private User userReceiver;
+
+    @ManyToOne
+    @JoinColumn(name = "id_conversation")
+    private Conversation conversation;
 }

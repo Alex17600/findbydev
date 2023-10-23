@@ -154,7 +154,6 @@ export async function readMatches(userId) {
 export async function updateUser(userId, updateData) {
   // const formData = new FormData();
   // formData.append("image", image);
-
   const response = await fetch(`${URL_API}/${userId}`, {
     method: 'PATCH',
     headers: {
