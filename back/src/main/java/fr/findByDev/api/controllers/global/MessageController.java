@@ -64,13 +64,13 @@ public class MessageController extends GenericController<Message, Integer> {
         messagingTemplate.convertAndSend("/topic/public", savedMessage);
     }
 
-    @GetMapping("/{conversationId}/conversation")
-    @ResponseStatus(HttpStatus.OK)
-    @CrossOrigin
-    public List<Message> getMessagesByConversationId(@PathVariable Integer conversationId) {
+    // @GetMapping("/{conversationId}/conversation")
+    // @ResponseStatus(HttpStatus.OK)
+    // @CrossOrigin
+    // public List<Message> getMessagesByConversationId(@PathVariable Integer conversationId) {
 
-        List<Message> messages = messageRepository.findMessagesByConversationId(conversationId);
-        return messages;
-    }
+    //     List<Message> messages = messageRepository.findMessagesByConversationId(conversationId);
+    //     return messages;
+    // }
     
 }

@@ -51,6 +51,7 @@ const Message = ({ userConnected }) => {
       }
     }
     fetchUserPhotosAndMatches();
+    // eslint-disable-next-line
   }, [conversations]);
 
 

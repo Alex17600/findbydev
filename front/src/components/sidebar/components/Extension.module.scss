@@ -1,0 +1,25 @@
+.extension {
+    position: fixed;
+    top: 51px;
+    left: 70px; 
+    width: 200px; 
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+
+    svg {
+      margin-bottom: 20px;
+      padding: 10px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+  
+      &:hover {
+        background-color: rgba(177, 175, 175, 0.4);
+      }
+    }   
+}

@@ -39,7 +39,6 @@ const Profil = () => {
 
     fetchPhotos();
   }, [users]);
-  console.log(users)
 
   return (
     <div className={style.profil}>

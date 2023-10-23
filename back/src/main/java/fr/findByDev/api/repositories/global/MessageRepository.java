@@ -10,5 +10,5 @@ import fr.findByDev.api.repositories.GenericRepository;
 
 @Repository
 public interface MessageRepository extends GenericRepository<Message, Integer>{
-    List<Message> findAllByidConversation(Integer conversationId);
+    
 }
