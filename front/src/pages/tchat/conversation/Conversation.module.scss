@@ -1,0 +1,34 @@
+.conversation {
+    background-image: url(../../../assets/background/152699-abstract-gold-letters-background.webp);
+    height: 100vh;
+    background-size: cover;
+    background-repeat: no-repeat;
+    overflow-y: auto;
+
+    .conversationBox {
+        background-color: rgba(0, 0, 0, 0.5);
+        color: black;
+
+        .conversations {
+            display: flex;
+            flex-direction: column;
+
+            .fiche {
+                display: flex;
+                align-items: center;
+                margin: 10px auto;
+                background-color: white;
+                border-radius: 6px;
+                width: 80%;
+
+
+                img {
+                    border-radius: 50%;
+                    max-width: 100px;
+                    margin: 5px;
+                }
+            }
+        }
+    }
+
+}

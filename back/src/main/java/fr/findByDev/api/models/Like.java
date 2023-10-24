@@ -45,7 +45,5 @@ public class Like {
 
     public void setExperience(Experience experience) {
         this.experience = experience;
-    }
-
-    
+    }    
 }

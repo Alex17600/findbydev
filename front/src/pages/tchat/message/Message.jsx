@@ -1,76 +1,67 @@
 import React, { useEffect, useState } from "react";
 import style from "./Message.module.scss";
-import { getConversationsForLoggedInUser } from "../../../apis/conversation";
-import { findPhotoById } from "../../../apis/photos";
-import { findUserById } from "../../../apis/users";
-import FooterMobile from "../../../components/footer/FooterMobile";
+import { useParams } from "react-router-dom";
+import { getAllMessagesFromIdConversation } from "../../../apis/messages";
+import FooterMobile from "../../../components/footer/FooterMobile"; 
+import SockJS from "sockjs-client"
+import Stomp from 'stompjs'
 
 const Message = ({ userConnected }) => {
-  const [conversations, setConversations] = useState([]);
-  const [userPhotos, setUserPhotos] = useState({});
-  const [userMatches, setUserMatches] = useState({});
-
+  const { idConversation } = useParams();
+  const [messages, setMessages] = useState([]);
+  const [newMessage, setNewMessage] = useState("");
+  let stompClient;
   useEffect(() => {
-    const fetchAllConversation = async () => {
+    const fetchMessages = async () => {
       try {
-        const data = await getConversationsForLoggedInUser(
-          userConnected.idUser
-        );
-        setConversations(data);
+        const messages = await getAllMessagesFromIdConversation(idConversation);
+        setMessages(messages);
       } catch (error) {
-        console.error(
-          "Erreur lors de la récupération des conversations :",
-          error
-        );
+        console.error("Erreur lors de la récupération des messages :", error);
       }
     };
 
-    fetchAllConversation();
-  }, [userConnected]);
+    fetchMessages();
+  }, [idConversation]);
 
-  useEffect(() => {
-    async function fetchUserPhotosAndMatches() {
-      try {
-        const photos = {};
-        const matches = {};
-        for (const conversation of conversations) {
-          // Trouver l'ID de l'utilisateur qui n'est pas l'utilisateur connecté
-          const otherUserId =
-            conversation.user1 === userConnected.idUser
-              ? conversation.user2
-              : conversation.user1;
-          const photo = await findPhotoById(otherUserId);
-          photos[otherUserId] = photo;
-          const match = await findUserById(otherUserId);
-          matches[otherUserId] = match;
-        }
-        setUserPhotos(photos);
-        setUserMatches(matches);
-      } catch (error) {
-        console.error("Erreur lors de la récupération des photos :", error);
-      }
-    }
-    fetchUserPhotosAndMatches();
-    // eslint-disable-next-line
-  }, [conversations]);
+  const sendMessage = () => {
+    const socket = new SockJS("http://localhost:8000/api/chat");
+    stompClient = Stomp.over(socket);
+    stompClient.connect({}, function (frame) {
+    console.log("Connected " + frame);
+    stompClient.subscribe("http://localhost:8000/api/topic", function (greeting) {
+    console.log("hi" + JSON.parse(greeting.body).content);
+    });
+    });
+    };
 
+    const sendSomething = () => {
+    stompClient.send("http://localhost:8080/send-message",{}, JSON.stringify({"name":"John"}));
+    };
 
   return (
     <div className={style.message}>
-      <div className={style.messageBox}>
-        <div className={style.conversations}>
-          {conversations.map((conversation) => (
-            <div key={conversation.idConversation} className={style.fiche}>
-              {userPhotos[conversation.user2] && (
-                <img
-                  src={userPhotos[conversation.user2]}
-                  alt={`personne liké`}
-                />
-              )}
-              <p>{userMatches[conversation.user2] ? userMatches[conversation.user2].pseudo : "Utilisateur"}</p>
-            </div>
-          ))}
+      {messages.map((message) => (
+        <div
+          key={message.idMessage}
+          className={`${style["message-bubble"]} ${
+            message.userSender.id === userConnected.idUser
+              ? style.sender
+              : style.receiver
+          }`}
+        >
+          <p>{message.userSender.pseudo}</p>
+          <p>{message.contain}</p>
         </div>
+      ))}
+      <div className={style["message-input"]}>
+        <input
+          type="text"
+          value={newMessage} 
+          onChange={(e) => setNewMessage(e.target.value)}
+          placeholder="Saisissez votre message"
+        />
+        <button onClick={sendMessage}>Envoyer</button>
       </div>
       <FooterMobile />
     </div>
@@ -78,4 +69,3 @@ const Message = ({ userConnected }) => {
 };
 
 export default Message;
-

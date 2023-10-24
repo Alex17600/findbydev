@@ -5,6 +5,7 @@ import FilterAuth from "./FilterAuth";
 import { getToken } from "./data/Token";
 import jwtDecode from "jwt-decode";
 
+
 const Accueil = lazy(() => import("./pages/home/Accueil"));
 const Register = lazy(() => import("./pages/register/Register"));
 const Informations = lazy(() => import("./pages/register/infos/Informations"));
@@ -17,6 +18,7 @@ const CardMobile = lazy(() => import("./pages/profil/card/CardMobile"));
 const Account = lazy(() => import("./pages/profil/account/Account"));
 const Notice = lazy(() => import("./pages/profil/notice/Notice"));
 const Tchat = lazy(() => import("./pages/tchat/Tchat"));
+const Conversation = lazy(() => import("./pages/tchat/conversation/Conversation"));
 const Message = lazy(() => import("./pages/tchat/message/Message"));
 const UserDetails = lazy(() => import("./pages/profil/userDetails/UserDetails"));
 
@@ -102,7 +104,11 @@ export const router = createBrowserRouter([
         ),
         children: [
           {
-            path: ":userId/message",
+            path: ":userId/conversation",
+            element: <Conversation userConnected={userConnected}/>
+          },
+          {
+            path: ":idConversation/message",
             element: <Message userConnected={userConnected}/>
           }
         ],

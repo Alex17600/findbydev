@@ -1,21 +1,24 @@
-import SockJS from 'sockjs-client'; // Pour la gestion WebSocket via SockJS
-import Stomp from 'stompjs'; // Pour la gestion du protocole STOMP sur WebSocket
+import SockJS from 'sockjs-client';
+import Stomp from 'stompjs';
 
+let stompClient = null;
 
-const connectWebSocket = (senderId) => {
+const connectToWebSocket = () => {
+    const socket = new SockJS('/chat');
+    stompClient = Stomp.over(socket);
+    
+    stompClient.connect({}, (frame) => {
+        // La connexion WebSocket est établie avec succès
+        console.log('Connected to WebSocket: ' + frame);
 
-    const socket = new SockJS('/ws');
-    const stompClient = Stomp.over(socket);
-  
-    stompClient.connect({}, () => {
-
-      const notificationTopic = `/topic/notifications/user/${senderId}`; 
-      stompClient.subscribe(notificationTopic, (message) => {
-        const notification = JSON.parse(message.body); 
-        console.log('Notification reçue :', notification);
-      });
+        // Ici, vous pouvez vous abonner à des topics WebSocket
+        // Par exemple :
+        stompClient.subscribe('/topic/queue', (message) => {
+            // Traitez le message reçu depuis le topic
+            console.log('Received message:', JSON.parse(message.body));
+        });
     });
-  };
-  
-  export default connectWebSocket;
-  
+};
+
+export { connectToWebSocket };
+

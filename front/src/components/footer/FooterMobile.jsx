@@ -62,7 +62,7 @@ const FooterMobile = () => {
 
   const handleMessageClick = () => {
     const userId = userConnected.idUser;
-    navigate(`/tchat/${userId}/message`);
+    navigate(`/tchat/${userId}/conversation`);
   }
 
 

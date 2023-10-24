@@ -216,33 +216,33 @@ INSERT INTO conversation (date_debut, archived, user1, user2)
 VALUES ('2023-09-27 12:00:00', false, 1, 2);
 
 -- Messages pour la conversation 1
-INSERT INTO message (contain, date_hour, Id_conversation, Id_user_sender, Id_user_receiver)
+INSERT INTO message (contain, date_hour, Id_conversation, Id_user_sender, Id_user_receiver, id_user)
 VALUES
-  ('Salut, comment ça va ?', '2023-09-27 12:01:00', 1, 1, 2),
-  ('Salut ! Ça va bien, merci !', '2023-09-27 12:02:00', 1, 2, 1),
-  ('Qu''est-ce que tu fais en ce moment ?', '2023-09-27 12:03:00', 1, 1, 2),
-  ('Je travaille sur un projet de développement web. Et toi ?', '2023-09-27 12:04:00', 1, 2, 1);
+  ('Salut, comment ça va ?', '2023-09-27 12:01:00', 1, 1, 2, 1),
+  ('Salut ! Ça va bien, merci !', '2023-09-27 12:02:00', 1, 2, 1, 2),
+  ('Qu''est-ce que tu fais en ce moment ?', '2023-09-27 12:03:00', 1, 1, 2, 1),
+  ('Je travaille sur un projet de développement web. Et toi ?', '2023-09-27 12:04:00', 1, 2, 1, 2);
 
 -- Conversation 2 entre l'utilisateur 3 et l'utilisateur 4
 INSERT INTO conversation (date_debut, archived,user1, user2)
 VALUES ('2023-09-27 14:00:00', false, 3, 4);
 
 -- Messages pour la conversation 2
-INSERT INTO message (contain, date_hour, Id_conversation, Id_user_sender, Id_user_receiver)
+INSERT INTO message (contain, date_hour, Id_conversation, Id_user_sender, Id_user_receiver, id_user)
 VALUES
-  ('Salut, comment ça va ?', '2023-09-27 14:01:00', 2, 3, 4),
-  ('Ça va bien, merci !', '2023-09-27 14:02:00', 2, 4, 3),
-  ('Tu veux faire quelque chose ce week-end ?', '2023-09-27 14:03:00', 2, 3, 4),
-  ('Je suis occupé ce week-end. Peut-être la semaine prochaine ?', '2023-09-27 14:04:00', 2, 4, 3);
+  ('Salut, comment ça va ?', '2023-09-27 14:01:00', 2, 3, 4, 3),
+  ('Ça va bien, merci !', '2023-09-27 14:02:00', 2, 4, 3, 4),
+  ('Tu veux faire quelque chose ce week-end ?', '2023-09-27 14:03:00', 2, 3, 4, 3),
+  ('Je suis occupé ce week-end. Peut-être la semaine prochaine ?', '2023-09-27 14:04:00', 2, 4, 3, 4);
 
 -- Conversation 3 entre l'utilisateur 5 et l'utilisateur 6
 INSERT INTO conversation (date_debut, archived, user1, user2)
 VALUES ('2023-09-27 16:00:00', false, 5, 6);
 
 -- Messages pour la conversation 3
-INSERT INTO message (contain, date_hour, Id_conversation, Id_user_sender, Id_user_receiver)
+INSERT INTO message (contain, date_hour, Id_conversation, Id_user_sender, Id_user_receiver, id_user)
 VALUES
-  ('Bonjour, ça va ?', '2023-09-27 16:01:00', 3, 5, 6),
-  ('Ça va, et toi ?', '2023-09-27 16:02:00', 3, 6, 5),
-  ('J''ai une question à propos du projet sur lequel nous travaillons.', '2023-09-27 16:03:00', 3, 5, 6),
-  ('D''accord, pose ta question.', '2023-09-27 16:04:00', 3, 6, 5);
+  ('Bonjour, ça va ?', '2023-09-27 16:01:00', 3, 5, 6, 5),
+  ('Ça va, et toi ?', '2023-09-27 16:02:00', 3, 6, 5, 6),
+  ('J''ai une question à propos du projet sur lequel nous travaillons.', '2023-09-27 16:03:00', 3, 5, 6, 5),
+  ('D''accord, pose ta question.', '2023-09-27 16:04:00', 3, 6, 5, 6);
