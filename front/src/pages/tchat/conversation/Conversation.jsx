@@ -3,7 +3,6 @@ import style from "./Conversation.module.scss";
 import { getConversationsForLoggedInUser } from "../../../apis/conversation";
 import { findPhotoById } from "../../../apis/photos";
 import { findUserById } from "../../../apis/users";
-import { getAllMessagesFromIdConversation } from "../../../apis/messages";
 import FooterMobile from "../../../components/footer/FooterMobile";
 import { useNavigate } from "react-router-dom";
 

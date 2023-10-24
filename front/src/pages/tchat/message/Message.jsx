@@ -3,14 +3,16 @@ import style from "./Message.module.scss";
 import { useParams } from "react-router-dom";
 import { getAllMessagesFromIdConversation } from "../../../apis/messages";
 import FooterMobile from "../../../components/footer/FooterMobile"; 
-import SockJS from "sockjs-client"
-import Stomp from 'stompjs'
+import SockJS from "sockjs-client";
+import Stomp from 'stompjs';
+import { getToken } from "../../../data/Token";
 
 const Message = ({ userConnected }) => {
   const { idConversation } = useParams();
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   let stompClient;
+  const token =  getToken();
   useEffect(() => {
     const fetchMessages = async () => {
       try {
@@ -25,7 +27,12 @@ const Message = ({ userConnected }) => {
   }, [idConversation]);
 
   const sendMessage = () => {
-    const socket = new SockJS("http://localhost:8000/api/chat");
+    
+    const headers = {
+      Authorization: `Bearer ${token}`
+    };
+    
+    const socket = new SockJS("http://localhost:8000/api/chat", null, { headers });
     stompClient = Stomp.over(socket);
     stompClient.connect({}, function (frame) {
     console.log("Connected " + frame);
