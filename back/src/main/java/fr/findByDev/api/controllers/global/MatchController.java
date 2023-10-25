@@ -130,5 +130,4 @@ public class MatchController extends GenericController<Match, MatchId> {
             throw new IllegalArgumentException("ID utilisateur non valide.");
         }
     }
-
 }

@@ -58,6 +58,7 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers(HttpMethod.POST, "/login/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "localhost:8080/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/users/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/users/**").permitAll()
                         .requestMatchers(HttpMethod.PATCH, "/users/**").permitAll()
@@ -65,6 +66,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PATCH, "/users/{userid}/update-photo").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN") 
                         .requestMatchers(HttpMethod.GET, "/genders/**").permitAll()               
                         .requestMatchers(HttpMethod.GET, "/matches/**").permitAll()               
+                        .requestMatchers(HttpMethod.POST, "/messages/**").hasAuthority("ROLE_USER")                               
                         .requestMatchers(HttpMethod.POST, "/chat/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/chat/**").permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/chat/**").permitAll()

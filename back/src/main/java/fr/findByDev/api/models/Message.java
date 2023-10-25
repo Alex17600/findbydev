@@ -103,6 +103,5 @@ public class Message {
     public void setConversation(Conversation conversation) {
         this.conversation = conversation;
     }
-    
-    
+
 }

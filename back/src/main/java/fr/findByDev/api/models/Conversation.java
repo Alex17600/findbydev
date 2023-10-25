@@ -67,7 +67,5 @@ public class Conversation {
 
     public void setUser2(Integer user2) {
         this.user2 = user2;
-    }
-
-    
+    }  
 }
