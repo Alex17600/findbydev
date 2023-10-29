@@ -95,11 +95,11 @@ CREATE TABLE conversation(
    Id_conversation SERIAL,
    date_debut TIMESTAMP NOT NULL,
    archived BOOLEAN NOT NULL,
-   user1 INTEGER NOT NULL,
-   user2 INTEGER NOT NULL,
+   user_sender INTEGER NOT NULL,
+   user_receiver INTEGER NOT NULL,
    PRIMARY KEY(Id_conversation),
-   FOREIGN KEY(user1) REFERENCES _user_(Id_user),
-   FOREIGN KEY(user2) REFERENCES _user_(Id_user)
+   FOREIGN KEY( user_sender) REFERENCES _user_(Id_user),
+   FOREIGN KEY(user_receiver) REFERENCES _user_(Id_user)
 );
 
 CREATE TABLE message (
@@ -144,16 +144,16 @@ VALUES
 
 INSERT INTO "_match_" (Id_user_receiver, Id_user_sender, date_hour, current_status) 
 VALUES 
-(1, 2, '2023-09-27 12:00:00', 'VALIDE'),
+(1, 2, '2023-09-27 12:00:00', 'EN_ATTENTE'),
 (2, 1, '2023-09-27 12:30:00', 'EN_ATTENTE'),
-(3, 4, '2023-09-27 13:00:00', 'REFUSE'),
-(4, 3, '2023-09-27 13:30:00', 'VALIDE'),
+(3, 4, '2023-09-27 13:00:00', 'EN_ATTENTE'),
+(4, 3, '2023-09-27 13:30:00', 'EN_ATTENTE'),
 (5, 6, '2023-09-27 14:00:00', 'EN_ATTENTE'),
-(6, 5, '2023-09-27 14:30:00', 'REFUSE'),
-(7, 8, '2023-09-27 15:00:00', 'VALIDE'),
+(6, 5, '2023-09-27 14:30:00', 'EN_ATTENTE'),
+(7, 8, '2023-09-27 15:00:00', 'EN_ATTENTE'),
 (8, 7, '2023-09-27 15:30:00', 'EN_ATTENTE'),
-(9, 10, '2023-09-27 16:00:00', 'REFUSE'),
-(10, 9, '2023-09-27 16:30:00', 'VALIDE');
+(9, 10, '2023-09-27 16:00:00', 'EN_ATTENTE'),
+(10, 9, '2023-09-27 16:30:00', 'EN_ATTENTE');
 
 INSERT INTO experience (descriptif) VALUES
   ('Développement d''une application web'),
@@ -240,9 +240,9 @@ INSERT INTO conversation (date_debut, archived, user1, user2)
 VALUES ('2023-09-27 16:00:00', false, 5, 6);
 
 -- Messages pour la conversation 3
-INSERT INTO message (contain, date_hour, Id_conversation, Id_user_sender, Id_user_receiver, id_user)
+INSERT INTO message (contain, date_hour, Id_conversation, Id_user_sender, Id_user_receiver)
 VALUES
-  ('Bonjour, ça va ?', '2023-09-27 16:01:00', 3, 5, 6, 5),
-  ('Ça va, et toi ?', '2023-09-27 16:02:00', 3, 6, 5, 6),
-  ('J''ai une question à propos du projet sur lequel nous travaillons.', '2023-09-27 16:03:00', 3, 5, 6, 5),
-  ('D''accord, pose ta question.', '2023-09-27 16:04:00', 3, 6, 5, 6);
+  ('Bonjour, ça va ?', '2023-09-27 16:01:00', 3, 5, 6),
+  ('Ça va, et toi ?', '2023-09-27 16:02:00', 3, 6, 5),
+  ('J''ai une question à propos du projet sur lequel nous travaillons.', '2023-09-27 16:03:00', 3, 5, 6),
+  ('D''accord, pose ta question.', '2023-09-27 16:04:00', 3, 6, 5);

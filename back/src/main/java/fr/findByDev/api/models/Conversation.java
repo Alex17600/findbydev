@@ -20,11 +20,11 @@ public class Conversation {
     @Column(name = "archived")
     private Boolean archived;
 
-    @Column(name = "user1")
-    private Integer user1;
+    @Column(name = "user_sender")
+    private Integer userSender;
 
-    @Column(name = "user2")
-    private Integer user2;
+    @Column(name = "user_receiver")
+    private Integer userReceiver;
 
     public Conversation() {
     }
@@ -53,19 +53,21 @@ public class Conversation {
         this.archived = archived;
     }
 
-    public Integer getUser1() {
-        return user1;
+    public Integer getUserSender() {
+        return userSender;
     }
 
-    public void setUser1(Integer user1) {
-        this.user1 = user1;
+    public void setUserSender(Integer userSender) {
+        this.userSender = userSender;
     }
 
-    public Integer getUser2() {
-        return user2;
+    public Integer getUserReceiver() {
+        return userReceiver;
     }
 
-    public void setUser2(Integer user2) {
-        this.user2 = user2;
-    }  
+    public void setUserReceiver(Integer userReceiver) {
+        this.userReceiver = userReceiver;
+    }
+
+
 }

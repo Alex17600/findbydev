@@ -110,12 +110,10 @@ public class MatchController extends GenericController<Match, MatchId> {
             String newStatus = (String) data.get("newStatus");
             User userSender = userRepository.findById(idUserSender).orElse(null);
 
-            // Recherchez le match correspondant dans la base de données en utilisant les
-            // IDs
             Match match = matchRepository.findByIdMatch(idUserSender, idUserReceiver);
 
             if (match != null) {
-                // Assurez-vous que le nouveau statut est valide (VALIDE ou REFUSE)
+                
                 if ("VALIDE".equals(newStatus) || "REFUSE".equals(newStatus)) {
                     match.setCurrentStatus(Status.valueOf(newStatus));
                     userSender.setPopularity(userSender.getPopularity() + 5);

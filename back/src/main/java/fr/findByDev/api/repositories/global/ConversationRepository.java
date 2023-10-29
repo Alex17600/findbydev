@@ -11,5 +11,5 @@ import fr.findByDev.api.repositories.GenericRepository;
 
 @Repository
 public interface ConversationRepository extends GenericRepository<Conversation, Integer>{
-    List<Conversation> findByUser1OrUser2(Integer user1, Integer user2);
+    List<Conversation> findByUserSenderOrUserReceiver(Integer userSender, Integer userReceiver);
 }

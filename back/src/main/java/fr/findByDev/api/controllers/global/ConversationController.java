@@ -1,6 +1,7 @@
 package fr.findByDev.api.controllers.global;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -35,10 +36,18 @@ public class ConversationController extends GenericController<Conversation, Inte
         return conversationRepository.findAll();
     }
 
+       
+    @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    @CrossOrigin
+    public Optional<Conversation> get(@PathVariable Integer id) {
+        return conversationRepository.findById(id);
+    }
+
     @GetMapping("/search/{userId}")
     @ResponseStatus(HttpStatus.OK)
     @CrossOrigin
     public List<Conversation> getConversationsForUser(@PathVariable Integer userId) {
-        return conversationRepository.findByUser1OrUser2(userId, userId);
+        return conversationRepository.findByUserSenderOrUserReceiver(userId, userId);
     }
 }

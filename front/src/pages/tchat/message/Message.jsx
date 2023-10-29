@@ -1,123 +1,173 @@
 import React, { useEffect, useState } from "react";
 import style from "./Message.module.scss";
 import { useParams } from "react-router-dom";
-import { getAllMessagesFromIdConversation } from "../../../apis/messages";
-import FooterMobile from "../../../components/footer/FooterMobile";
 import SockJS from "sockjs-client";
 import Stomp from "stompjs";
 import { getToken } from "../../../data/Token";
+import FooterMobile from "../../../components/footer/FooterMobile";
+import { getConversationById } from "../../../apis/conversation";
+import { getAllMessagesFromIdConversation } from "../../../apis/messages";
+import { findUserById } from "../../../apis/users";
+import { createMessage } from "../../../apis/messages";
 
 const Message = ({ userConnected }) => {
   const { idConversation } = useParams();
-  const [messages, setMessages] = useState([]);
-  const [newMessage, setNewMessage] = useState("");
-  const [websocketMessages, setWebsocketMessages] = useState([]);
   const [stompClient, setStompClient] = useState(null);
+  const [messages, setMessages] = useState([]);
+  const [nouveauMessage, setNouveauMessage] = useState("");
+  const [receiverId, setReceiverId] = useState(null);
+  const [senderId, setSenderId] = useState(null);
+  const [senderPseudo, setSenderPseudo] = useState("");
+  
 
   useEffect(() => {
-    // Fonction pour se connecter au WebSocket
-    const connectToWebSocket = () => {
-      const socket = new SockJS("http://localhost:8080/websocket/chat", null, {
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-        },
-      });
-      const client = Stomp.over(socket);
-      client.connect({}, function (frame) {
-        console.log("Connected " + frame);
-        setStompClient(client); // Stockez le client dans l'état
-      });
-    };
+    const socket = new SockJS("http://localhost:8080/websocket/ws", null, {
+      headers: {
+        Authorization: `Bearer ${getToken()}`,
+      },
+    });
+    const client = Stomp.over(socket);
 
-    // Lancer la connexion WebSocket lorsque le composant est monté
-    connectToWebSocket();
+    client.connect({}, () => {
+      client.subscribe("/topic/messages", (nouveauMessage) => {
+        const messageReçu = JSON.parse(nouveauMessage.body);
+        setMessages((prevMessages) => [...prevMessages, messageReçu]);
+      });
+    });
+
+    setStompClient(client);
+    return () => {
+      client.disconnect();
+    };
   }, []);
 
   useEffect(() => {
-    const fetchMessages = async () => {
+    async function fetchConversation() {
+      try {
+        
+        const conversation = await getConversationById(idConversation);
+
+        const userSender = conversation[0].userSender;
+        const userReceiver = conversation[0].userReceiver;
+        if (userConnected.idUser === userSender) {
+          setReceiverId(userReceiver);
+          setSenderId(userSender);
+ 
+        } else if (userConnected.idUser === userReceiver) {
+          setReceiverId(userSender);
+          setSenderId(userReceiver)
+        }
+      } catch (error) {
+        console.error(
+          "Erreur lors de la récupération de la conversation",
+          error
+        );
+      }
+    }
+    fetchConversation();
+  }, [idConversation, userConnected.idUser]);
+
+  //charge les messages déjà existant d'un conversation
+  useEffect(() => {
+    async function fetchMessages() {
       try {
         const messages = await getAllMessagesFromIdConversation(idConversation);
         setMessages(messages);
+
       } catch (error) {
-        console.error("Erreur lors de la récupération des messages :", error);
+        console.error(
+          "Erreur lors de la récupération des messages de la conversation",
+          error
+        );
       }
-    };
-
-    fetchMessages();
-
-    if (stompClient) {
-      stompClient.subscribe("/topic/chat", function (message) {
-        const newMessage = JSON.parse(message.body).contain;
-        setWebsocketMessages((prevMessages) => [...prevMessages, newMessage]);
-      });
     }
+    fetchMessages();
   }, [idConversation]);
 
-  const sendMessage = () => {
+  //recup du pseudo du sender pour l'envoyer au receiver
+  useEffect(() => {
+    async function fetchSenderPseudo() {
+      try {
+        const senderResponse = await findUserById(userConnected.idUser);
+        const senderPseudo = senderResponse.pseudo;
+        setSenderPseudo(senderPseudo);
+      } catch (error) {
+        console.error("Erreur lors de la récupération du pseudo du sender", error);
+      }
+    }
+    fetchSenderPseudo();
+  }, [userConnected.idUser]);
+  
+
+  const sendMessage = (messageData) => {
+    stompClient.send(
+      "/app/sendMessage",
+      {},
+      JSON.stringify(messageData),
+      () => {
+        setNouveauMessage("");
+      }
+    );
+  };
+
+  const handleSendMessage = async () => {
     if (stompClient && stompClient.connected) {
-      // Assurez-vous que la connexion est établie
-      const messageData = {
-        contain: newMessage,
-        conversation: {
-          idConversation: idConversation,
-        },
-        userSender: {
-          id: messages[0].userSender.id,
-        },
-        userReceiver: {
-          id: messages[0].userReceiver.id,
-        },
-      };
+      try {
 
-      stompClient.send(
-        `/tchat/${idConversation}`,
-        {},
-        JSON.stringify(messageData.contain)
-      );
-      // Mettre à jour localement le tableau de messages avec le nouveau message
-      const newMessageObject = {
-        userSender: {
-          pseudo: userConnected.pseudo,
-        },
-        contain: newMessage,
-      };
+        const messageData = {
+          contain: nouveauMessage,
+          userSender: senderId,
+          userReceiver: receiverId,
+          pseudo: senderPseudo,
+          conversationId: idConversation,
+        };
 
-      setMessages([...messages, newMessageObject]);
-      setNewMessage("");
-    } else {
-      console.error("La connexion WebSocket n'est pas établie.");
+        const data = {
+          contain: nouveauMessage,
+          userSender: userConnected.idUser,
+          userReceiver: receiverId,
+          conversation: parseInt(idConversation)
+        };
+
+        sendMessage(messageData);
+        //save en bdd
+        await createMessage(data);
+
+        setNouveauMessage("");
+      } catch (error) {
+        console.error(
+          "Erreur lors de la récupération du pseudo du sender",
+          error
+        );
+      }
     }
   };
 
   return (
     <div className={style.message}>
-      {messages.map((message) => (
-        <div
-          key={message.idMessage}
-          className={`${style["message-bubble"]} ${
-            message.userSender.id === userConnected.idUser
-              ? style.sender
-              : style.receiver
-          }`}
-        >
-          <p>{message.userSender.pseudo}</p>
-          <p>{message.contain}</p>
-        </div>
-      ))}
-      {newMessage && (
-        <div className={`${style["message-bubble"]} ${style.sender}`}>
-          <p>{userConnected.pseudo}</p>
-          <p>{newMessage}</p>
-        </div>
-      )}
+      <div className={style["message-bubbles"]}>
+        {messages.map((message, index) => (
+          <div
+            key={index}
+            className={`${style["message-bubble"]} ${
+              (message.userSender.id === userConnected.idUser) || (message.userSender === userConnected.idUser)
+                ? style.sender
+                : style.receiver
+            }`}
+          > 
+            <p>{message.pseudo}</p>
+            <p>{message.contain}</p>
+          </div>
+        ))}
+      </div>
       <div className={style["message-input"]}>
         <input
           type="text"
-          value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
+          value={nouveauMessage}
+          onChange={(e) => setNouveauMessage(e.target.value)}
           placeholder="Saisissez votre message"
         />
-        <button onClick={sendMessage}>Envoyer</button>
+        <button onClick={handleSendMessage}>Envoyer</button>
       </div>
       <FooterMobile />
     </div>

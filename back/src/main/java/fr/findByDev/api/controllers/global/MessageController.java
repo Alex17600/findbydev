@@ -77,10 +77,10 @@ public class MessageController extends GenericController<Message, Integer> {
     @CrossOrigin
     public ResponseEntity<?> createMessage(@RequestBody Map<String, Object> data) throws Exception {
         try {
-            Integer userSenderId = (Integer) ((Map<String, Object>) data.get("userSender")).get("id");
-            Integer userReceiverId = (Integer) ((Map<String, Object>) data.get("userReceiver")).get("id");
+            Integer userSenderId = (Integer) data.get("userSender");
+            Integer userReceiverId = (Integer) data.get("userReceiver");
             String contain = (String) data.get("contain");
-            Integer conversationId = Integer.parseInt((String) ((Map<String, Object>) data.get("conversation")).get("idConversation"));
+            Integer conversationId = (Integer) data.get("conversation");
     
             User sender = userRepository.findById(userSenderId).orElse(null);
             User receiver = userRepository.findById(userReceiverId).orElse(null);
@@ -102,9 +102,6 @@ public class MessageController extends GenericController<Message, Integer> {
             e.printStackTrace();
             return new ResponseEntity<>("Erreur lors de la création du message", HttpStatus.INTERNAL_SERVER_ERROR);
         }
-    
-        // Ajout du return ResponseEntity pour le cas où rien n'est retourné ci-dessus
         return new ResponseEntity<>("Erreur lors de la création du message", HttpStatus.INTERNAL_SERVER_ERROR);
     }
-    
 }
