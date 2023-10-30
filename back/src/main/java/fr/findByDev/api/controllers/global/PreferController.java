@@ -21,7 +21,7 @@ import fr.findByDev.api.models.Technology;
 import fr.findByDev.api.models.User;
 import fr.findByDev.api.models.DTO.PreferDTO;
 import fr.findByDev.api.models.associations.PreferId;
-import fr.findByDev.api.repositories.PreferRepository;
+import fr.findByDev.api.repositories.global.PreferRepository;
 import fr.findByDev.api.repositories.global.TechnologyRepository;
 import fr.findByDev.api.repositories.global.UserRepository;
 
@@ -63,6 +63,14 @@ public class PreferController extends GenericController<Prefer, PreferId> {
         PreferId preferId = new PreferId(idUser, idTechnology);
         return preferRepository.findById(preferId);
     }
+
+    @GetMapping("/user/{userId}")
+    @ResponseStatus(HttpStatus.OK)
+    @CrossOrigin
+    public List<Prefer> getAllTechnologyByUser(@PathVariable("userId") Integer idUser) {
+        return preferRepository.findAllByUserIdUser(idUser);
+    }
+    
 
     @PostMapping("create")
     @CrossOrigin

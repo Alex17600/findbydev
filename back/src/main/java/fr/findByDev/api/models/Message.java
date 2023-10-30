@@ -19,10 +19,6 @@ public class Message {
     private Date dateHour;
 
     @ManyToOne
-    @JoinColumn(name = "id_user")
-    private User user;
-
-    @ManyToOne
     @JoinColumn(name = "id_user_sender")
     private User userSender;
 
@@ -37,12 +33,11 @@ public class Message {
     public Message() {
     }
 
-    public Message(Integer idMessage, String contain, Date dateHour, User user, User userSender, User userReceiver,
+    public Message(Integer idMessage, String contain, Date dateHour, User userSender, User userReceiver,
             Conversation conversation) {
         this.idMessage = idMessage;
         this.contain = contain;
         this.dateHour = dateHour;
-        this.user = user;
         this.userSender = userSender;
         this.userReceiver = userReceiver;
         this.conversation = conversation;
@@ -70,14 +65,6 @@ public class Message {
 
     public void setDateHour(Date dateHour) {
         this.dateHour = dateHour;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
     }
 
     public User getUserSender() {

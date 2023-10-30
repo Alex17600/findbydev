@@ -82,7 +82,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/experiences/**").permitAll()               
                         .requestMatchers(HttpMethod.GET, "/likes/**").permitAll()               
                         .requestMatchers(HttpMethod.GET, "/concernes/**").permitAll()               
-                        .requestMatchers(HttpMethod.GET, "/prefers/**").permitAll()               
+                        .requestMatchers(HttpMethod.GET, "/prefers/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")             
                         .requestMatchers(HttpMethod.GET, "/alerts/**").permitAll()               
                         .requestMatchers(HttpMethod.GET, "/sessions/**").authenticated()
                         .anyRequest().authenticated())

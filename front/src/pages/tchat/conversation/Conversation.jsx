@@ -10,21 +10,15 @@ const Conversation = ({ userConnected }) => {
   const [conversations, setConversations] = useState([]);
   const [userPhotos, setUserPhotos] = useState({});
   const [userMatches, setUserMatches] = useState({});
-  const [otherUserId, setOtherUserId] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchAllConversation = async () => {
       try {
-        const data = await getConversationsForLoggedInUser(
-          userConnected.idUser
-        );
+        const data = await getConversationsForLoggedInUser(userConnected.idUser);
         setConversations(data);
       } catch (error) {
-        console.error(
-          "Erreur lors de la récupération des conversations :",
-          error
-        );
+        console.error("Erreur lors de la récupération des conversations :", error);
       }
     };
 
@@ -43,14 +37,18 @@ const Conversation = ({ userConnected }) => {
               ? conversation.userSender
               : conversation.userReceiver;
 
-          // Récupérer la photo de l'autre utilisateur
-          setOtherUserId(receiver)
-          const photo = await findPhotoById(receiver);
-          photos[receiver] = photo;
+          // Vérifiez si la conversation a déjà été ajoutée à la liste
+          if (!photos[receiver]) {
+            // Récupérer la photo de l'autre utilisateur
+            const photo = await findPhotoById(receiver);
+            photos[receiver] = photo;
+          }
 
-          // Récupérer les informations de l'autre utilisateur
-          const match = await findUserById(receiver);
-          matches[receiver] = match;
+          if (!matches[receiver]) {
+            // Récupérer les informations de l'autre utilisateur
+            const match = await findUserById(receiver);
+            matches[receiver] = match;
+          }
         }
 
         setUserPhotos(photos);
@@ -71,31 +69,38 @@ const Conversation = ({ userConnected }) => {
 
   return (
     <div className={style.conversation}>
-    <div className={style.conversationBox}>
-      <div className={style.conversations}>
-        {conversations.map((conversation) => (
-          <div
-            key={conversation.idConversation}
-            className={style.fiche}
-            onClick={() => handleConversationClick(conversation)}
-          >
-            {userPhotos[otherUserId] && (
-              <img
-                src={userPhotos[otherUserId]}
-                alt={`personne liké`}
-              />
-            )}
-            <p>
-              {userMatches[otherUserId]
-                ? userMatches[otherUserId].pseudo
-                : "Utilisateur"}
-            </p>
-          </div>
-        ))}
+      <div className={style.conversationBox}>
+        <div className={style.conversations}>
+          {conversations.map((conversation) => {
+            const receiver =
+              conversation.userReceiver === userConnected.idUser
+                ? conversation.userSender
+                : conversation.userReceiver;
+
+            return (
+              <div
+                key={conversation.idConversation}
+                className={style.fiche}
+                onClick={() => handleConversationClick(conversation)}
+              >
+                {userPhotos[receiver] && (
+                  <img
+                    src={userPhotos[receiver]}
+                    alt={`personne liké`}
+                  />
+                )}
+                <p>
+                  {userMatches[receiver]
+                    ? userMatches[receiver].pseudo
+                    : "Utilisateur"}
+                </p>
+              </div>
+            );
+          })}
+        </div>
       </div>
+      <FooterMobile />
     </div>
-    <FooterMobile />
-  </div>
   );
 };
 

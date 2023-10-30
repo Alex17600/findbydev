@@ -175,6 +175,36 @@
         align-items: center;
         margin-top: 20px;
 
+        .technos {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+
+
+            label {
+                color: white;
+                text-align: center;
+            }
+
+            .technologiesContainer {
+                display: flex;
+                background-color: white;
+                width: 80%;
+                margin: 10px auto;
+                padding: 10px;
+                border-radius: 6px;                
+
+                .technology {
+                    display: flex;
+                    flex-direction: column;
+
+                    span {
+                        text-align: center;
+                    }
+                }
+            }
+        }
+
         .inputGroup {
             display: flex;
             flex-direction: column;

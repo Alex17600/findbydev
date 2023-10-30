@@ -11,6 +11,8 @@ import { BiLogOut } from "react-icons/bi";
 import { FaPencilAlt } from "react-icons/fa";
 import { findPhotoById } from "../../../apis/photos";
 import FooterMobile from "../../../components/footer/FooterMobile";
+import { getAllTechnologysByUserPrefers } from "../../../apis/prefers";
+import { getIconTechnologie } from "../../../apis/technology";
 
 const iconColor = "#ffffff";
 
@@ -18,6 +20,8 @@ const Account = ({ userConnected }) => {
   const { userId } = useParams();
   const [user, setUser] = useState([]);
   const [photo, setPhoto] = useState();
+  const [prefers, setPrefers] = useState({});
+  const [technologys, setTechnologys] = useState({});
   const [isEditing, setIsEditing] = useState(false);
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -48,8 +52,19 @@ const Account = ({ userConnected }) => {
         if (Number(userConnected.idUser) === Number(userId)) {
           const data = await findUserById(userConnected.idUser);
           const photoData = await findPhotoById(userId);
+          const preferData = await getAllTechnologysByUserPrefers(userId);
           setUser(data);
           setPhoto(photoData);
+          setPrefers(preferData);
+          // Récupérez les icônes de technologie pour chaque technologie préférée
+          const technologyIcons = [];
+          for (const prefer of preferData) {
+            const icon = await getIconTechnologie(
+              prefer.technology.idTechnology
+            );
+            technologyIcons.push({ technology: prefer.technology, icon });
+          }
+          setTechnologys(technologyIcons);
           setFormValues({
             description: data.description,
             pseudo: data.pseudo,
@@ -143,7 +158,7 @@ const Account = ({ userConnected }) => {
       }
 
       await updateUser(userConnected.idUser, updateData);
-      console.log(userId, updateData);
+
       setSuccessText("Mise à jour réussie!");
     } catch (error) {
       setErrorText("Erreur lors de la mise à jour.");
@@ -170,7 +185,7 @@ const Account = ({ userConnected }) => {
         newProfileImage
       );
       console.log(response);
-      
+
       setSuccessText("L'image de profil a été mise à jour avec succès.");
       setShowSuccessMessage(true);
 
@@ -253,6 +268,17 @@ const Account = ({ userConnected }) => {
                 }
                 className={style.inputField}
               />
+            </div>
+            <div className={style.technos}>
+              <label>Technologies :</label>
+              <div className={style.technologiesContainer}>
+                {technologys.map((tech, index) => (
+                  <div key={index} className={style.technology}>
+                    <span>{tech.technology.name}</span>
+                    <img src={tech.icon} alt={tech.technology.name} style={{ width: '60px', height: 'auto' }}/>
+                  </div>
+                ))}
+              </div>
             </div>
             <div className={style.inputGroup}>
               <label>Nom :</label>

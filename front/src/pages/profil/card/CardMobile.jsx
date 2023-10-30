@@ -167,10 +167,6 @@ const CardMobile = () => {
                 src={photo[user.id]}
                 alt={user.pseudo}
                 onClick={() => {
-                  console.log(
-                    "Clique sur la carte de l'utilisateur ID",
-                    user.id
-                  );
                   navigate(`/profil/${user.id}/user-details`);
                 }}
               />

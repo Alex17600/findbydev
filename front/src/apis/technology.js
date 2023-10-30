@@ -30,7 +30,7 @@ export async function getIconTechnologie(id) {
     if (response.ok) {
 
         const blob = await response.blob();
-        const url = URL.createObjectURL(blob); // Créez une URL à partir du Blob
+        const url = URL.createObjectURL(blob);
         return url;
         
     } else {

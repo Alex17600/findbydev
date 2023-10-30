@@ -107,7 +107,7 @@ const FirstConnexion = ({ passwordTemporaly, setActiveAccount }) => {
           {error && <div className={style.errorText}>{error}</div>}
           {!error && !success && (
             <div className={style.info}>
-              Minimum 8 caractères avec une majuscule, minuscule et un chiffre
+              Minimum 11 caractères avec une majuscule, minuscule et un chiffre
             </div>
           )}
           {success && (

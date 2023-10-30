@@ -14,10 +14,10 @@ const Login = () => {
   const [activeAccount, setActiveAccount] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(()=> {
+  useEffect(() => {
     setMail("");
     setPassword("");
-  }, [activeAccount])
+  }, [activeAccount]);
 
   const handleEmailChange = (event) => {
     setMail(event.target.value);
@@ -41,26 +41,24 @@ const Login = () => {
   //Connexion
   const handleLogin = async (e) => {
     e.preventDefault();
-  
+
     if (!mail || !password) {
       setError("Veuillez remplir tous les champs.");
       return;
     }
-  
+
     try {
-  
       const response = await fetch("http://localhost:8000/api/login", {
         method: "POST",
         body: JSON.stringify({ mail, password }),
       });
-  
+
       if (response.ok && response.status === 200) {
         const token = response.headers.get("Access_token");
         const decodedToken = jwtDecode(token);
         const activeAccount = decodedToken.active_account;
 
         if (!activeAccount) {
-          
           saveToken(token, false);
           setActiveAccount(true);
         } else {
@@ -72,47 +70,45 @@ const Login = () => {
         setError("Email ou mot de passe incorrect");
       }
     } catch (error) {
-       console.error(error);
+      console.error(error);
     }
   };
 
   if (activeAccount) {
-    return <FirstConnection passwordTemporaly={password} setActiveAccount={setActiveAccount}/>;
+    return (
+      <FirstConnection
+        passwordTemporaly={password}
+        setActiveAccount={setActiveAccount}
+      />
+    );
   }
 
   return (
     <form onSubmit={handleLogin}>
-    <div className={style.login}>
-      {windowWidth < 928 ? (
-        <div className={style.blockLogin}>
-          <div className={style.returnIcon}>
-            <TfiClose onClick={() => navigate("/accueil")} />
-          </div>
-          <h1>Connectez-vous</h1>
-          {error && <div className={style.errorText}>{error}</div>}
-          <input type="email" placeholder="Email" name="email" autoComplete="email" onChange={handleEmailChange}/>
-          <input type="password" placeholder="Mot de passe" name="password" autoComplete="current-password" onChange={handlePasswordChange}/>
-          <div className={style.bas}>
-              <p>
-                Pas encore de compte?{" "}
-                <span onClick={() => navigate("/register/informations")}>
-                  Créez en-un ici
-                </span>
-              </p>
-              <button >Confirmer</button>
-            </div>
-        </div>
-        
-      ) : (
-        <div className={style.popup}>
-          <div className={style.popupContent}>
+      <div className={style.login}>
+        {windowWidth < 928 ? (
+          <div className={style.blockLogin}>
             <div className={style.returnIcon}>
               <TfiClose onClick={() => navigate("/accueil")} />
             </div>
             <h1>Connectez-vous</h1>
             {error && <div className={style.errorText}>{error}</div>}
-            <input type="email" placeholder="Email" name="email" autoComplete="email" onChange={handleEmailChange}/>
-            <input type="password" placeholder="Mot de passe" name="password" autoComplete="current-password" onChange={handlePasswordChange}/>
+            <input
+              type="email"
+              placeholder="Email"
+              name="email"
+              autoComplete="email"
+              onChange={handleEmailChange}
+            />
+            <input
+              type="password"
+              placeholder={
+                activeAccount ? "Mot de passe" : "Mot de passe temporaire"
+              }
+              name="password"
+              autoComplete="current-password"
+              onChange={handlePasswordChange}
+            />
             <div className={style.bas}>
               <p>
                 Pas encore de compte?{" "}
@@ -123,9 +119,41 @@ const Login = () => {
               <button>Confirmer</button>
             </div>
           </div>
-        </div>
-      )}
-    </div>
+        ) : (
+          <div className={style.popup}>
+            <div className={style.popupContent}>
+              <div className={style.returnIcon}>
+                <TfiClose onClick={() => navigate("/accueil")} />
+              </div>
+              <h1>Connectez-vous</h1>
+              {error && <div className={style.errorText}>{error}</div>}
+              <input
+                type="email"
+                placeholder="Email"
+                name="email"
+                autoComplete="email"
+                onChange={handleEmailChange}
+              />
+              <input
+                type="password"
+                placeholder="Mot de passe"
+                name="password"
+                autoComplete="current-password"
+                onChange={handlePasswordChange}
+              />
+              <div className={style.bas}>
+                <p>
+                  Pas encore de compte?{" "}
+                  <span onClick={() => navigate("/register/informations")}>
+                    Créez en-un ici
+                  </span>
+                </p>
+                <button>Confirmer</button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
     </form>
   );
 };

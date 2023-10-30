@@ -4,6 +4,8 @@ import { TfiClose } from "react-icons/tfi";
 import { useNavigate } from "react-router-dom";
 import { createUser } from "../../../apis/users";
 import { getAllGenders } from "../../../apis/genders";
+import dayjs from 'dayjs';
+
 // import ReCAPTCHA from "react-google-recaptcha";
 
 const Informations = () => {
@@ -22,6 +24,7 @@ const Informations = () => {
   const [genders, setGenders] = useState([]);
   const [selectedGender, setSelectedGender] = useState("");
   const [isChecked, setIsChecked] = useState(false);
+
 
   const checkboxConditionRef = useRef(null);
 
@@ -60,6 +63,17 @@ const Informations = () => {
 
   const handleRegister = async (e) => {
     e.preventDefault();
+    // Vérification de l'âge
+  const birthDate = dayjs(birthday);
+  const age = dayjs().diff(birthDate, 'year');
+
+  if (age < 18) {
+    setError('Vous devez avoir au moins 18 ans pour vous inscrire.');
+    return;
+  } else {
+    setError('');
+  }
+
     const jsonData = {
       pseudo,
       lastName,

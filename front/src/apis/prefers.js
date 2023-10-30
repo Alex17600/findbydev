@@ -21,6 +21,23 @@ export async function getAllPrefers() {
     }
 }
 
+//find all technology by user
+export async function getAllTechnologysByUserPrefers(userId) {
+    const response = await fetch(`${URL_API}/user/${userId}`, {
+        headers: {
+            'Authorization': `Bearer ${getToken()}`,
+            'Content-Type': 'application/json'
+        },
+    });
+    if (response.ok) {
+        const body = await response.json();
+        return Array.isArray(body) ? body : [body];
+
+    } else {
+        throw new Error('Error fetch Get users');
+    }
+}
+
 export async function createPrefer(userId, technologyIds) {
 
     const preferData = {

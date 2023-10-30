@@ -90,7 +90,7 @@ export const router = createBrowserRouter([
             element: <Notice />
           },
           {
-            path: ":userIdSelected/user-details",
+            path: ":userId/user-details",
             element: <UserDetails />
           }
         ]

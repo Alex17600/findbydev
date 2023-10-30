@@ -46,7 +46,6 @@ const Message = ({ userConnected }) => {
       try {
         
         const conversation = await getConversationById(idConversation);
-
         const userSender = conversation[0].userSender;
         const userReceiver = conversation[0].userReceiver;
         if (userConnected.idUser === userSender) {
@@ -72,6 +71,7 @@ const Message = ({ userConnected }) => {
     async function fetchMessages() {
       try {
         const messages = await getAllMessagesFromIdConversation(idConversation);
+        
         setMessages(messages);
 
       } catch (error) {
