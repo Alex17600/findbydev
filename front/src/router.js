@@ -55,11 +55,11 @@ export const router = createBrowserRouter([
             element: <Informations />,
           },
           {
-            path: "language",
-            element: <Language userConnected={userConnected}/>,
+            path: ":userId/language",
+            element: <Language />,
           },
           {
-            path: "photo",
+            path: ":userId/photo",
             element: <Photo />,
           },
         ],

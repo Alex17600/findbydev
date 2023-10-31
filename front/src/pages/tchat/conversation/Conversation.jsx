@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import style from "./Conversation.module.scss";
 import { getConversationsForLoggedInUser } from "../../../apis/conversation";
 import { findUserById } from "../../../apis/users";
@@ -7,15 +8,20 @@ import FooterMobile from "../../../components/footer/FooterMobile";
 import { useNavigate } from "react-router-dom";
 
 const Conversation = ({ userConnected }) => {
+  const { userId } = useParams();
   const [conversations, setConversations] = useState([]);
   const [userPhotos, setUserPhotos] = useState({});
   const [userMatches, setUserMatches] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
+    if (userConnected.idUser !== parseInt(userId)) {
+      navigate("/accueil"); // Redirigez vers la page d'accueil ou une autre page d'erreur
+    }
+  
     const fetchAllConversation = async () => {
       try {
-        const data = await getConversationsForLoggedInUser(userConnected.idUser);
+        const data = await getConversationsForLoggedInUser(userId);
         setConversations(data);
       } catch (error) {
         console.error("Erreur lors de la récupération des conversations :", error);
@@ -23,7 +29,7 @@ const Conversation = ({ userConnected }) => {
     };
 
     fetchAllConversation();
-  }, [userConnected]);
+  }, [userId]);
 
   useEffect(() => {
     async function fetchUserPhotosAndMatches() {
@@ -33,7 +39,7 @@ const Conversation = ({ userConnected }) => {
 
         for (const conversation of conversations) {
           const receiver =
-            conversation.userReceiver === userConnected.idUser
+            conversation.userReceiver === userId
               ? conversation.userSender
               : conversation.userReceiver;
 

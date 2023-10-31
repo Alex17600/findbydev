@@ -1,20 +1,29 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import style from "./Language.module.scss";
 import {
   getAllTechnologies,
   getIconTechnologie,
 } from "../../../apis/technology";
-
 import { createPrefer } from "../../../apis/prefers";
+import { getToken } from "../../../data/Token";
+import jwtDecode from "jwt-decode";
 
-const Languages = ({ userConnected }) => {
+const Languages = () => {
+  const userId = useParams();
   const [languages, setLanguages] = useState([]);
   const [selectedLanguages, setSelectedLanguages] = useState([]);
   const [idUser, setIdUser] = useState("");
   const navigate = useNavigate();
 
+  const token = getToken();
+  const userConnected = token ? jwtDecode(token) : null;
+
   useEffect(() => {
+    if( userConnected.idUser !== parseInt(userId.userId)) {
+      navigate("/accueil")
+    }
+
     async function fetchData() {
       try {
 
@@ -65,7 +74,7 @@ const Languages = ({ userConnected }) => {
     );
     try {
       await createPrefer(userId, technologyIds);
-      navigate(`../photo?userId=${idUser}`)
+      navigate(`../${idUser}/photo`)
     } catch (error) {
       console.error("Erreur lors de la création de préférences:", error);
     }

@@ -1,5 +1,7 @@
 package fr.findByDev.api.models;
 
+import java.util.Date;
+
 import com.fasterxml.jackson.annotation.JsonView;
 
 import fr.findByDev.api.models.views.View;
@@ -27,7 +29,7 @@ public class User {
     private String town;
 
     @Column(name = "birthday")
-    private String birthday;
+    private Date birthday;
 
     @Column(name = "mail")
     private String mail;
@@ -62,7 +64,7 @@ public class User {
     }
 
     
-    public User(Integer idUser, String pseudo, String lastName, String firstName, String town, String birthday,
+    public User(Integer idUser, String pseudo, String lastName, String firstName, String town, Date birthday,
             String mail, String password, boolean activeAccount, String description, Integer popularity, String photo,
             String gitProfile, String type, Gender gender) {
         this.idUser = idUser;
@@ -123,11 +125,11 @@ public class User {
         this.town = town;
     }
 
-    public String getBirthday() {
+    public Date getBirthday() {
         return birthday;
     }
 
-    public void setBirthday(String birthday) {
+    public void setBirthday(Date birthday) {
         this.birthday = birthday;
     }
 

@@ -24,7 +24,7 @@ CREATE TABLE _user_(
    lastname VARCHAR(50)  NOT NULL,
    firstname VARCHAR(50)  NOT NULL,
    town VARCHAR(50)  NOT NULL,
-   birthday VARCHAR(50)  NOT NULL,
+   birthday DATE  NOT NULL,
    mail VARCHAR(75)  NOT NULL,
    password VARCHAR(255)  NOT NULL,
    active_account BOOLEAN NOT NULL,

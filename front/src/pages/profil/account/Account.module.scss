@@ -85,6 +85,23 @@
             height: 300px;
         }
 
+        .addPhotoProfil {
+           color: white;
+           text-align: center;
+
+           input[type="file"]{
+            padding: 10px 15px;
+           }
+
+           button {
+            padding: 15px 30px;
+            border-radius: 6px;
+            background-color: #ee9c31;
+            border: none;
+            color: white;
+           }
+        }
+
         .editPhotoButton {
             position: absolute;
             right: 35px;

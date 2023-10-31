@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import style from "./Account.module.scss";
 import {
@@ -13,6 +13,7 @@ import { findPhotoById } from "../../../apis/photos";
 import FooterMobile from "../../../components/footer/FooterMobile";
 import { getAllTechnologysByUserPrefers } from "../../../apis/prefers";
 import { getIconTechnologie } from "../../../apis/technology";
+import { downloadPhoto } from "../../../apis/users";
 
 const iconColor = "#ffffff";
 
@@ -39,6 +40,8 @@ const Account = ({ userConnected }) => {
   // eslint-disable-next-line
   const [updatePassword, setUpdatePassword] = useState(false);
   const [modalPhoto, setModalPhoto] = useState(false);
+  const [image, setImage] = useState(null);
+  const fileInputRef = useRef(null);
   // eslint-disable-next-line
   const [errorText, setErrorText] = useState("");
   const [successText, setSuccessText] = useState("");
@@ -51,10 +54,14 @@ const Account = ({ userConnected }) => {
       try {
         if (Number(userConnected.idUser) === Number(userId)) {
           const data = await findUserById(userConnected.idUser);
-          const photoData = await findPhotoById(userId);
+          if (data.photo) {
+            const photoData = await findPhotoById(userId);
+            setPhoto(photoData);
+          }
+
           const preferData = await getAllTechnologysByUserPrefers(userId);
           setUser(data);
-          setPhoto(photoData);
+
           setPrefers(preferData);
           // Récupérez les icônes de technologie pour chaque technologie préférée
           const technologyIcons = [];
@@ -127,6 +134,18 @@ const Account = ({ userConnected }) => {
 
   const toggleEditing = () => {
     setIsEditing(!isEditing);
+  };
+
+  const handlePost = async (e) => {
+    e.preventDefault();
+    // console.log(userId, image);
+    const response = await downloadPhoto(userId, image);
+
+    if (response) {
+      const imageUrl = URL.createObjectURL(image);
+      setPhoto(imageUrl);
+      setImage(null);
+    }
   };
 
   const updatedUserWithtoutPic = async () => {
@@ -211,7 +230,22 @@ const Account = ({ userConnected }) => {
       </div>
       <h1>Bienvenue sur votre compte {user.pseudo}</h1>
       <div className={style.blockPhoto}>
-        <img src={photo} alt={user.pseudo} className={style.imgProfil} />
+        {photo ? ( // Vérifiez si l'utilisateur a une photo de profil
+          <img src={photo} alt={user.pseudo} className={style.imgProfil} />
+        ) : (
+          <>
+            <div className={style.addPhotoProfil}>
+              <p>Ajouter une photo à votre profil</p>
+              <input
+                type="file"
+                accept="image/*"
+                ref={fileInputRef}
+                onChange={(e) => setImage(e.target.files[0])}
+              />
+              <button onClick={handlePost}>Envoyer</button>
+            </div>
+          </>
+        )}
         {isEditing && (
           <button className={style.editPhotoButton} onClick={openModalPhoto}>
             <FaPencilAlt />
@@ -275,7 +309,11 @@ const Account = ({ userConnected }) => {
                 {technologys.map((tech, index) => (
                   <div key={index} className={style.technology}>
                     <span>{tech.technology.name}</span>
-                    <img src={tech.icon} alt={tech.technology.name} style={{ width: '60px', height: 'auto' }}/>
+                    <img
+                      src={tech.icon}
+                      alt={tech.technology.name}
+                      style={{ width: "60px", height: "auto" }}
+                    />
                   </div>
                 ))}
               </div>

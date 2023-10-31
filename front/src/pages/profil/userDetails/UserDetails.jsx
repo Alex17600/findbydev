@@ -28,7 +28,7 @@ const UserDetails = () => {
           setUserData(data);
 
           setPrefers(preferData);
-          // Récupérez les icônes de technologie pour chaque technologie préférée
+          
           const technologyIcons = [];
           for (const prefer of preferData) {
             const icon = await getIconTechnologie(

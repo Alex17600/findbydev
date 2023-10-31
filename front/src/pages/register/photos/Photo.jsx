@@ -1,15 +1,29 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { downloadPhoto } from "../../../apis/users";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import style from "./Photo.module.scss";
 import { TfiClose } from "react-icons/tfi";
+import { getToken } from "../../../data/Token";
+import jwtDecode from "jwt-decode";
 
 const Photo = () => {
-  const location = useLocation();
-  const userId = new URLSearchParams(location.search).get("userId");
+  const userId = useParams();
   const [image, setImage] = useState(null);
   const iconColor = "#ffffff";
   const navigate = useNavigate();
+  
+  const token = getToken();
+  const userConnected = token ? jwtDecode(token) : null;
+
+  useEffect(() => {
+    try {
+      if( userConnected.idUser !== parseInt(userId.userId)) {
+        navigate("/accueil")
+      }
+    } catch (error) {
+      
+    }
+  }, []);
 
   const handlePhotoUpload = async (e) => {
     e.preventDefault();
@@ -20,7 +34,7 @@ const Photo = () => {
     try {
       
       const response = await downloadPhoto(userId, image);
-      console.log(response);
+      console.log(userId, image);
       if (response.ok) {
         const imageUrl = URL.createObjectURL(image); 
         setImage(imageUrl);

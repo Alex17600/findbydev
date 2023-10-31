@@ -4,13 +4,16 @@ import { useNavigate } from "react-router-dom";
 import { TfiClose } from "react-icons/tfi";
 import { updatePassword } from "../../apis/users";
 
-const FirstConnexion = ({ passwordTemporaly, setActiveAccount }) => {
+
+const FirstConnexion = ({ passwordTemporaly, setActiveAccount, userId }) => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [newPassword, setNewPassword] = useState("");
   const [repeatNewPassword, setRepeatNewPassword] = useState("");
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const navigate = useNavigate();
+
+
 
   useEffect(() => {
     const handleResize = () => {
@@ -87,7 +90,7 @@ const FirstConnexion = ({ passwordTemporaly, setActiveAccount }) => {
           setTimeout(() => {
             event.target.children[0].disabled = false;
             setActiveAccount(true);
-            navigate("/register/language");
+            navigate(`/register/${userId}/language`);
           }, 3000);
         }
       }
@@ -113,8 +116,7 @@ const FirstConnexion = ({ passwordTemporaly, setActiveAccount }) => {
           {success && (
             <div className={style.successText}>
               <p>
-                Modification réussie ! Vous allez être redirigé vers l'écran de
-                connexion
+                Modification réussie ! Vous allez être redirigé vers l'écran suivant
               </p>
             </div>
           )}

@@ -12,6 +12,7 @@ const Login = () => {
   const [error, setError] = useState("");
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [activeAccount, setActiveAccount] = useState(false);
+  const [userId, setUserId] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -57,9 +58,11 @@ const Login = () => {
         const token = response.headers.get("Access_token");
         const decodedToken = jwtDecode(token);
         const activeAccount = decodedToken.active_account;
+        setUserId(decodedToken.idUser);
+
 
         if (!activeAccount) {
-          saveToken(token, false);
+          saveToken(token, true);
           setActiveAccount(true);
         } else {
           saveToken(token, true);
@@ -77,6 +80,7 @@ const Login = () => {
   if (activeAccount) {
     return (
       <FirstConnection
+        userId={userId}
         passwordTemporaly={password}
         setActiveAccount={setActiveAccount}
       />
