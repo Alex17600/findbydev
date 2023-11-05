@@ -7,21 +7,24 @@
     background-position: center;
     font-family: 'JetBrains Mono', monospace;
 
-
     .errorText {
         background-color: #E96969;
-        padding: 5px;
+        padding: 10px;
         color: white;
         text-align: center;
         border-radius: 6px;
+        width: 80%;
+        margin: 20px auto ;
     }
 
     .succesText {
         background-color: #05ad0d;
-        padding: 5px;
+        padding: 10px;
         color: white;
         text-align: center;
         border-radius: 6px;
+        width: 80%;
+        margin: 20px auto ;
     }
 
     .blockRegister {
@@ -29,6 +32,22 @@
         flex-direction: column;
         background-color: black;
         opacity: 0.8;
+
+        .gitlab {
+            display: flex;
+            align-items: center;
+            flex: 1;
+            width: 80%;
+            margin: auto;
+
+
+            .addon {
+                display: flex;
+                align-items: center;
+                color: white;
+                font-size: 30px;
+            }
+        }
 
         
         .checkboxGenders {

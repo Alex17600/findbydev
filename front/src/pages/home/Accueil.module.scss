@@ -59,6 +59,16 @@
                 p {
                     margin: 20px 0;
                 }
+
+                .confidentialite {
+                    color: #ee9c31;
+                    cursor: pointer;
+        
+                    &:hover {
+                        transition: 0.2s ease;
+                        color: white;
+                    }
+                }
     
                 ul {
                     font-size: 16px;

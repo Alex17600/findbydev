@@ -1,20 +1,26 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation, useNavigate } from "react-router-dom";
 import style from "./UserDetails.module.scss";
 import { findUserById } from "../../../apis/users";
 import { findPhotoById } from "../../../apis/photos";
 import FooterMobile from "../../../components/footer/FooterMobile";
 import { getIconTechnologie } from "../../../apis/technology";
 import { getAllTechnologysByUserPrefers } from "../../../apis/prefers";
+import { IoReturnUpBack } from "react-icons/io5";
+import { useSearchResults  } from "../../../context/SearchResultsContext";
 import dayjs from "dayjs";
 
 const UserDetails = () => {
   const { userId } = useParams();
+  const { searchResults } = useSearchResults();
   const [userData, setUserData] = useState(null);
   const [photo, setPhoto] = useState({});
   const [technologys, setTechnologys] = useState({});
   const [prefers, setPrefers] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  console.log(searchResults);
+
 
   useEffect(() => {
     const fetchUserSelected = async () => {

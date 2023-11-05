@@ -22,7 +22,7 @@ const Account = ({ userConnected }) => {
   const [user, setUser] = useState([]);
   const [photo, setPhoto] = useState();
   const [prefers, setPrefers] = useState({});
-  const [technologys, setTechnologys] = useState({});
+  const [technologys, setTechnologys] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -54,6 +54,7 @@ const Account = ({ userConnected }) => {
       try {
         if (Number(userConnected.idUser) === Number(userId)) {
           const data = await findUserById(userConnected.idUser);
+          console.log(data);
           if (data.photo) {
             const photoData = await findPhotoById(userId);
             setPhoto(photoData);
@@ -222,6 +223,8 @@ const Account = ({ userConnected }) => {
     const file = e.target.files[0];
     setNewProfileImage(file);
   };
+
+  console.log(formValues);
 
   return (
     <div className={style.account}>

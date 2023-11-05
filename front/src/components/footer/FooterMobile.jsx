@@ -68,7 +68,7 @@ const FooterMobile = () => {
 
   return (
     <div className={style.bottomIcon}>
-      <FiSearch />
+      <FiSearch onClick={() => navigate("/search")}/>
       {newMatchFound ? (
         <MdOutlineNotificationsActive
         className={location.pathname.endsWith(`/profil/${userId}/notice`) ? style.disabled : style.newmatch}

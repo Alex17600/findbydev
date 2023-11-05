@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="15.1">
+  <help_text/>
+  <zoom_level>7</zoom_level>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>154</x>
+      <y>525</y>
+      <w>210</w>
+      <h>231</h>
+    </coordinates>
+    <panel_attributes>fr.findByDev.api.models::Alert
+--
+-idAlert: Integer
+-idReportedUser: Integer
+-reason: String
+-dateAlert: Timestamp
+-user: User
+--
++Alert()
++getId()
++setId(Integer idAlert)
++getReportedUserId()
++setReportedUserId(Integer idReportedUser)
++getReason()
++setReason(String reason)
++getDateAlert()
++setDateAlert(Timestamp dateAlert)
++getUser()
++setUser(User user)
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>931</x>
+      <y>294</y>
+      <w>203</w>
+      <h>98</h>
+    </coordinates>
+    <panel_attributes>fr.findByDev.api.models::Conversation
+--
+-idConversation: Integer
+-dateDebut: Date
+-archived: Boolean
+-userSender: Integer
+-userReceiver: Integer
+
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>924</x>
+      <y>616</y>
+      <w>182</w>
+      <h>56</h>
+    </coordinates>
+    <panel_attributes>fr.findByDev.api.models::Experience
+--
+-idExperience: Integer
+-descriptif: String
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>539</x>
+      <y>49</y>
+      <w>266</w>
+      <h>182</h>
+    </coordinates>
+    <panel_attributes>fr.findByDev.api.models::Gender
+--
+-idGender: Integer
+-name: String
+-users: List&lt;User&gt;
+--
++Gender()
++Gender(Integer idGender, String name, List&lt;User&gt; users)
++Gender(String name)
++getId()
++setId(Integer idGender)
++getName()
++setName(String name)
++getUsers()
++setUsers(List&lt;User&gt; users)
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>959</x>
+      <y>469</y>
+      <w>168</w>
+      <h>105</h>
+    </coordinates>
+    <panel_attributes>fr.findByDev.api.models::Message
+--
+-idMessage: Integer
+-contain: String
+-dateHour: Date
+-userSender: User
+-userReceiver: User
+-conversation: Conversation
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>581</x>
+      <y>637</y>
+      <w>175</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>fr.findByDev.api.models::Technology
+--
+-idTechnology: Integer
+-name: String
+-imagePath: String
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>525</x>
+      <y>294</y>
+      <w>273</w>
+      <h>196</h>
+    </coordinates>
+    <panel_attributes>fr.findByDev.api.models::User
+--
+-idUser: Integer
+-pseudo: String
+-lastName: String
+-firstName: String
+-town: String
+-birthday: Date
+-mail: String
+-password: String
+-activeAccount: boolean
+-description: String
+-popularity: Integer
+-photo: String
+-gitProfile: String
+-type: String
+-gender: Gender
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>665</x>
+      <y>224</y>
+      <w>35</w>
+      <h>84</h>
+    </coordinates>
+    <panel_attributes>lt=-
+m1=1
+m2=0..*
+</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;100.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>791</x>
+      <y>322</y>
+      <w>154</w>
+      <h>35</h>
+    </coordinates>
+    <panel_attributes>lt=-
+m1=1
+m2=0..*
+</panel_attributes>
+    <additional_attributes>10.0;20.0;200.0;20.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>644</x>
+      <y>483</y>
+      <w>35</w>
+      <h>168</h>
+    </coordinates>
+    <panel_attributes>lt=-
+m1=0..*
+m2=0..*
+</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;220.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>462</x>
+      <y>525</y>
+      <w>140</w>
+      <h>77</h>
+    </coordinates>
+    <panel_attributes>fr.findByDev.api.models::Prefer
+--
+-idPrefer: PreferId
+-user: User
+-technology: Technology
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>595</x>
+      <y>553</y>
+      <w>70</w>
+      <h>21</h>
+    </coordinates>
+    <panel_attributes>lt=.</panel_attributes>
+    <additional_attributes>80.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>777</x>
+      <y>245</y>
+      <w>84</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-
+match</panel_attributes>
+    <additional_attributes>30.0;80.0;90.0;80.0;90.0;20.0;10.0;20.0;10.0;70.0</additional_attributes>
+  </element>
+</diagram>

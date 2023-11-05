@@ -57,7 +57,8 @@ public class SecurityConfig {
          http.csrf(AbstractHttpConfigurer::disable) // désactivation de la vérification par défaut des attaques CSRF (pas grave vu qu'on va mettre en place un système de jetons)
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers(HttpMethod.POST, "/login/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/login/**", "/websocket/login/oauth2/code/gitlab", "localhost:8080/websocket/login/oauth2/code/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "localhost:8080/websocket/login/oauth2/code/gitlab").permitAll()
                         .requestMatchers(HttpMethod.POST, "localhost:8080/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/users/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/users/**").permitAll()

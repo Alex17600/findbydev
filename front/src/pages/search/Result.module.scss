@@ -1,0 +1,76 @@
+.result {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    background-image: url(../../assets/background/152699-abstract-gold-letters-background.webp);
+    height: 100vh;
+    background-size: cover;
+    background-repeat: no-repeat;
+    overflow: auto;
+
+    
+    .iconBack {
+        margin-top: 10px;
+        font-size: 50px;
+        cursor: pointer;
+        margin: auto;
+        color: white;
+    }
+
+    .warningMessage {
+        display: flex;
+        flex-direction: column;
+        margin: auto;
+        background-color: rgba(0, 0, 0, 0.5);
+        border-radius: 6px;
+        padding: 10px 15px;
+
+
+        .iconBack {
+            margin-top: 10px;
+            font-size: 50px;
+            cursor: pointer;
+            margin: auto;
+            color: white;
+        }
+
+        .noresult {
+            text-align: center;
+            color: white;
+            font-size: 24px;
+        }
+    }
+
+    .resultCard {
+        display: flex;
+        flex-direction: column;
+        background-color: white;
+        margin: 20px 20px;
+        padding: 10px 15px;
+        border-radius: 6px;
+        height: 260px;
+        align-items: center;
+        min-width: 200px;
+
+        .infos {
+            text-align: center;
+
+            h1 {
+                font-size: 20px;
+                max-width: 200px;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+            }
+        }
+
+        img {
+            max-width: 150px;
+            border-radius: 50%;
+        }
+
+        &:last-child {
+            margin-bottom: 140px;
+        }
+    }
+}

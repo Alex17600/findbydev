@@ -32,9 +32,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -138,6 +140,13 @@ public class UserController extends GenericController<User, Integer> {
     @CrossOrigin
     public ResponseEntity<?> createUser(@RequestBody User jsonData) {
         try {
+
+            User existingUser = userRepository.findByMail(jsonData.getMail());
+
+            if (existingUser != null) {
+                return new ResponseEntity<>("Un utilisateur avec cet e-mail existe déjà.",
+                        HttpStatus.BAD_REQUEST);
+            }
 
             String randomPassword = generatePasswordWithCriteria();
 
@@ -488,4 +497,20 @@ public class UserController extends GenericController<User, Integer> {
         return password.toString();
     }
 
+    @GetMapping("/search")
+    @CrossOrigin
+    public ResponseEntity<List<User>> searchUsers(
+        @RequestParam(value = "pseudo", required = false) String pseudo,
+        @RequestParam(value = "town", required = false) String town,
+        @RequestParam(value = "gitProfile", required = false) String gitProfile,
+        @RequestParam(value = "genderId", required = false) Integer genderId
+    ) {
+        try {
+            List<User> searchResults = userRepository.searchUsers(pseudo, town, gitProfile, genderId);
+            return ResponseEntity.ok(searchResults);
+        } catch (Exception e) {
+            // Gérez les erreurs, par exemple, en renvoyant une réponse d'erreur
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 }

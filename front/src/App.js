@@ -19,7 +19,7 @@ function App() {
   }, []);
 
  
-  const excludedPages = ["/accueil", "/register", "/login", "/"];
+  const excludedPages = ["/accueil", "/register/informations", "/login", "/rgpd", "/"];
 
   return (
     <Fragment>

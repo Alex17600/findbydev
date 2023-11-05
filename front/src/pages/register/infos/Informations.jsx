@@ -4,7 +4,8 @@ import { TfiClose } from "react-icons/tfi";
 import { useNavigate } from "react-router-dom";
 import { createUser } from "../../../apis/users";
 import { getAllGenders } from "../../../apis/genders";
-import dayjs from 'dayjs';
+import { getAllUsers } from "../../../apis/users";
+import dayjs from "dayjs";
 
 // import ReCAPTCHA from "react-google-recaptcha";
 
@@ -24,14 +25,35 @@ const Informations = () => {
   const [genders, setGenders] = useState([]);
   const [selectedGender, setSelectedGender] = useState("");
   const [isChecked, setIsChecked] = useState(false);
-
+  const [existingUsers, setExistingUsers] = useState([]);
+  // const [idGitProfile, setIdGitProfile] = useState(null);
 
   const checkboxConditionRef = useRef(null);
 
+  //verif si checkbox est bien coché
   const handleLabelClick = () => {
     setIsChecked(!isChecked);
     checkboxConditionRef.current.checked = !isChecked;
   };
+
+  //fetch all user for test email existing
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const users = await getAllUsers();
+        setExistingUsers(users);
+      } catch (error) {
+        console.error(
+          "Erreur lors de la récupération des utilisateurs :",
+          error
+        );
+      }
+    };
+
+    fetchUsers();
+  }, []);
+
+  console.log(existingUsers);
 
   useEffect(() => {
     const handleResize = () => {
@@ -63,16 +85,27 @@ const Informations = () => {
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    // Vérification de l'âge
-  const birthDate = dayjs(birthday);
-  const age = dayjs().diff(birthDate, 'year');
 
-  if (age < 18) {
-    setError('Vous devez avoir au moins 18 ans pour vous inscrire.');
-    return;
-  } else {
-    setError('');
-  }
+    // Vérification de l'âge
+    const birthDate = dayjs(birthday);
+    const age = dayjs().diff(birthDate, "year");
+
+    if (age < 18) {
+      setError("Vous devez avoir au moins 18 ans pour vous inscrire.");
+      return;
+    } else {
+      setError("");
+    }
+
+    // Vérification de l'e-mail en double
+    const isEmailTaken = existingUsers.some((user) => user.mail === mail);
+
+    if (isEmailTaken) {
+      setError("Cet e-mail est déjà utilisé par un autre utilisateur.");
+      return;
+    } else {
+      setError("");
+    }
 
     const jsonData = {
       pseudo,
@@ -86,16 +119,13 @@ const Informations = () => {
       gender: {
         idGender: selectedGender,
       },
-
     };
-
-    console.log(jsonData);
 
     try {
       const createdUser = await createUser(jsonData);
 
       if (Array.isArray(createdUser) && createdUser.length > 0) {
-        setSucces("Inscritpion réussie, vous allez recevoir un email");
+        setSucces("Inscription réussie, vous allez recevoir un email");
         setError("");
 
         setTimeout(() => {
@@ -111,6 +141,7 @@ const Informations = () => {
     }
   };
 
+  console.log(error);
   return (
     <form onSubmit={handleRegister}>
       <div className={style.register}>
@@ -148,6 +179,7 @@ const Informations = () => {
               value={town}
               onChange={(e) => handleChange(e, setTown)}
             />
+            
             <input
               type="email"
               placeholder="Email"
@@ -167,12 +199,6 @@ const Informations = () => {
               placeholder="Décrivez-vous en quelques mots...(limité a 1000 caractères)"
               value={description}
               onChange={(e) => handleChange(e, setDescription)}
-            />
-            <input
-              type="text"
-              placeholder="Votre lien Git"
-              value={gitProfile}
-              onChange={(e) => handleChange(e, setGitProfile)}
             />
             <div className={style.checkboxGenders}>
               {genders.map((gender) => (
@@ -256,12 +282,6 @@ const Informations = () => {
                     placeholder="Décrivez-vous en quelques mots..."
                     value={description}
                     onChange={(e) => handleChange(e, setDescription)}
-                  />
-                  <input
-                    type="text"
-                    placeholder="Votre lien Git"
-                    value={gitProfile}
-                    onChange={(e) => handleChange(e, setGitProfile)}
                   />
                   <div className={style.checkboxGenders}>
                     {genders.map((gender) => (

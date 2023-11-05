@@ -40,7 +40,7 @@ const Photo = () => {
         setImage(imageUrl);
         
         setTimeout(() => {
-          navigate("/profil");
+          navigate("../git");
         }, 3000);
       } else {
         setTimeout(() => {

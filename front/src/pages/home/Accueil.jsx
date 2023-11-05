@@ -47,10 +47,6 @@ const Accueil = () => {
                 vous.
               </li>
               <li>
-                Discutez de projets open-source, de langages de programmation et
-                de nouvelles technologies.
-              </li>
-              <li>
                 Partagez vos connaissances, vos expériences et vos passions avec
                 une communauté axée sur le développement.
               </li>
@@ -59,7 +55,7 @@ const Accueil = () => {
                 développement spécifiques.
               </li>
               <li>
-                Découvrez des profils Git et suivez les derniers commits de vos
+                Découvrez des profils Git et suivez les derniers pushs de vos
                 correspondances.
               </li>
             </ul>
@@ -68,6 +64,7 @@ const Accueil = () => {
               nouvelle dimension de la rencontre en ligne. Inscrivez-vous
               maintenant pour commencer à coder votre futur !
             </p>
+            <p onClick={() => navigate("/rgpd")} className={style.confidentialite}>Vous pouvez consulter notre politique de confidentialité ici.</p>
           </div>
         </div>
       )}
