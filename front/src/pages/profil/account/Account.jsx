@@ -14,10 +14,12 @@ import FooterMobile from "../../../components/footer/FooterMobile";
 import { getAllTechnologysByUserPrefers } from "../../../apis/prefers";
 import { getIconTechnologie } from "../../../apis/technology";
 import { downloadPhoto } from "../../../apis/users";
+import { getToken } from "../../../data/Token";
+import jwtDecode from "jwt-decode";
 
 const iconColor = "#ffffff";
 
-const Account = ({ userConnected }) => {
+const Account = () => {
   const { userId } = useParams();
   const [user, setUser] = useState([]);
   const [photo, setPhoto] = useState();
@@ -46,15 +48,17 @@ const Account = ({ userConnected }) => {
   const [errorText, setErrorText] = useState("");
   const [successText, setSuccessText] = useState("");
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const token = getToken();
+  const userConnected = token ? jwtDecode(token) : null;
 
   const navigate = useNavigate();
 
   useEffect(() => {
     async function fetchData() {
       try {
+
         if (Number(userConnected.idUser) === Number(userId)) {
           const data = await findUserById(userConnected.idUser);
-          console.log(data);
           if (data.photo) {
             const photoData = await findPhotoById(userId);
             setPhoto(photoData);
@@ -224,7 +228,6 @@ const Account = ({ userConnected }) => {
     setNewProfileImage(file);
   };
 
-  console.log(formValues);
 
   return (
     <div className={style.account}>

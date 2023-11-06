@@ -2,72 +2,57 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import style from "./Conversation.module.scss";
 import { getConversationsForLoggedInUser } from "../../../apis/conversation";
-import { findUserById } from "../../../apis/users";
 import { findPhotoById } from "../../../apis/photos";
 import FooterMobile from "../../../components/footer/FooterMobile";
 import { useNavigate } from "react-router-dom";
+import { getToken } from "../../../data/Token";
+import jwtDecode from "jwt-decode";
+import { findUserById } from "../../../apis/users";
 
-const Conversation = ({ userConnected }) => {
+const Conversation = () => {
   const { userId } = useParams();
   const [conversations, setConversations] = useState([]);
   const [userPhotos, setUserPhotos] = useState({});
-  const [userMatches, setUserMatches] = useState({});
+  const [userPseudos, setUserPseudos] = useState({});
   const navigate = useNavigate();
+  const token = getToken();
+  const userConnected = token ? jwtDecode(token) : null;
 
   useEffect(() => {
-    if (userConnected.idUser !== parseInt(userId)) {
-      navigate("/accueil"); // Redirigez vers la page d'accueil ou une autre page d'erreur
-    }
-  
-    const fetchAllConversation = async () => {
-      try {
-        const data = await getConversationsForLoggedInUser(userId);
-        setConversations(data);
-      } catch (error) {
-        console.error("Erreur lors de la récupération des conversations :", error);
-      }
-    };
+    async function fetchData() {
+      if (userConnected && userConnected.idUser === Number(userId)) {
+        try {
+          const data = await getConversationsForLoggedInUser(userId);
+          setConversations(data);
 
-    fetchAllConversation();
-  }, [userId]);
+          const photos = {};
+          const pseudos = {};
 
-  useEffect(() => {
-    async function fetchUserPhotosAndMatches() {
-      try {
-        const photos = {};
-        const matches = {};
-
-        for (const conversation of conversations) {
-          const receiver =
-            conversation.userReceiver === userId
-              ? conversation.userSender
-              : conversation.userReceiver;
-
-          // Vérifiez si la conversation a déjà été ajoutée à la liste
-          if (!photos[receiver]) {
-            // Récupérer la photo de l'autre utilisateur
+          for (const conversation of data) {
+            const receiver =
+              conversation.userReceiver === userConnected.idUser
+                ? conversation.userSender
+                : conversation.userReceiver;
             const photo = await findPhotoById(receiver);
             photos[receiver] = photo;
+
+            const user = await findUserById(receiver);
+
+            pseudos[receiver] = user.pseudo;
           }
 
-          if (!matches[receiver]) {
-            // Récupérer les informations de l'autre utilisateur
-            const match = await findUserById(receiver);
-            matches[receiver] = match;
-          }
+          setUserPhotos(photos);
+          setUserPseudos(pseudos);
+        } catch (error) {
+          console.error("Erreur lors de la récupération des données :", error);
         }
-
-        setUserPhotos(photos);
-        setUserMatches(matches);
-      } catch (error) {
-        console.error("Erreur lors de la récupération des photos :", error);
+      } else {
+        navigate("/accueil");
       }
     }
 
-    if (conversations.length > 0) {
-      fetchUserPhotosAndMatches();
-    }
-  }, [conversations, userConnected]);
+    fetchData();
+  }, []);
 
   function handleConversationClick(conversation) {
     navigate(`../${conversation.idConversation}/message`);
@@ -77,29 +62,24 @@ const Conversation = ({ userConnected }) => {
     <div className={style.conversation}>
       <div className={style.conversationBox}>
         <div className={style.conversations}>
-          {conversations.map((conversation) => {
-            const receiver =
+          {conversations.map((conversation, index) => {
+            const otherUserId =
               conversation.userReceiver === userConnected.idUser
                 ? conversation.userSender
                 : conversation.userReceiver;
+            const photo = userPhotos[otherUserId];
+            const pseudo = userPseudos[otherUserId];
 
             return (
               <div
-                key={conversation.idConversation}
+                key={index}
                 className={style.fiche}
                 onClick={() => handleConversationClick(conversation)}
               >
-                {userPhotos[receiver] && (
-                  <img
-                    src={userPhotos[receiver]}
-                    alt={`personne liké`}
-                  />
-                )}
-                <p>
-                  {userMatches[receiver]
-                    ? userMatches[receiver].pseudo
-                    : "Utilisateur"}
-                </p>
+                {photo && <img src={photo} alt={`personne liké`} />}
+                <div className={style.pseudo}>
+                  {pseudo && <p>{pseudo}</p>}
+                </div>
               </div>
             );
           })}

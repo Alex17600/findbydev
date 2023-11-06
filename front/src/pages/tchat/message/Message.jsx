@@ -9,8 +9,9 @@ import { getConversationById } from "../../../apis/conversation";
 import { getAllMessagesFromIdConversation } from "../../../apis/messages";
 import { findUserById } from "../../../apis/users";
 import { createMessage } from "../../../apis/messages";
+import jwtDecode from "jwt-decode";
 
-const Message = ({ userConnected }) => {
+const Message = () => {
   const { idConversation } = useParams();
   const [stompClient, setStompClient] = useState(null);
   const [messages, setMessages] = useState([]);
@@ -18,7 +19,8 @@ const Message = ({ userConnected }) => {
   const [receiverId, setReceiverId] = useState(null);
   const [senderId, setSenderId] = useState(null);
   const [senderPseudo, setSenderPseudo] = useState("");
-  
+  const token = getToken();
+  const userConnected = token ? jwtDecode(token) : null;
 
   useEffect(() => {
     const socket = new SockJS("http://localhost:8080/websocket/ws", null, {
@@ -143,6 +145,14 @@ const Message = ({ userConnected }) => {
     }
   };
 
+  function getMessagePseudo(message) {
+    if (message.pseudo) {
+      return message.pseudo;
+    } else {
+      return message.userSender.pseudo;
+    }
+  }
+
   return (
     <div className={style.message}>
       <div className={style["message-bubbles"]}>
@@ -155,7 +165,7 @@ const Message = ({ userConnected }) => {
                 : style.receiver
             }`}
           > 
-            <p>{message.pseudo}</p>
+            <p>{getMessagePseudo(message)}</p>
             <p>{message.contain}</p>
           </div>
         ))}

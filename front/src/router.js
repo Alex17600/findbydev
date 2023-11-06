@@ -95,7 +95,7 @@ export const router = createBrowserRouter([
           },
           {
             path: ":userId/account",
-            element: <Account  userConnected={userConnected}/>
+            element: <Account/>
           },
           {
             path: ":userId/notice",
@@ -120,11 +120,11 @@ export const router = createBrowserRouter([
         children: [
           {
             path: ":userId/conversation",
-            element: <Conversation userConnected={userConnected}/>
+            element: <Conversation/>
           },
           {
             path: ":idConversation/message",
-            element: <Message userConnected={userConnected}/>
+            element: <Message/>
           }
         ],
       },

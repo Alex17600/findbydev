@@ -504,7 +504,9 @@ public class UserController extends GenericController<User, Integer> {
         @RequestParam(value = "town", required = false) String town,
         @RequestParam(value = "gitProfile", required = false) String gitProfile,
         @RequestParam(value = "genderId", required = false) Integer genderId
-    ) {
+    ) 
+    
+    {
         try {
             List<User> searchResults = userRepository.searchUsers(pseudo, town, gitProfile, genderId);
             return ResponseEntity.ok(searchResults);

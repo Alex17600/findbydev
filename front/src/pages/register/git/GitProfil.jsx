@@ -4,7 +4,7 @@ import { BiRightArrow } from "react-icons/bi";
 import { checkGitLabUsername } from "../../../apis/git";
 
 const GitProfil = () => {
-  const [pseudo, setPseudo] = useState("");
+
   const [errorGit, setErrorGit] = useState("");
   const [succesGit, setSuccesGit] = useState("");
   const [gitProfile, setGitProfile] = useState("");

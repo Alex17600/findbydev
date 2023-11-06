@@ -2,7 +2,6 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
-    padding: 10px;
     align-items: flex-start;
     max-width: 100%;
     background-image: url(../../../assets/background/152699-abstract-gold-letters-background.webp);
@@ -13,6 +12,7 @@
 
     .message-bubble {
         border-radius: 10px;
+        margin: 0 20px;
         padding: 10px;
         max-width: 70%;
         word-break: break-word;

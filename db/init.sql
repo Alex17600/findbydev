@@ -104,7 +104,7 @@ CREATE TABLE conversation(
 
 CREATE TABLE message (
    Id_message SERIAL,
-   contain VARCHAR(1000) NOT NULL,
+   contain VARCHAR NOT NULL,
    date_hour TIMESTAMP NOT NULL,
    Id_conversation INTEGER NOT NULL,
    Id_user_sender INTEGER NOT NULL, 
