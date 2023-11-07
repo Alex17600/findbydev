@@ -3,8 +3,7 @@ import style from "./GitProfil.module.scss";
 
 const GitProfil = () => {
   const handleGitLabLogin = () => {
-    // Redirigez l'utilisateur vers le formulaire de connexion GitLab
-    window.location.href = 'http://localhost:8080/websocket/login/oauth2/authorization/gitlab';
+    window.location.href = 'http://localhost:8000/api/login/oauth2/authorization/gitlab';
   };
 
   return (

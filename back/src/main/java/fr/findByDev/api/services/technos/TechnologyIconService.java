@@ -23,10 +23,10 @@ public class TechnologyIconService {
     private FileStorageService fileStorageService;
 
     public Technology createTechnologyIcon(Technology technology, MultipartFile icon) {
-        fileStorageService.store(icon); // Nous stockons le fichier, mais ne récupérons pas le chemin ici
-        String fileName = icon.getOriginalFilename(); // Obtenir le nom du fichier
-        String iconPath = "language-icons/" + fileName; // Construire le chemin du fichier
-        technology.setImagePath(iconPath); // Stocker le chemin d'accès dans la technologie
+        fileStorageService.store(icon); 
+        String fileName = icon.getOriginalFilename(); 
+        String iconPath = "language-icons/" + fileName; 
+        technology.setImagePath(iconPath);
         return technologyRepository.save(technology);
     }
 
@@ -42,14 +42,14 @@ public class TechnologyIconService {
             // Supprimez l'icône de la base de données
             technologyRepository.deleteById(id);
 
-            // Supprimez également le fichier du répertoire (s'il existe)
+            
             if (iconPath != null && !iconPath.isEmpty()) {
                 Path iconFile = Paths.get(iconPath);
                 if (Files.exists(iconFile)) {
                     try {
                         Files.delete(iconFile);
                     } catch (IOException e) {
-                        // Gérer l'erreur en conséquence, par exemple, journaliser le problème
+                       
                     }
                 }
             }

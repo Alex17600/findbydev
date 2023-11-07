@@ -58,11 +58,11 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers(HttpMethod.POST, "/login/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/localhost:3000/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/oauth2/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/oauth2/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/localhost:3000/**").permitAll()//a changer et definir precisement les bonnes requetes
+                        .requestMatchers(HttpMethod.GET, "/login/oauth2/**").permitAll() 
+                        .requestMatchers(HttpMethod.POST, "/login/oauth2/**").hasAuthority("ROLE_USER")  
                         .requestMatchers(HttpMethod.GET, "https://gitlab.com/**").permitAll()
-                        .requestMatchers(HttpMethod.POST,"https://gitlab.com/**").permitAll()
+                        .requestMatchers(HttpMethod.POST,"https://gitlab.com/oauth/token").permitAll()
                         .requestMatchers(HttpMethod.GET, "/users/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/users/**").permitAll()
                         .requestMatchers(HttpMethod.PATCH, "/users/**").permitAll()

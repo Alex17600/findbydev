@@ -16,7 +16,7 @@ public class UpdateIconPathsService {
 
     public void updateIconPaths() {
         // Chemin vers le répertoire de stockage des icônes
-        String iconDirectory = "language-icons/"; // Assurez-vous d'utiliser le bon chemin
+        String iconDirectory = "language-icons/"; 
 
         // Récupérez la liste des fichiers dans le répertoire
         File iconDir = new File(iconDirectory);
@@ -25,7 +25,7 @@ public class UpdateIconPathsService {
         if (iconFiles != null) {
             for (File iconFile : iconFiles) {
                 String iconFileName = iconFile.getName();
-                // Recherchez la technologie par nom d'icône (supposons que le nom de l'icône corresponde au nom de la technologie)
+                // Recherchez la technologie par nom d'icône 
                 Technology technology = technologyRepository.findByName(iconFileName);
                 if (technology != null) {
                     // Mettez à jour le chemin de l'icône dans la base de données
