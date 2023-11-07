@@ -24,41 +24,26 @@
             margin-bottom: 20px;
         }
 
-        .errorText {
-            background-color: #E96969;
-            padding: 10px;
-            color: white;
-            text-align: center;
-            border-radius: 6px;
-            width: 80%;
-            margin: 20px auto;
-        }
-
-        .succesText {
-            background-color: #05ad0d;
-            padding: 10px;
-            color: white;
-            text-align: center;
-            border-radius: 6px;
-            width: 80%;
-            margin: 20px auto;
-        }
 
         .gitlab {
             border: 1px white solid;
             border-radius: 6px;
             display: flex;
             align-items: center;
-            flex: 1;
             width: 80%;
             margin: auto;
             padding: 20px 0;
+            justify-content: center;
 
-            .addon {
-                display: flex;
-                align-items: center;
+
+            button {
+                background-color: #ee9c31;
                 color: white;
-                font-size: 30px;
+                padding: 10px 20px;
+                font-size: 18px;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
             }
         }
 

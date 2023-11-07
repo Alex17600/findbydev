@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import style from "./Search.module.scss";
 import FooterMobile from "../../components/footer/FooterMobile";
 import { searchUsers } from "../../apis/search";
