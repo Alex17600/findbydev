@@ -1,6 +1,7 @@
 package fr.findByDev.api.models;
 
 import java.util.Date;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonView;
 
@@ -59,14 +60,16 @@ public class User {
     @JoinColumn(name = "id_gender")
     private Gender gender;
 
+    @OneToMany(mappedBy = "user")
+    private List<GitProject> gitProjets;
+
 
     public User() {
     }
 
-    
     public User(Integer idUser, String pseudo, String lastName, String firstName, String town, Date birthday,
             String mail, String password, boolean activeAccount, String description, Integer popularity, String photo,
-            String gitProfile, String type, Gender gender) {
+            String gitProfile, String type, Gender gender, List<GitProject> gitProjets) {
         this.idUser = idUser;
         this.pseudo = pseudo;
         this.lastName = lastName;
@@ -82,7 +85,11 @@ public class User {
         this.gitProfile = gitProfile;
         this.type = type;
         this.gender = gender;
+        this.gitProjets = gitProjets;
     }
+
+
+
 
 
     public Integer getId() {
@@ -204,5 +211,15 @@ public class User {
     public void setType(String type) {
         this.type = type;
     }
+
+    public List<GitProject> getGitProjets() {
+        return gitProjets;
+    }
+
+    public void setGitProjets(List<GitProject> gitProjets) {
+        this.gitProjets = gitProjets;
+    }
+
+    
 }
 

@@ -58,7 +58,7 @@ public class UserController extends GenericController<User, Integer> {
     Logger logger = LoggerFactory.getLogger(FileStorageService.class);
 
     @Autowired
-    private UserRepository userRepository;
+    private UserRepository userRepository;;
 
     @Autowired
     private FileStorageService fileStorageService;
@@ -96,7 +96,6 @@ public class UserController extends GenericController<User, Integer> {
     public Optional<User> get(@PathVariable Integer id) {
         return userRepository.findById(id);
     }
-
     // Recuperation de la photo d'un user
     @GetMapping("/{idUser}/photo")
     @CrossOrigin

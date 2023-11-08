@@ -102,6 +102,15 @@ CREATE TABLE conversation(
    FOREIGN KEY(user_receiver) REFERENCES _user_(Id_user)
 );
 
+CREATE TABLE git_projet(
+   Id_git_project SERIAL,
+   name VARCHAR(50) ,
+   depot_url VARCHAR(1000) ,
+   Id_user INTEGER NOT NULL,
+   PRIMARY KEY(Id_git_projet),
+   FOREIGN KEY(Id_user) REFERENCES _user_(Id_user)
+);
+
 CREATE TABLE message (
    Id_message SERIAL,
    contain VARCHAR NOT NULL,
