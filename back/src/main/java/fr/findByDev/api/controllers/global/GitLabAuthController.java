@@ -1,6 +1,6 @@
 package fr.findByDev.api.controllers.global;
 
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.core.ParameterizedTypeReference;
@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 
-import fr.findByDev.api.models.GitProject;
 import fr.findByDev.api.services.utils.OAuthUtil;
 import jakarta.servlet.http.HttpSession;
 
@@ -27,6 +26,7 @@ import jakarta.servlet.http.HttpSession;
 public class GitLabAuthController {
     private final String clientId = "03c6edda281830e0b2b456bb31487af95738fb4672a695adb59a2f1f71f6b013";
     private final String clientSecret = "gloas-6208a617921de4ba9278a05d577882f4f48533229674d2405bf9d780fe78bf0a";
+    private String accessToken;
     private Object idGit;
 
     @GetMapping("/login/oauth2/authorization/gitlab")
@@ -59,9 +59,9 @@ public class GitLabAuthController {
 
         if (storedState != null && state != null && storedState.equals(state)) {
             try {
-                String gitLabAccessToken = exchangeCodeForAccessToken(code, session);
-                System.out.println("------------------------------ID de l'utilisateur GitLab : " + gitLabAccessToken);
-                return "redirect:http://localhost:3000/profil/card";
+                accessToken = exchangeCodeForAccessToken(code, session);
+                System.out.println("------------------------------ID de l'utilisateur GitLab : " + accessToken);
+                return "redirect:http://localhost:3000/register/gitdetails";
             } catch (Exception e) {
                 e.printStackTrace();
                 return "redirect:/error";
@@ -100,71 +100,105 @@ public class GitLabAuthController {
         return "";
     }
 
+    @GetMapping("/getaccesstoken")
+    @CrossOrigin
+    public ResponseEntity<String> getAccessToken() {
+        if (accessToken != null && !accessToken.isEmpty()) {
+            return new ResponseEntity<>(accessToken, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Access token is missing or invalid.", HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @GetMapping("/getgituserinfo")
     @CrossOrigin
     public ResponseEntity<Map<String, Object>> getGitLabUserInfo(@RequestParam("access_token") String accessToken) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + accessToken);
+        if (accessToken != null && !accessToken.isEmpty()) {
+            // Vous avez maintenant `accessToken` en tant que paramètre
 
-        HttpEntity<String> entity = new HttpEntity<>(headers);
+            HttpHeaders headers = new HttpHeaders();
 
-        ResponseEntity<Map<String, Object>> response = new RestTemplate().exchange(
-                "https://gitlab.com/api/v4/user",
+            HttpEntity<String> entity = new HttpEntity<>(headers);
+
+            ResponseEntity<Map<String, Object>> response = new RestTemplate().exchange(
+                    "https://gitlab.com/api/v4/user?access_token=" + accessToken,
+                    HttpMethod.GET,
+                    entity,
+                    new ParameterizedTypeReference<Map<String, Object>>() {
+                    });
+
+            if (response.getStatusCode().is2xxSuccessful()) {
+                Map<String, Object> userInfo = response.getBody();
+                // Extraire l'ID de l'utilisateur GitLab
+                int userId = (int) userInfo.get("id");
+                String username = userInfo.get("username").toString();
+
+                // Créez une carte pour stocker ces informations
+                Map<String, Object> userInformation = new HashMap<>();
+                userInformation.put("id", userId);
+                userInformation.put("username", username);
+
+                return ResponseEntity.ok(userInformation);
+            } else {
+                // Gérez les erreurs ici
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        } else {
+
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/getgitprojects")
+    @CrossOrigin
+    public ResponseEntity<String> getGitLabProjects(@RequestParam("id_git") String idGit) {
+        if (idGit != null && !idGit.isEmpty()) {
+            HttpHeaders headers = new HttpHeaders();
+    
+            String projectsUrl = "https://gitlab.com/api/v4/users/" + idGit + "/projects";
+    
+            HttpEntity<String> entity = new HttpEntity<>(headers);
+    
+            ResponseEntity<String> response = new RestTemplate().exchange(
+                projectsUrl,
                 HttpMethod.GET,
                 entity,
-                new ParameterizedTypeReference<Map<String, Object>>() {
-                });
-
-        if (response.getStatusCode().is2xxSuccessful()) {
-            Map<String, Object> userInfo = response.getBody();
-            // Extraire l'ID de l'utilisateur GitLab
-            idGit = userInfo.get("id");
-
-            // Vous pouvez également extraire d'autres informations de l'utilisateur ici si
-            // nécessaire
-
-            // Ensuite, vous pouvez appeler la méthode pour récupérer les projets de
-            // l'utilisateur
-            // en utilisant l'ID de l'utilisateur
-
-            // Construisez l'URL pour récupérer les projets de l'utilisateur en utilisant
-            // l'ID
-            String projectsUrl = "https://gitlab.com/api/v4/users/" + idGit + "/projects";
-
-            // Appelez la méthode pour récupérer les projets en utilisant l'URL projectsUrl
-            ResponseEntity<List<GitProject>> projectsResponse = getGitLabProjects(accessToken, projectsUrl);
-
-            // Gérez la réponse des projets ici
-
-            return response;
+                String.class  
+            );
+    
+            if (response.getStatusCode().is2xxSuccessful()) {
+                String gitLabProjects = response.getBody();
+                // Vous avez maintenant la réponse sous forme de chaîne, qui peut contenir la liste des projets JSON
+    
+                return new ResponseEntity<>(gitLabProjects, HttpStatus.OK);
+            } else {
+                // Gérez les erreurs ici
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
         } else {
-            // Gérez les erreurs ici
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            // Gérez le cas où l'ID GitLab n'est pas défini
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
-    @GetMapping("/getgitprojects")
-    private ResponseEntity<List<GitProject>> getGitLabProjects(String accessToken, String projectsUrl) {
+
+    @GetMapping("/getlastpushoflastproject")
+    public ResponseEntity<String> getLastPushOfLastProject(@RequestParam("id_git") String projectId) {
+        String gitLabApiUrl = "https://gitlab.com/api/v4/projects/" + projectId + "/repository/commits";
+        
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + accessToken);
         
         HttpEntity<String> entity = new HttpEntity<>(headers);
         
-        ResponseEntity<List<GitProject>> response = new RestTemplate().exchange(
-            projectsUrl,
-            HttpMethod.GET,
-            entity,
-            new ParameterizedTypeReference<List<GitProject>>() {
-            }
-        );
+        RestTemplate restTemplate = new RestTemplate();
+        
+        ResponseEntity<String> response = restTemplate.getForEntity(gitLabApiUrl, String.class, entity);
         
         if (response.getStatusCode().is2xxSuccessful()) {
-            List<GitProject> gitLabProjects = response.getBody();
-            // Stockez ces projets dans votre base de données ou faites ce que vous devez en faire
-            
             return response;
         } else {
             // Gérez les erreurs ici
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.status(response.getStatusCode()).body("Erreur lors de la récupération du dernier push.");
         }
     }
+
 }

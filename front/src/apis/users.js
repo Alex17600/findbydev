@@ -21,6 +21,22 @@ export async function getAllUsers() {
   }
 }
 
+//findByAll
+export async function getAllUsersForCheckMailExist() {
+  const response = await fetch(`${URL_API}/chekMailExist`, {
+    headers: {
+      'Content-Type': 'application/json'
+    },
+  });
+  if (response.ok) {
+    const body = await response.json();
+    return Array.isArray(body) ? body : [body];
+
+  } else {
+    throw new Error('Error fetch Get users');
+  }
+}
+
 
 // findById
 export const findUserById = async (userId) => {
@@ -28,6 +44,7 @@ export const findUserById = async (userId) => {
     const response = await fetch(`${URL_API}/${userId}`, {
       method: 'GET',
       headers: {
+        'Authorization': `Bearer ${getToken()}`,
         'Content-Type': 'application/json',
       },
     });
@@ -188,5 +205,28 @@ export async function updateProfileImageWithAuth(userId, image) {
     return Array.isArray(body) ? body : [body];
   } else {
     throw new Error('Erreur lors de la requête pour télécharger la photo');
+  }
+}
+
+//mise à jour des infos git
+export async function setGitInfos(gitInfo) {
+  try {
+    const response = await fetch(`${URL_API}/gitconfirm`, {
+      headers: {
+        'Authorization': `Bearer ${getToken()}`,
+        'Content-Type': 'application/json'
+      },
+      method: 'PATCH',
+      body: JSON.stringify(gitInfo)
+    });
+
+    if (response.ok) {
+      const body = await response.json();
+      return body;
+    } else {
+      throw new Error('Error patch git user');
+    }
+  } catch (error) {
+    throw new Error('Error patch git user');
   }
 }

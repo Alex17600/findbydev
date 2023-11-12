@@ -18,7 +18,6 @@ const Result = () => {
   };
   const [userPhotos, setUserPhotos] = useState({});
   const navigate = useNavigate();
-  console.log(searchResults);
 
   useEffect(() => {
     // Fonction pour récupérer les photos

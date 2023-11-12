@@ -26,6 +26,7 @@ export const findPhotoById = async (userId) => {
       const response = await fetch(`${URL_API}/${userId}/photo`, {
         method: 'GET',
         headers: {
+          'Authorization': `Bearer ${getToken()}`,
           'Content-Type': 'application/json',
         },
       });

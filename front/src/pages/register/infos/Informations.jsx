@@ -4,7 +4,7 @@ import { TfiClose } from "react-icons/tfi";
 import { useNavigate } from "react-router-dom";
 import { createUser } from "../../../apis/users";
 import { getAllGenders } from "../../../apis/genders";
-import { getAllUsers } from "../../../apis/users";
+import { getAllUsersForCheckMailExist } from "../../../apis/users";
 import dayjs from "dayjs";
 
 // import ReCAPTCHA from "react-google-recaptcha";
@@ -40,7 +40,7 @@ const Informations = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const users = await getAllUsers();
+        const users = await getAllUsersForCheckMailExist();
         setExistingUsers(users);
       } catch (error) {
         console.error(
@@ -52,8 +52,6 @@ const Informations = () => {
 
     fetchUsers();
   }, []);
-
-  console.log(existingUsers);
 
   useEffect(() => {
     const handleResize = () => {
@@ -141,7 +139,6 @@ const Informations = () => {
     }
   };
 
-  console.log(error);
   return (
     <form onSubmit={handleRegister}>
       <div className={style.register}>

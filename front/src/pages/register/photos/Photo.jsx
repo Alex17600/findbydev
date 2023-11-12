@@ -17,7 +17,7 @@ const Photo = () => {
 
   useEffect(() => {
     try {
-      if( userConnected.idUser !== parseInt(userId.userId)) {
+      if( userConnected.idUser !== parseInt(userId)) {
         navigate("/accueil")
       }
     } catch (error) {
@@ -34,7 +34,7 @@ const Photo = () => {
     try {
       
       const response = await downloadPhoto(userId, image);
-      console.log(userId, image);
+      
       if (response.ok) {
         const imageUrl = URL.createObjectURL(image); 
         setImage(imageUrl);

@@ -60,9 +60,12 @@ const Conversation = () => {
 
   return (
     <div className={style.conversation}>
-      <div className={style.conversationBox}>
-        <div className={style.conversations}>
-          {conversations.map((conversation, index) => {
+    <div className={style.conversationBox}>
+      <div className={style.conversations}>
+        {conversations.length === 0 ? (
+          <p className={style.notice}>Vous n'avez pas de conversation pour le moment.</p>
+        ) : (
+          conversations.map((conversation, index) => {
             const otherUserId =
               conversation.userReceiver === userConnected.idUser
                 ? conversation.userSender
@@ -82,9 +85,10 @@ const Conversation = () => {
                 </div>
               </div>
             );
-          })}
-        </div>
+          })
+        )}
       </div>
+    </div>
       <FooterMobile />
     </div>
   );

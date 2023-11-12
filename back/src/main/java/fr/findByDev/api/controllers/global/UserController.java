@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 import java.nio.file.Path;
 
 import org.springframework.core.io.Resource;
@@ -90,12 +91,20 @@ public class UserController extends GenericController<User, Integer> {
         return userRepository.findAll();
     }
 
+    @GetMapping("/chekMailExist")
+    @ResponseStatus(HttpStatus.OK)
+    @CrossOrigin
+    public Iterable<User> allForCheckingEmailExist() {
+        return userRepository.findAll();
+    }
+
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     @CrossOrigin
     public Optional<User> get(@PathVariable Integer id) {
         return userRepository.findById(id);
     }
+
     // Recuperation de la photo d'un user
     @GetMapping("/{idUser}/photo")
     @CrossOrigin
@@ -139,6 +148,17 @@ public class UserController extends GenericController<User, Integer> {
     @CrossOrigin
     public ResponseEntity<?> createUser(@RequestBody User jsonData) {
         try {
+            // Vérifier si l'utilisateur a au moins 18 ans
+            java.util.Date today = new java.util.Date();
+            java.util.Date birthday = jsonData.getBirthday();
+
+            long ageInMillis = today.getTime() - birthday.getTime();
+            int ageInYears = (int) TimeUnit.MILLISECONDS.toDays(ageInMillis) / 365;
+
+            if (ageInYears < 18) {
+                return new ResponseEntity<>("L'utilisateur doit avoir au moins 18 ans.",
+                        HttpStatus.BAD_REQUEST);
+            }
 
             User existingUser = userRepository.findByMail(jsonData.getMail());
 
@@ -368,6 +388,7 @@ public class UserController extends GenericController<User, Integer> {
      */
     @PatchMapping(value = "/{userId}/update-photo", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     @ResponseStatus(HttpStatus.OK)
+    @CrossOrigin
     public User updatePhoto(@PathVariable Integer userId, @RequestPart MultipartFile image) {
 
         Optional<User> optionalUser = userRepository.findById(userId);
@@ -499,16 +520,48 @@ public class UserController extends GenericController<User, Integer> {
     @GetMapping("/search")
     @CrossOrigin
     public ResponseEntity<List<User>> searchUsers(
-        @RequestParam(value = "pseudo", required = false) String pseudo,
-        @RequestParam(value = "town", required = false) String town,
-        @RequestParam(value = "gitProfile", required = false) String gitProfile,
-        @RequestParam(value = "genderId", required = false) Integer genderId
-    ) 
-    
+            @RequestParam(value = "pseudo", required = false) String pseudo,
+            @RequestParam(value = "town", required = false) String town,
+            @RequestParam(value = "gitProfile", required = false) String gitProfile,
+            @RequestParam(value = "genderId", required = false) Integer genderId)
+
     {
         try {
             List<User> searchResults = userRepository.searchUsers(pseudo, town, gitProfile, genderId);
             return ResponseEntity.ok(searchResults);
+        } catch (Exception e) {
+            // Gérez les erreurs, par exemple, en renvoyant une réponse d'erreur
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @PatchMapping("/gitconfirm")
+    @CrossOrigin
+    public ResponseEntity<User> gitConfirm(@RequestBody Map<String, Object> gitInfo) {
+        try {
+            String pseudoGit = (String) gitInfo.get("pseudoGit");
+            Integer idGit = (Integer) gitInfo.get("idGit");
+            Integer userId = (Integer) gitInfo.get("userId");
+
+            // Assurez-vous que les valeurs ne sont pas nulles
+            if (pseudoGit == null || idGit == null || userId == null) {
+                return ResponseEntity.badRequest().build();
+            }
+
+            Optional<User> optionalUser = userRepository.findById(userId);
+
+            if (optionalUser.isPresent()) {
+                User user = optionalUser.get();
+
+                user.setGitProfile(pseudoGit);
+                user.setIdGit(idGit);
+
+                User updatedUser = userRepository.save(user);
+
+                return ResponseEntity.ok(updatedUser);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
         } catch (Exception e) {
             // Gérez les erreurs, par exemple, en renvoyant une réponse d'erreur
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

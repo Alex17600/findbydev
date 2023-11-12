@@ -31,7 +31,8 @@ CREATE TABLE _user_(
    description VARCHAR(255) ,
    popularity INTEGER,
    photo VARCHAR,
-   git_profile VARCHAR(50) ,
+   id_git INTEGER,
+   git_profile VARCHAR(50),
    type VARCHAR(10)  NOT NULL,
    Id_gender INTEGER NOT NULL,
    PRIMARY KEY(Id_user),
@@ -102,15 +103,6 @@ CREATE TABLE conversation(
    FOREIGN KEY(user_receiver) REFERENCES _user_(Id_user)
 );
 
-CREATE TABLE git_projet(
-   Id_git_project SERIAL,
-   name VARCHAR(50) ,
-   depot_url VARCHAR(1000) ,
-   Id_user INTEGER NOT NULL,
-   PRIMARY KEY(Id_git_projet),
-   FOREIGN KEY(Id_user) REFERENCES _user_(Id_user)
-);
-
 CREATE TABLE message (
    Id_message SERIAL,
    contain VARCHAR NOT NULL,
@@ -124,8 +116,6 @@ CREATE TABLE message (
    FOREIGN KEY(Id_user_receiver) REFERENCES _user_(Id_user)
 );
 
-
-
 INSERT INTO gender (name)
 VALUES ('Homme');
 
@@ -135,21 +125,64 @@ VALUES ('Femme');
 INSERT INTO gender (name)
 VALUES ('Autre');
 
+--function for unauthorized double email
+CREATE OR REPLACE FUNCTION public.check_email_exists()
+ RETURNS trigger
+ LANGUAGE plpgsql
+AS $function$
+BEGIN
+  IF EXISTS (SELECT 1 FROM _user_ WHERE mail = NEW.mail) THEN
+    RAISE EXCEPTION 'Un utilisateur avec cet e-mail existe déjà.';
+  END IF;
+  RETURN NEW;
+END;
+$function$
+;
+
+--trigger function check_email_exists()
+create trigger trigger_check_email_exists before
+insert
+    on
+    public._user_ for each row execute function check_email_exists()
+
+--check majorité
+CREATE OR REPLACE FUNCTION check_user_age()
+RETURNS TRIGGER AS $$
+BEGIN
+    DECLARE
+        v_age INTEGER;
+    BEGIN
+        SELECT EXTRACT(YEAR FROM age(NEW.birthday)) INTO v_age;
+        IF v_age < 18 THEN
+            RAISE EXCEPTION 'L''utilisateur doit avoir au moins 18 ans.';
+        END IF;
+
+        RETURN NEW;
+    END;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER user_age_check
+BEFORE INSERT ON _user_
+FOR EACH ROW
+EXECUTE FUNCTION check_user_age();
+
+
 -- Insertion d'utilisateurs avec des pseudonymes Git aléatoires et des valeurs factices pour la photo
-INSERT INTO _user_ (pseudo, lastname, firstname, town, birthday, mail, password, active_account, description, popularity, photo, git_profile, id_gender, type)
+INSERT INTO _user_ (pseudo, lastname, firstname, town, birthday, mail, password, active_account, description, popularity, photo, id_gender, type)
 VALUES
-  ('ByteWizard42', 'Doe', 'John', 'New York', '1990-05-15', 'user@user.user', '$2y$10$hdcop0JmljwX0pkef.p5IOClt6qXxN.rOX7Q3Atzg/Ldx90cAH86W', true, 'Software Engineer', 100, '', 'john_git', 1, 'U'),
-  ('CodeNinjaX', 'admin', 'admin', 'Philadelphia', '1998-08-07', 'admin@admin.admin', '$2y$10$hdcop0JmljwX0pkef.p5IOClt6qXxN.rOX7Q3Atzg/Ldx90cAH86W', true, 'QA Engineer', 78, '', 'alex_git', 2, 'A'),
-  ('PixelPirate', 'Doe', 'John', 'New York', '1990-05-15', 'john@example.com', '$2y$10$hdcop0JmljwX0pkef.p5IOClt6qXxN.rOX7Q3Atzg/Ldx90cAH86W', true, 'Web Developer', 85, '', 'johndoe', 1, 'U'),
-  ('GeekGuru123', 'Smith', 'Alice', 'Los Angeles', '1988-03-20', 'alice@example.com', '$2y$10$hdcop0JmljwX0pkef.p5IOClt6qXxN.rOX7Q3Atzg/Ldx90cAH86W', true, 'Software Engineer', 92, '', 'alicesmith', 2, 'U'),
-  ('TechJunkie42', 'Brown', 'Michael', 'Chicago', '1992-09-10', 'michael@example.com', '$2y$10$hdcop0JmljwX0pkef.p5IOClt6qXxN.rOX7Q3Atzg/Ldx90cAH86W', false, 'Data Scientist', 78, '', 'michaelbrown', 1, 'U'),
-  ('DigiDungeonMaster', 'Johnson', 'Emily', 'Houston', '1985-12-05', 'emily@example.com', '$2y$10$hdcop0JmljwX0pkef.p5IOClt6qXxN.rOX7Q3Atzg/Ldx90cAH86W', true, 'UX Designer', 89, '', 'emilyjohnson', 2, 'U'),
-  ('CyberspaceHero', 'Williams', 'Daniel', 'San Francisco', '1991-07-25', 'daniel@example.com', '$2y$10$hdcop0JmljwX0pkef.p5IOClt6qXxN.rOX7Q3Atzg/Ldx90cAH86W', true, 'Full Stack Developer', 88, '', 'danwilliams', 1, 'U'),
-  ('QuantumCoder', 'Lee', 'Olivia', 'Boston', '1987-04-12', 'olivia@example.com', '$2y$10$hdcop0JmljwX0pkef.p5IOClt6qXxN.rOX7Q3Atzg/Ldx90cAH86W', true, 'Product Manager', 91, '', 'oliviale', 2, 'U'),
-  ('DataVoyagerX', 'Garcia', 'Matthew', 'Seattle', '1989-08-30', 'matthew@example.com', '$2y$10$hdcop0JmljwX0pkef.p5IOClt6qXxN.rOX7Q3Atzg/Ldx90cAH86W', false, 'Network Engineer', 82, '', 'matthewgarcia', 1, 'U'),
-  ('DataVoyagerX', 'Martinez', 'Sophia', 'Austin', '1993-02-18', 'sophia@example.com', '$2y$10$hdcop0JmljwX0pkef.p5IOClt6qXxN.rOX7Q3Atzg/Ldx90cAH86W', true, 'Frontend Developer', 86, '', 'sophiamartinez', 2, 'U'),
-  ('BinarySorcerer', 'Lopez', 'William', 'Miami', '1986-11-08', 'william@example.com', '$2y$10$hdcop0JmljwX0pkef.p5IOClt6qXxN.rOX7Q3Atzg/Ldx90cAH86W', true, 'Database Administrator', 79, '', 'williamlopez', 1, 'U'),
-  ('AIWhisperer', 'Harris', 'Mia', 'Denver', '1990-06-22', 'mia@example.com', '$2y$10$hdcop0JmljwX0pkef.p5IOClt6qXxN.rOX7Q3Atzg/Ldx90cAH86W', true, 'Graphic Designer', 87, '', 'miaharris', 2, 'U');
+  ('ByteWizard42', 'Doe', 'John', 'New York', '1990-05-15', 'user@user.user', '$2y$10$hdcop0JmljwX0pkef.p5IOClt6qXxN.rOX7Q3Atzg/Ldx90cAH86W', true, 'Software Engineer', 100, '', 1, 'U'),
+  ('CodeNinjaX', 'admin', 'admin', 'Philadelphia', '1998-08-07', 'admin@admin.admin', '$2y$10$hdcop0JmljwX0pkef.p5IOClt6qXxN.rOX7Q3Atzg/Ldx90cAH86W', true, 'QA Engineer', 78, '', , 2, 'A'),
+  ('PixelPirate', 'Doe', 'John', 'New York', '1990-05-15', 'john@example.com', '$2y$10$hdcop0JmljwX0pkef.p5IOClt6qXxN.rOX7Q3Atzg/Ldx90cAH86W', true, 'Web Developer', 85, '', 1, 'U'),
+  ('GeekGuru123', 'Smith', 'Alice', 'Los Angeles', '1988-03-20', 'alice@example.com', '$2y$10$hdcop0JmljwX0pkef.p5IOClt6qXxN.rOX7Q3Atzg/Ldx90cAH86W', true, 'Software Engineer', 92, '', 2, 'U'),
+  ('TechJunkie42', 'Brown', 'Michael', 'Chicago', '1992-09-10', 'michael@example.com', '$2y$10$hdcop0JmljwX0pkef.p5IOClt6qXxN.rOX7Q3Atzg/Ldx90cAH86W', false, 'Data Scientist', 78, '', 1, 'U'),
+  ('DigiDungeonMaster', 'Johnson', 'Emily', 'Houston', '1985-12-05', 'emily@example.com', '$2y$10$hdcop0JmljwX0pkef.p5IOClt6qXxN.rOX7Q3Atzg/Ldx90cAH86W', true, 'UX Designer', 89, '', 2, 'U'),
+  ('CyberspaceHero', 'Williams', 'Daniel', 'San Francisco', '1991-07-25', 'daniel@example.com', '$2y$10$hdcop0JmljwX0pkef.p5IOClt6qXxN.rOX7Q3Atzg/Ldx90cAH86W', true, 'Full Stack Developer', 88, '', 1, 'U'),
+  ('QuantumCoder', 'Lee', 'Olivia', 'Boston', '1987-04-12', 'olivia@example.com', '$2y$10$hdcop0JmljwX0pkef.p5IOClt6qXxN.rOX7Q3Atzg/Ldx90cAH86W', true, 'Product Manager', 91, '', 2, 'U'),
+  ('DataVoyagerX', 'Garcia', 'Matthew', 'Seattle', '1989-08-30', 'matthew@example.com', '$2y$10$hdcop0JmljwX0pkef.p5IOClt6qXxN.rOX7Q3Atzg/Ldx90cAH86W', false, 'Network Engineer', 82, '', 1, 'U'),
+  ('DataVoyagerX', 'Martinez', 'Sophia', 'Austin', '1993-02-18', 'sophia@example.com', '$2y$10$hdcop0JmljwX0pkef.p5IOClt6qXxN.rOX7Q3Atzg/Ldx90cAH86W', true, 'Frontend Developer', 86, '', 2, 'U'),
+  ('BinarySorcerer', 'Lopez', 'William', 'Miami', '1986-11-08', 'william@example.com', '$2y$10$hdcop0JmljwX0pkef.p5IOClt6qXxN.rOX7Q3Atzg/Ldx90cAH86W', true, 'Database Administrator', 79, '', 1, 'U'),
+  ('AIWhisperer', 'Harris', 'Mia', 'Denver', '1990-06-22', 'mia@example.com', '$2y$10$hdcop0JmljwX0pkef.p5IOClt6qXxN.rOX7Q3Atzg/Ldx90cAH86W', true, 'Graphic Designer', 87, '', 2, 'U');
 
 INSERT INTO "_match_" (Id_user_receiver, Id_user_sender, date_hour, current_status) 
 VALUES 

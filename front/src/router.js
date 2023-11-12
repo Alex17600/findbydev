@@ -6,6 +6,7 @@ import { getToken } from "./data/Token";
 import jwtDecode from "jwt-decode";
 import { SearchResultsProvider } from "./context/SearchResultsContext";
 
+
 const Accueil = lazy(() => import("./pages/home/Accueil"));
 const Register = lazy(() => import("./pages/register/Register"));
 const Informations = lazy(() => import("./pages/register/infos/Informations"));
@@ -22,6 +23,7 @@ const Conversation = lazy(() => import("./pages/tchat/conversation/Conversation"
 const Message = lazy(() => import("./pages/tchat/message/Message"));
 const UserDetails = lazy(() => import("./pages/profil/userDetails/UserDetails"));
 const GitProfil = lazy(() => import("./pages/register/git/GitProfil"));
+const GitDetail = lazy(() => import("./pages/register/git/GitDetail"));
 const Rgpd = lazy(() => import("./components/rgpd/Rgpd"));
 const Search = lazy(() => import("./pages/search/Search"));
 const Results = lazy(() => import("./pages/search/Result"));
@@ -66,6 +68,10 @@ export const router = createBrowserRouter([
           {
             path: "git",
             element: <GitProfil />,
+          },
+          {
+            path: "gitdetails",
+            element: <GitDetail />
           },
           {
             path: ":userId/language",
