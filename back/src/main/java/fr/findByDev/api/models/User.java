@@ -62,9 +62,6 @@ public class User {
     @JoinColumn(name = "id_gender")
     private Gender gender;
 
-
-
-
     public User() {
     }
 
@@ -89,9 +86,8 @@ public class User {
         this.gender = gender;
     }
 
-
-
-
+    public User(String string, String string2, String string3, Gender gender2) {
+    }
 
     public Integer getId() {
         return idUser;

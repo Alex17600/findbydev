@@ -16,7 +16,7 @@ const Login = lazy(() => import("./pages/login/Login"));
 const Profil = lazy(() => import("./pages/profil/Profil"));
 const Card = lazy(() => import("./pages/profil/card/Card"));
 const CardMobile = lazy(() => import("./pages/profil/card/CardMobile"));
-const Account = lazy(() => import("./pages/profil/account/Account"));
+const AccountMobile = lazy(() => import("./pages/profil/account/AccountMobile"));
 const Notice = lazy(() => import("./pages/profil/notice/Notice"));
 const Tchat = lazy(() => import("./pages/tchat/Tchat"));
 const Conversation = lazy(() => import("./pages/tchat/conversation/Conversation"));
@@ -101,7 +101,7 @@ export const router = createBrowserRouter([
           },
           {
             path: ":userId/account",
-            element: <Account/>
+            element: <AccountMobile/>
           },
           {
             path: ":userId/notice",

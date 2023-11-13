@@ -106,23 +106,26 @@ const CardMobile = () => {
 
   const swipe = async (dir) => {
     if (canSwipe && currentIndex < users.length) {
-      const matchData = {
-        userSender: userConnected.idUser,
-        userReceiver: users[currentIndex].id,
-      };
-      //vérif fin de liste
-      if (currentIndex === users.length - 1) {
-        setReachedEndOfList(true);
+
+        const matchData = {
+          userSender: userConnected.idUser,
+          userReceiver: users[currentIndex].id,
+          swipeDirection: dir
+        };
+        //vérif fin de liste
+        if (currentIndex === users.length - 1) {
+          setReachedEndOfList(true);
+        }
+
+        try {
+          await createMatch(matchData);
+        } catch (error) {
+          console.error("Erreur lors de la création du match :", error);
+        }
+        await childRefs[currentIndex].current.swipe(dir);
+        updateCurrentIndex(currentIndex + 1);
       }
 
-      try {
-        await createMatch(matchData);
-      } catch (error) {
-        console.error("Erreur lors de la création du match :", error);
-      }
-      await childRefs[currentIndex].current.swipe(dir);
-      updateCurrentIndex(currentIndex + 1);
-    }
   };
 
   const goBack = async () => {
@@ -132,9 +135,8 @@ const CardMobile = () => {
     await childRefs[newIndex].current.restoreCard();
   };
 
-  // Fonction pour réinitialiser la liste des cartes Tinder
+  // Fonction pour réinitialiser la liste des cartes
   const resetCardList = () => {
-    // Mettez à jour currentIndex et réinitialisez reachedEndOfList
     setCurrentIndex(0);
     setReachedEndOfList(false);
     // Réinitialisez la liste des cartes Tinder

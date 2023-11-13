@@ -167,7 +167,6 @@ BEFORE INSERT ON _user_
 FOR EACH ROW
 EXECUTE FUNCTION check_user_age();
 
-
 -- Insertion d'utilisateurs avec des pseudonymes Git aléatoires et des valeurs factices pour la photo
 INSERT INTO _user_ (pseudo, lastname, firstname, town, birthday, mail, password, active_account, description, popularity, photo, id_gender, type)
 VALUES

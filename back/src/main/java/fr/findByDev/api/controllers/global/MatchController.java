@@ -6,7 +6,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -18,12 +18,14 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import fr.findByDev.api.controllers.GenericController;
+import fr.findByDev.api.models.Conversation;
 import fr.findByDev.api.models.Match;
 
 import fr.findByDev.api.models.User;
 import fr.findByDev.api.models.DTO.MatchRequestDTO;
 import fr.findByDev.api.models.associations.MatchId;
 import fr.findByDev.api.models.enums.Status;
+import fr.findByDev.api.repositories.global.ConversationRepository;
 import fr.findByDev.api.repositories.global.MatchRepository;
 
 import fr.findByDev.api.repositories.global.UserRepository;
@@ -32,8 +34,6 @@ import fr.findByDev.api.repositories.global.UserRepository;
 @RequestMapping("/matches")
 public class MatchController extends GenericController<Match, MatchId> {
 
-
-
     @Autowired
     private MatchRepository matchRepository;
 
@@ -41,11 +41,14 @@ public class MatchController extends GenericController<Match, MatchId> {
     private UserRepository userRepository;
 
     @Autowired
-    public MatchController(MatchRepository matchRepository, UserRepository userRepository
-            ) {
+    private ConversationRepository conversationRepository;
+
+    @Autowired
+    public MatchController(MatchRepository matchRepository, UserRepository userRepository, ConversationRepository conversationRepository) {
         super(matchRepository);
         this.matchRepository = matchRepository;
         this.userRepository = userRepository;
+        this.conversationRepository = conversationRepository;
     }
 
     @GetMapping("")
@@ -68,9 +71,10 @@ public class MatchController extends GenericController<Match, MatchId> {
     @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
     @CrossOrigin
-    public Match createMatch(@RequestBody MatchRequestDTO matchData) {
+    public ResponseEntity<?> createMatch(@RequestBody MatchRequestDTO matchData) {
         Integer userSenderId = matchData.getUserSender();
         Integer userReceiverId = matchData.getUserReceiver();
+        String swipeDirection = matchData.getSwipeDirection();
 
         // Recherchez les objets User correspondants dans la base de données
         User userSender = userRepository.findById(userSenderId).orElse(null);
@@ -80,24 +84,40 @@ public class MatchController extends GenericController<Match, MatchId> {
             throw new IllegalArgumentException("Utilisateur non trouvé.");
         }
 
-        Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
+        // Si la direction du swipe est "right", créez le match
+        if ("right".equals(swipeDirection)) {
+            Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
 
-        MatchId matchId = new MatchId(userSenderId, userReceiverId);
+            MatchId matchId = new MatchId(userSenderId, userReceiverId);
 
-        Match match = new Match();
-        match.setIdMatch(matchId);
-        match.setSender(userSender);
-        match.setReceiver(userReceiver);
-        match.setDateHour(currentTimestamp);
-        match.setCurrentStatus(Status.EN_ATTENTE);
+            Match match = new Match();
+            match.setIdMatch(matchId);
+            match.setSender(userSender);
+            match.setReceiver(userReceiver);
+            match.setDateHour(currentTimestamp);
+            match.setCurrentStatus(Status.EN_ATTENTE);
+            match.setIsRead(false);
+            userReceiver.setPopularity(userReceiver.getPopularity() + 5);
 
-        match.setIsRead(false);
+            userRepository.save(userReceiver);
+            Match savedMatch = matchRepository.save(match);
 
-        userReceiver.setPopularity(userReceiver.getPopularity() + 5);
-        userRepository.save(userReceiver);
+            if (savedMatch.getCurrentStatus() == Status.VALIDE) {
+            Conversation conversation = new Conversation();
+            conversation.setDateDebut(currentTimestamp);
+            conversation.setArchived(false);
+            conversation.setUserSender(userSenderId);
+            conversation.setUserReceiver(userReceiverId);
 
-        return matchRepository.save(match);
+            conversationRepository.save(conversation);
+        }
 
+            return ResponseEntity.status(HttpStatus.CREATED).build();
+        } else if ("left".equals(swipeDirection)) {
+            return ResponseEntity.status(HttpStatus.OK).build();
+        }
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 
     @PatchMapping("/update-status")
@@ -113,7 +133,7 @@ public class MatchController extends GenericController<Match, MatchId> {
             Match match = matchRepository.findByIdMatch(idUserSender, idUserReceiver);
 
             if (match != null) {
-                
+
                 if ("VALIDE".equals(newStatus) || "REFUSE".equals(newStatus)) {
                     match.setCurrentStatus(Status.valueOf(newStatus));
                     userSender.setPopularity(userSender.getPopularity() + 5);

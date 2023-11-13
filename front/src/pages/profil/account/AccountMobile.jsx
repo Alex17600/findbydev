@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import style from "./Account.module.scss";
+import style from "./AccountMobile.module.scss";
 import {
   findUserById,
   updateUser,

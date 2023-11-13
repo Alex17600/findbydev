@@ -1,7 +1,7 @@
 package fr.findByDev.api.models;
 
 
-import java.sql.Date;
+import java.sql.Timestamp;
 
 import jakarta.persistence.*;
 
@@ -15,7 +15,7 @@ public class Conversation {
     private Integer idConversation;
 
     @Column(name = "date_debut")
-    private Date dateDebut;
+    private Timestamp dateDebut;
 
     @Column(name = "archived")
     private Boolean archived;
@@ -37,11 +37,11 @@ public class Conversation {
         this.idConversation = idConversation;
     }
 
-    public Date getDateDebut() {
+    public Timestamp getDateDebut() {
         return dateDebut;
     }
 
-    public void setDateDebut(Date dateDebut) {
+    public void setDateDebut(Timestamp dateDebut) {
         this.dateDebut = dateDebut;
     }
 
@@ -68,6 +68,4 @@ public class Conversation {
     public void setUserReceiver(Integer userReceiver) {
         this.userReceiver = userReceiver;
     }
-
-
 }

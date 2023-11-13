@@ -1,6 +1,7 @@
 import {
   getToken
 } from "../data/Token";
+const token = getToken();
 
 const URL_API = 'http://localhost:8000/api/users';
 
@@ -147,7 +148,7 @@ export async function unreadMatches(userId) {
 // Fonction pour récupérer les matchs lus ou pas et en attente de l'utilisateur
 export async function readMatches(userId) {
   try {
-    const token = getToken();
+    
     const response = await fetch(`${URL_API}/${userId}/read-matches`, {
       method: 'GET',
       headers: {
@@ -174,6 +175,7 @@ export async function updateUser(userId, updateData) {
   const response = await fetch(`${URL_API}/${userId}`, {
     method: 'PATCH',
     headers: {
+      'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(updateData),

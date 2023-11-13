@@ -5,6 +5,7 @@ import { VscAccount } from "react-icons/vsc";
 import { FiSearch, FiSettings } from "react-icons/fi";
 import { AiOutlineMessage } from "react-icons/ai";
 import { BiLogOut } from "react-icons/bi";
+import { BsSearchHeart } from "react-icons/bs";
 import { clearToken, getToken } from "../../data/Token";
 import Extension from "./components/Extension";
 import jwtDecode from "jwt-decode";
@@ -30,6 +31,7 @@ const Sidebar = () => {
 
   return (
     <div className={style.sidebar}>
+      <BsSearchHeart size={32} style={{ color: iconColor }} onClick={() => navigate("/profil/card")}/>
       <FiSearch
         size={32}
         style={{ color: iconColor }}

@@ -24,14 +24,15 @@
 
         .headerLarge {
             display: flex;
-            justify-content:space-around;
+            justify-content: space-between;
             background-color: black;
             opacity: 80%;
             height: fit-content;
-            margin: 0;
+            margin: 0 20px;
             font-family: 'JetBrains Mono', monospace;
-            
-            pre, p {
+
+            pre,
+            p {
                 display: flex;
                 align-items: center;
                 margin: 0;
@@ -42,8 +43,27 @@
             pre {
                 font-size: 44px;
             }
+
+            .blocUserInfos {
+                background-color: rgba(238, 20, 20, 0.3);
+                display: flex;
+                padding: 0 20px;
+                border: 1px solid white;
+                border-radius: 6px;
+
+                .infos {
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+                    margin: 0 10px;
+                }
+
+                .profileImage {
+                    border-radius: 50px;
+                    max-width: 50px;
+                }
+            }
         }
-
-
     }
 }

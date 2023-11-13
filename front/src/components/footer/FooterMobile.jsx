@@ -9,6 +9,8 @@ import { MdOutlineNotificationsActive } from "react-icons/md";
 import { getToken } from "../../data/Token";
 import jwtDecode from "jwt-decode";
 import { unreadMatches } from "../../apis/users";
+import { BsSearchHeart} from "react-icons/bs";
+import { BsFilterCircle } from "react-icons/bs";
 
 const FooterMobile = () => {
   const [userConnected, setUserConnected] = useState();
@@ -68,7 +70,7 @@ const FooterMobile = () => {
 
   return (
     <div className={style.bottomIcon}>
-      <FiSearch onClick={() => navigate("/search")}/>
+      <BsFilterCircle onClick={() => navigate("/search")}/>
       {newMatchFound ? (
         <MdOutlineNotificationsActive
         className={location.pathname.endsWith(`/profil/${userId}/notice`) ? style.disabled : style.newmatch}
@@ -79,6 +81,7 @@ const FooterMobile = () => {
         className={location.pathname.endsWith(`/profil/${userId}/notice`) ? style.disabled : null}
         onClick={handleNotificationsClick} />
       )}
+      <BsSearchHeart onClick={() => navigate("/profil/card")}/>
       <AiOutlineMessage onClick={handleMessageClick}/>
       <VscAccount 
       className={location.pathname.endsWith(`/profil/${userId}/account`) ? style.disabled : null}
