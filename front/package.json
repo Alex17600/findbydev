@@ -24,7 +24,7 @@
     "react-scripts": "^5.0.1",
     "react-stomp": "^5.1.0",
     "react-tinder-card": "^1.6.2",
-    "sass": "^1.66.1",
+    "sass": "^1.69.4",
     "socket.io": "^4.7.2",
     "socket.io-client": "^2.0.2",
     "sockjs": "^0.3.24",
